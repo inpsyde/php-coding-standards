@@ -5,7 +5,6 @@
 
 	<rule ref="WordPress">
 
-		<!-- Yoda conditions are not helpful, cost only time. -->
 		<exclude name="WordPress.PHP.YodaConditions"/>
 
 		<exclude name="Generic.PHP.LowerCaseConstant"/>
@@ -19,7 +18,7 @@
 		<exclude name="Squiz.Commenting.FunctionComment.SpacingBeforeParamType"/>
 		<exclude name="Squiz.Commenting.FunctionComment.SpacingBeforeParams"/>
 
-		<!-- Exclude Full Stops on inline comment. -->
+		<!-- Exclude full stops on inline comment. -->
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment"/>
 
