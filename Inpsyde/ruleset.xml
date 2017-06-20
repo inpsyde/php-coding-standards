@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="Inpsyde Coding Standards Configuration">
+<ruleset name="Inpsyde">
 	<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
 
 	<!-- Set a description for this ruleset. -->
