@@ -3,9 +3,6 @@
 
 	<description>A custom set of code standard rules to check for Inpsyde Codex.</description>
 
-	<!-- TRUE, FALSE, NULL are constant, we write in uppercase. -->
-	<rule ref="Generic.PHP.UpperCaseConstant"/>
-
 	<!-- Allow . in hook names -->
 	<rule ref="WordPress.NamingConventions.ValidHookName">
 		<properties>
