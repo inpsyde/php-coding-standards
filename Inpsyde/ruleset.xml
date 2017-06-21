@@ -5,8 +5,10 @@
 
 	<rule ref="WordPress">
 
+		<exclude name="WordPress.Files.FileName"/>
 		<exclude name="WordPress.PHP.YodaConditions"/>
 
+		<exclude name="Generic.PHP.DisallowShortOpenTag"/>
 		<exclude name="Generic.PHP.LowerCaseConstant"/>
 		<exclude name="Generic.WhiteSpace.ScopeIndent.Incorrect"/>
 		<exclude name="Generic.Commenting.DocComment.MissingShort"/>
@@ -17,6 +19,9 @@
 		<exclude name="Squiz.Commenting.VariableComment.VarIndent"/>
 		<exclude name="Squiz.Commenting.FunctionComment.SpacingBeforeParamType"/>
 		<exclude name="Squiz.Commenting.FunctionComment.SpacingBeforeParams"/>
+
+		<!-- no need for @package in files -->
+		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
 
 		<!-- Exclude full stops on inline comment. -->
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
