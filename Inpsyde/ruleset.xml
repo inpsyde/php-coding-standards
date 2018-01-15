@@ -26,6 +26,7 @@
 	-->
 	<rule ref="NeutronStandard">
 		<exclude name="NeutronStandard.Functions.LongFunction"/>
+		<exclude name="NeutronStandard.Globals.DisallowGlobalFunctions"/>
 	</rule>
 
 	<!--
