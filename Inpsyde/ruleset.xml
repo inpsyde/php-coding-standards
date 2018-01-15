@@ -27,6 +27,8 @@
 	<rule ref="NeutronStandard">
 		<exclude name="NeutronStandard.Functions.LongFunction"/>
 		<exclude name="NeutronStandard.Globals.DisallowGlobalFunctions"/>
+		<!-- This rule is broken for now, see https://github.com/Automattic/phpcs-neutron-standard/issues/19 -->
+		<exclude name="NeutronStandard.Functions.TypeHint.NoReturnType"/>
 	</rule>
 
 	<!--
