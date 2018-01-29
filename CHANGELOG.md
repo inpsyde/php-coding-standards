@@ -1,10 +1,10 @@
 # Changelog
 
-## 0.3.0  (NOT RELEASED)
+## 0.3.0
 * Usage of PSR 1/2 as base
 * Test for PHP 7+
 * Introduction of [phpcs-variable-analysis](https://github.com/sirbrillig/phpcs-variable-analysis)
-* Introduction of [Autmattic NeutronStandard](https://github.com/Automattic/phpcs-neutron-standard)
+* Introduction of [Automattic NeutronStandard](https://github.com/Automattic/phpcs-neutron-standard)
 * Only use few WordPress rules from [wpcs](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards)
 * Make package compatible with `phpcodesniffer-composer-installer`
 * Add lot of info to README
