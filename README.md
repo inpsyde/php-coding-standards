@@ -103,22 +103,24 @@ See https://github.com/sirbrillig/phpcs-variable-analysis
 
 See https://github.com/Automattic/phpcs-neutron-standard
 
-All Neutron Standard rules are included except "Function size" rule.
+All Neutron Standard rules are included except "Function size" (handles in custom rules, see below)
+and "Variable Functions" rules.
 
 
-## Object Calisthenics
+## Custom Rules
 
-Object calisthenics are about software quality.
-Some rules are too strict for PHP/WP development, so we keep just some.
-See https://github.com/object-calisthenics/phpcs-calisthenics-rules
+Few custom rules are also in use, highly derived from Object Calisthenics 
+see (https://github.com/object-calisthenics/phpcs-calisthenics-rules).
 
-Included calisthenics rules are:
+Customs rules are:
 
-- Only 1 Level of Indentation per Method
-- Do Not Use "else" Keyword
-- Do not Abbreviate
-- Do not Use Getters and Setters (forbidden public property, no methods that start with "set")
-- Keep Your Classes Small (only: max 10 property per class, max 50 lines per method)
+- Only 2 levels of indentation per Method
+- Do not use "else" keyword
+- Use minimum 3 chars for names (with a few exclusions)
+- No public properties
+- No setters
+- Max 10 properties per class
+- Max 50 lines per method
 
 
 ## WordPress Coding Standard

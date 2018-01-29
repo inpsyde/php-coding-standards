@@ -32,7 +32,6 @@
     "wp-coding-standards/wpcs": "^0.14",
     "automattic/phpcs-neutron-standard": "^1",
     "sirbrillig/phpcs-variable-analysis": "^2",
-    "object-calisthenics/phpcs-calisthenics-rules": "^3",
     "wimg/php-compatibility": "^8.0"
   },
   "extra": {

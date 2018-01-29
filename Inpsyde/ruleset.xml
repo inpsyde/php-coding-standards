@@ -3,6 +3,9 @@
 
 	<description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
 
+    <autoload>./Helpers.php</autoload>
+    <autoload>./PHPCSAliases.php</autoload>
+
 	<!--
 	PHP 7.0 and higher.
 	-->
@@ -27,87 +30,48 @@
 	<rule ref="NeutronStandard">
 		<exclude name="NeutronStandard.Functions.LongFunction"/>
 		<exclude name="NeutronStandard.Functions.VariableFunctions"/>
-		<exclude name="NeutronStandard.Globals.DisallowGlobalFunctions"/>
-		<!-- This rule is broken for now, see https://github.com/Automattic/phpcs-neutron-standard/issues/19 -->
-		<exclude name="NeutronStandard.Functions.TypeHint.NoReturnType"/>
 	</rule>
 
-	<!--
-	Object calisthenics are about software quality.
-	Some rules are too strict for PHP/WP development, so we keep just some.
-	See https://github.com/object-calisthenics/phpcs-calisthenics-rules
-	-->
-	<rule ref="ObjectCalisthenics.Metrics.MaxNestingLevel">
-		<properties>
-			<property name="maxNestingLevel" value="2"/>
-		</properties>
-	</rule>
-	<rule ref="ObjectCalisthenics.ControlStructures.NoElse"/>
-	<rule ref="ObjectCalisthenics.NamingConventions.ElementNameMinimalLength"/>
-	<rule ref="ObjectCalisthenics.Classes.ForbiddenPublicProperty"/>
-	<rule ref="ObjectCalisthenics.NamingConventions.NoSetter"/>
-	<rule ref="ObjectCalisthenics.Files.FunctionLength">
-		<properties>
-			<property name="maxLength" value="50"/>
-		</properties>
-	</rule>
-	<rule ref="ObjectCalisthenics.Metrics.PropertyPerClassLimit">
-		<properties>
-			<property name="maxCount" value="10"/>
-		</properties>
-	</rule>
-
-
-	<!-- Load WordPress ruleset, then exclude all of them. Necessary for wpcs 3.0 compat -->
-	<rule ref="WordPress">
-		<exclude name="WordPress-Core"/>
-		<exclude name="WordPress-Docs"/>
-		<exclude name="WordPress-Extra"/>
-		<exclude name="WordPress-VIP"/>
-		<exclude name="WordPress.PHP.DiscouragedPHPFunctions" />
-	</rule>
-
-	<!--
-	Some WordPress specific rules.
-	See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
-	-->
-	<rule ref="WordPress.VIP.SessionVariableUsage"/>
-	<rule ref="WordPress.VIP.SessionFunctionsUsage"/>
-	<rule ref="WordPress.VIP.SuperGlobalInputUsage"/>
-	<rule ref="WordPress.VIP.ValidatedSanitizedInput"/>
-	<rule ref="WordPress.XSS.EscapeOutput"/>
-	<rule ref="WordPress.CSRF.NonceVerification"/>
-	<rule ref="WordPress.WP.AlternativeFunctions.curl"/>
-	<rule ref="WordPress.WP.DiscouragedConstants"/>
-	<rule ref="WordPress.WP.I18n"/>
-	<rule ref="WordPress.Arrays.CommaAfterArrayItem"/>
-	<rule ref="WordPress.PHP.StrictComparisons"/>
-	<rule ref="WordPress.PHP.StrictInArray"/>
-	<rule ref="WordPress.PHP.POSIXFunctions"/>
-	<rule ref="WordPress.PHP.RestrictedPHPFunctions"/>
-	<rule ref="WordPress.PHP.DiscouragedPHPFunctions">
-		<properties>
-			<property name="exclude" value="serialize"/>
-			<property name="exclude" value="urlencode"/>
-			<property name="exclude" value="obfuscation"/>
-		</properties>
-	</rule>
-	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration">
-		<type>error</type>
-	</rule>
-	<rule ref="WordPress.PHP.DevelopmentFunctions"/>
-	<rule ref="WordPress.PHP.DevelopmentFunctions.error_log">
-		<type>error</type>
-	</rule>
-	<rule ref="WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure">
-		<type>error</type>
-	</rule>
+    <!--
+    Some WordPress specific rules.
+    See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
+    -->
+    <rule ref="WordPress.VIP.SessionVariableUsage"/>
+    <rule ref="WordPress.VIP.SessionFunctionsUsage"/>
+    <rule ref="WordPress.VIP.SuperGlobalInputUsage"/>
+    <rule ref="WordPress.VIP.ValidatedSanitizedInput"/>
+    <rule ref="WordPress.XSS.EscapeOutput"/>
+    <rule ref="WordPress.CSRF.NonceVerification"/>
+    <rule ref="WordPress.WP.AlternativeFunctions.curl"/>
+    <rule ref="WordPress.WP.DiscouragedConstants"/>
+    <rule ref="WordPress.WP.I18n"/>
+    <rule ref="WordPress.Arrays.CommaAfterArrayItem"/>
+    <rule ref="WordPress.PHP.StrictComparisons"/>
+    <rule ref="WordPress.PHP.StrictInArray"/>
+    <rule ref="WordPress.PHP.POSIXFunctions"/>
+    <rule ref="WordPress.PHP.RestrictedPHPFunctions"/>
+    <rule ref="WordPress.PHP.DiscouragedPHPFunctions">
+        <properties>
+            <property name="exclude" value="serialize"/>
+            <property name="exclude" value="urlencode"/>
+            <property name="exclude" value="obfuscation"/>
+        </properties>
+    </rule>
+    <rule ref="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration">
+        <type>error</type>
+    </rule>
+    <rule ref="WordPress.PHP.DevelopmentFunctions"/>
+    <rule ref="WordPress.PHP.DevelopmentFunctions.error_log">
+        <type>error</type>
+    </rule>
+    <rule ref="WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure">
+        <type>error</type>
+    </rule>
 
 	<!--
 	Generic and common sense sanity.
 	-->
 	<rule ref="Generic.ControlStructures.InlineControlStructure"/>
-	<rule ref="Generic.Files.EndFileNewline"/>
 	<rule ref="Generic.Files.ByteOrderMark"/>
 	<rule ref="Generic.Files.LineEndings">
 		<properties>
@@ -115,9 +79,6 @@
 		</properties>
 	</rule>
 	<rule ref="Squiz.PHP.Eval"/>
-	<rule ref="Squiz.PHP.Eval.Discouraged">
-		<type>error</type>
-	</rule>
 
 	<!--
 	No commented-out code, please. Let version control do its job.
