@@ -6,6 +6,11 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ *
+ * This file contains code from "phpcs-calisthenics-rules" repository
+ * found at https://github.com/object-calisthenics
+ * Copyright (c) 2014 Doctrine Project
+ * released under MIT license.
  */
 
 namespace Inpsyde\CodingStandard;
@@ -14,7 +19,7 @@ use PHP_CodeSniffer\Files\File;
 
 /**
  * @package php-coding-standards
- * @license MIT
+ * @license http://opensource.org/licenses/MIT MIT
  */
 class Helpers
 {

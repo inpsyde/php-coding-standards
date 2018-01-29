@@ -6,6 +6,11 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ *
+ * This file contains code from "phpcs-calisthenics-rules" repository
+ * found at https://github.com/object-calisthenics
+ * Copyright (c) 2014 Doctrine Project
+ * released under MIT license.
  */
 
 namespace Inpsyde\CodingStandard\Sniffs\CodeQuality;
@@ -15,7 +20,7 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 
 /**
  * @package php-coding-standards
- * @license MIT
+ * @license http://opensource.org/licenses/MIT MIT
  */
 final class MaxNestingLevelSniff implements Sniff
 {
@@ -66,7 +71,7 @@ final class MaxNestingLevelSniff implements Sniff
      * @param File $file
      * @param int $position
      */
-    public function process(File $file, $position): void
+    public function process(File $file, $position)
     {
         $this->file = $file;
         $this->position = $position;
@@ -88,7 +93,7 @@ final class MaxNestingLevelSniff implements Sniff
         $this->handleNestingLevel($this->nestingLevel);
     }
 
-    private function handleNestingLevel(int $nestingLevel): void
+    private function handleNestingLevel(int $nestingLevel)
     {
         if ($nestingLevel > $this->maxNestingLevel) {
             $levelPluralization = $this->maxNestingLevel > 1 ? 's' : '';
@@ -107,7 +112,7 @@ final class MaxNestingLevelSniff implements Sniff
     /**
      * @param mixed[] $tokens
      */
-    private function iterateTokens(int $start, int $end, array $tokens): void
+    private function iterateTokens(int $start, int $end, array $tokens)
     {
         $this->currentPtr = $start + 1;
 
@@ -122,7 +127,7 @@ final class MaxNestingLevelSniff implements Sniff
     /**
      * @param mixed[] $nestedToken
      */
-    private function handleToken(array $nestedToken): void
+    private function handleToken(array $nestedToken)
     {
         $this->handleClosureToken($nestedToken);
         $this->handleCaseToken($nestedToken);
@@ -149,7 +154,7 @@ final class MaxNestingLevelSniff implements Sniff
     /**
      * @param mixed[] $nestedToken
      */
-    private function handleClosureToken(array $nestedToken): void
+    private function handleClosureToken(array $nestedToken)
     {
         if ($nestedToken['code'] === T_CLOSURE) {
             // Move index pointer in case we found a lambda function
@@ -163,7 +168,7 @@ final class MaxNestingLevelSniff implements Sniff
     /**
      * @param mixed[] $nestedToken
      */
-    private function handleCaseToken(array $nestedToken): void
+    private function handleCaseToken(array $nestedToken)
     {
         if (in_array($nestedToken['code'], [T_CASE, T_DEFAULT])) {
             array_push($this->ignoredScopeStack, $nestedToken);
@@ -172,7 +177,7 @@ final class MaxNestingLevelSniff implements Sniff
         }
     }
 
-    private function adjustNestingLevelToIgnoredScope(): void
+    private function adjustNestingLevelToIgnoredScope()
     {
         // Iterated through ignored scope stack to find out if
         // anything can be popped out and adjust nesting level.
@@ -185,7 +190,7 @@ final class MaxNestingLevelSniff implements Sniff
      * @param int $key
      * @param mixed[] $ignoredScope
      */
-    private function unsetScopeIfNotCurrent(int $key, array $ignoredScope): void
+    private function unsetScopeIfNotCurrent(int $key, array $ignoredScope)
     {
         if ($ignoredScope['scope_closer'] !== $this->currentPtr) {
             return;
