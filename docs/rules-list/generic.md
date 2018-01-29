@@ -1,0 +1,54 @@
+# Generic, Squiz and PEAR Rules
+
+- Generic
+    - Generic.ControlStructures
+        - Generic.ControlStructures.InlineControlStructure
+            - Generic.ControlStructures.InlineControlStructure.NotAllowed
+    - Generic.Files
+        - Generic.Files.ByteOrderMark
+            - Generic.Files.ByteOrderMark.Found
+        - Generic.Files.LineEndings
+            - Generic.Files.LineEndings.InvalidEOLChar
+        - Generic.Files.LineLength
+    - Generic.Functions
+        - Generic.FunctionCallArgumentSpacing
+    - Generic.NamingConventions
+        - Generic.NamingConventions.UpperCaseConstantName
+    - Generic.WhiteSpace
+        - Generic.WhiteSpace.SuperfluousWhitespace
+        - Generic.WhiteSpace.ScopeIndent
+        - Generic.WhiteSpace.DisallowTabIndent
+    - Generic.Formatting
+        - Generic.Formatting.DisallowMultipleStatements
+    - Generic.PHP
+        - Generic.PHP.LowerCaseKeyword
+        
+- Squiz
+    - Squiz.Classes
+        - Squiz.Classes.ValidClassName
+    - Squiz.ControlStructures
+        - Squiz.ControlStructures.ControlSignature
+        - Squiz.ControlStructures.ForEachLoopDeclaration
+        - Squiz.ControlStructures.ForLoopDeclaration
+        - Squiz.ControlStructures.LowercaseDeclaration
+        - Squiz.ControlStructures.InlineControlStructure
+    - Squiz.Functions
+        - Squiz.Functions.FunctionDeclaration
+        - Squiz.Functions.LowercaseFunctionKeywords
+        - Squiz.Functions.FunctionDeclarationArgumentSpacing
+        - Squiz.Functions.MultiLineFunctionDeclaration
+    - Squiz.Scope
+        - Squiz.Scope.MethodScope
+    - Squiz.PHP
+        - Squiz.PHP.Eval
+            - Squiz.PHP.Eval.Discouraged
+        - Squiz.PHP.CommentedOutCode
+            - Squiz.PHP.CommentedOutCode.Found
+    - Squiz.WhiteSpace
+        - Squiz.WhiteSpace.ScopeKeywordSpacing
+        - Squiz.WhiteSpace.ControlStructureSpacing
+        - Squiz.WhiteSpace.ScopeClosingBrace
+
+- PEAR
+    - PEAR.Functions
+        - PEAR.Functions.ValidDefaultValue

@@ -66,7 +66,7 @@ final class ElementNameMinimalLengthSniff implements Sniff
             $this->minLength
         );
 
-        $file->addError($message, $position, 'ElementNameMinimalLength');
+        $file->addError($message, $position, 'TooShort');
     }
 
     /**

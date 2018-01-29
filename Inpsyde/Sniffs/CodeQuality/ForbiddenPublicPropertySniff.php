@@ -54,7 +54,7 @@ final class ForbiddenPublicPropertySniff implements Sniff
             $file->addError(
                 'Do not use public properties. Use method access instead.',
                 $position,
-                'ForbiddenPublicProperty'
+                'Found'
             );
         }
     }

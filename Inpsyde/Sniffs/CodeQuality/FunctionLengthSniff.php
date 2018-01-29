@@ -52,7 +52,7 @@ final class FunctionLengthSniff implements Sniff
                 $this->maxLength
             );
 
-            $file->addError($error, $position, 'FunctionLength');
+            $file->addError($error, $position, 'TooLong');
         }
     }
 

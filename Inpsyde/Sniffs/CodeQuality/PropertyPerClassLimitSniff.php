@@ -56,7 +56,7 @@ final class PropertyPerClassLimitSniff implements Sniff
                 $this->maxCount
             );
 
-            $file->addWarning($message, $position, 'PropertyPerClassLimit');
+            $file->addWarning($message, $position, 'TooMuchProperties');
         }
     }
 }

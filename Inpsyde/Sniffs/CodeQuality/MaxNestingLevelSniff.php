@@ -105,7 +105,7 @@ final class MaxNestingLevelSniff implements Sniff
                 $nestingLevel
             );
 
-            $this->file->addError($error, $this->position, 'MaxNestingLevel');
+            $this->file->addError($error, $this->position, 'TooNested');
         }
     }
 

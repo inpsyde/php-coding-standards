@@ -91,20 +91,45 @@ internationalization functions are called with the proper text domain.
 
 ## PSR-1 & PSR-2
 
-See http://www.php-fig.org/psr/psr-1/ and http://www.php-fig.org/psr/psr-2/
+See http://www.php-fig.org/psr/psr-1/ and http://www.php-fig.org/psr/psr-2/.
+
+The tree of used rules are listed in the `/docs/rules-list/psr.md` file in this repo.
 
 
 ## VariableAnalysis
 
 See https://github.com/sirbrillig/phpcs-variable-analysis
 
+The tree of used rules are listed in the `/docs/rules-list/variable-analysis.md` file in this repo.
+
 
 ## Neutron Standard
 
 See https://github.com/Automattic/phpcs-neutron-standard
 
-All Neutron Standard rules are included except "Function size" (handles in custom rules, see below)
-and "Variable Functions" rules.
+Almost all Neutron Standard rules are included.
+
+The tree of used rules are listed in the `/docs/rules-list/neutron-standard.md` file in this repo.
+
+
+## WordPress Coding Standard
+
+To ensure code quality, and compatibility with VIP, several WordPress Coding Standard rules have been
+"cherry picked" from WP coding standards.
+
+See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.
+
+The tree of used rules are listed in the `/docs/rules-list/wordpress.md` file in this repo.
+
+
+## Generic Rules
+
+Some rules are also included from PHP cCode Sniffer itself. Those rules fall in the
+"Generic", "Squiz" and "PEAR" namespace.
+
+Those rules are included by other styles, mainly by PSR-1 and PSR-2.
+
+The tree of used rules are listed in the `/docs/rules-list/generic.md` file in this repo.
 
 
 ## Custom Rules
@@ -122,46 +147,120 @@ Customs rules are:
 - Max 10 properties per class
 - Max 50 lines per method
 
+The tree of used rules are listed in the `/docs/rules-list/custom.md` file in this repo.
 
-## WordPress Coding Standard
+-------------
 
-To ensure code quality, and compatibility with VIP, several WordPress Coding Standard rules have been
-"cherry picked" from WP coding standards.
-See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.
+# Removing or Disabling Rules
 
-Included rules are:
+## Rules Tree
 
-- `WordPress.VIP.SessionVariableUsage` - Avoid usages of `$_SESSION` super global
-- `VIP.SessionFunctionsUsage` - Avoid usages of session-related functions
-- `WordPress.VIP.SuperGlobalInputUsage` - Avoid usages of sulerglobals: `$_GET`, `$_POST`, etc
-- `WordPress.VIP.ValidatedSanitizedInput` - Avoid non-validated/sanitized input (`$_GET`, `$_POST`, etc)
-- `WordPress.Security.EscapeOutput` - Verifies that all outputted strings are escaped.
-- `WordPress.Security.NonceVerification` - Checks that nonce verification accompanies form processing.
-- `WordPress.WP.AlternativeFunctions.curl` - Discourages the use of cURL functions and suggests WP alternatives.
-- `WordPress.WP.DiscouragedConstants` - Warns against usage of discouraged WP constants
-- `WordPress.WP.I18n` - Makes sure WP internationalization functions are used properly. Also checks text domain if set in `phpcs.xml`
-- `WordPress.Arrays.CommaAfterArrayItem` - Ensure last item of arrays have a comma
-- `WordPress.PHP.StrictComparisons` - Enforces Strict Comparison checks
-- `WordPress.PHP.StrictInArray` - Prevent calling `in_array()`, `array_search()` and `array_keys()` without `true` as the 3rd parameter
-- `WordPress.PHP.POSIXFunctions` - Suggest usage of PCRE functions (`preg_*`) instead of POSIX alternative
-- `WordPress.PHP.RestrictedPHPFunctions` - Prevent usage of `create_function`
-- `WordPress.PHP.DiscouragedPHPFunctions` - Discourage usage of soem PHP functions (runtime configuration, system calls)
-- `WordPress.PHP.DevelopmentFunctions` - Prevent usage of development PHP functions (`error_log`, `var_dump`, `var_export`, `print_r`...)
+Sometimes it is necessary to don't follow some rules.
+To avoid error reporting is is possible to:
 
-Any of these rules (just like the others) can be excluded in the `phpcs.xml`, using a syntax like this:
+- Removing rules for an entire project via configuration
+- Disabling rules from code, only is specific places
+
+In both cases it is possible to remove or disable:
+
+- a whole standard
+- a standard subset
+- a single sniff
+- a single rules
+
+The for things above are in hierarchical relationship: a _standard_ is made of one
+or more _subset_, each subset contains one or more _sniff_ and each sniff contains
+one or more rule.
+
+The folder `/docs/rules-list/` of this repo contains 6 files, each of them contain
+the rules _tree_ for one (or few related) standard(s).
+
+For example, in the file `docs/rules-list/psr.md` is is possible to read something
+like:
+
+```
+- PSR1
+    - PSR1.Classes
+        - PSR1.Classes.ClassDeclaration
+            - PSR1.Classes.ClassDeclaration.MultipleClasses
+```
+
+Where:
+- "_PSR1_" is the standard
+- "_PSR1.Classes_" is the subset
+- "_PSR1.Classes.ClassDeclaration_" is the sniff
+- "_PSR1.Classes.ClassDeclaration.MultipleClasses_" is the rule
+
+
+## Remove rules via configuration file
+
+Rules can be removed for the entire project by using a custom `phpcs.xml`, with
+ a syntax like this:
 
 ```xml
 <?xml version="1.0"?>
 <ruleset name="MyProjectCodingStandard">
 
 	<rule ref="Inpsyde">
-		<exclude name="WordPress.PHP.DevelopmentFunctions"/>
+		<exclude name="PSR1.Classes.ClassDeclaration"/>
 	</rule>
 
 </ruleset>
 ```
 
+In the example above, the _sniff_ `PSR1.Classes.ClassDeclaration` (and all the rules
+it contains) has been removed.
+
+Replacing `PSR1.Classes.ClassDeclaration` with just `PSR1` had been possible to
+remove the whole standard, while replacing it with `PSR1.Classes.ClassDeclaration.MultipleClasses`
+only the single rule is removed.
+
+## Remove rules via code comments
+
+If it is necessary to remove a rule/sniff/standard subset/standard only in 
+specific place in the code, it is possible to use special comments that starts
+with:
+
+```php
+// phpcs:disable
+```
+
+followed by the what you want to to remove.
+
+For example: `// phpcs:disable PSR1.Classes.ClassDeclaration`.
+
+From the point the comment is encountered to the end of the file, the requested
+rule/sniff/standard subset/standard is not checked anymore.
+
+To re-enable it is necessary to use a similar syntax, but this time using 
+`phpcs:enable` instead of `phpcs:disable`.
+
+It worth nothing:
+
+- `phpcs:disable` and `phpcs:enable` can be used without anything else, in this
+  case the check for *all* rules are disabled/enabled.
+- Disabling / enabling comments could be embedded in doc block comments at
+  file/class/method level. For example:
+  
+```php
+class Foo
+{
+    /**
+     * @param mixed $a
+     * @param mixed $b
+     *
+     * phpcs:disable NeutronStandard.Functions.TypeHint.NoArgumentType
+     */
+    public function test($a, $b)
+    {
+        // phpcs:enable
+    }
+}
+```
+
+
 -------------
+
 
 # IDE integration
 
