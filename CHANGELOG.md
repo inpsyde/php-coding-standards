@@ -5,7 +5,6 @@
 * Test for PHP 7+
 * Introduction of [phpcs-variable-analysis](https://github.com/sirbrillig/phpcs-variable-analysis)
 * Introduction of [Autmattic NeutronStandard](https://github.com/Automattic/phpcs-neutron-standard)
-* Partial introduction of [phpcs-calisthenics-rules](https://github.com/object-calisthenics/phpcs-calisthenics-rules)
 * Only use few WordPress rules from [wpcs](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards)
 * Make package compatible with `phpcodesniffer-composer-installer`
 * Add lot of info to README
