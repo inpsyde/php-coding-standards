@@ -34,7 +34,17 @@ final class ElementNameMinimalLengthSniff implements Sniff
     /**
      * @var string[]
      */
-    public $allowedShortNames = ['i', 'id', 'to', 'up', 'ok', 'no', 'go', 'it'];
+    public $allowedShortNames = [
+        'i',
+        'id',
+        'to',
+        'up',
+        'ok',
+        'no',
+        'go',
+        'it',
+        'db',
+    ];
 
     /**
      * @return int[]
@@ -95,6 +105,10 @@ final class ElementNameMinimalLengthSniff implements Sniff
      */
     private function isShortNameAllowed(string $variableName): bool
     {
-        return in_array($variableName, $this->allowedShortNames);
+        return in_array(
+            strtolower($variableName),
+            $this->allowedShortNames,
+            true
+        );
     }
 }
