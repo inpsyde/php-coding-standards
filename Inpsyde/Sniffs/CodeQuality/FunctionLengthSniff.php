@@ -13,7 +13,7 @@
  * released under MIT license.
  */
 
-namespace Inpsyde\CodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
