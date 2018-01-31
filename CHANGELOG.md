@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.0
+* Rename custom rules namespace from `CodingStandard` to `InpsydeCodingStandard`
+
 ## 0.3.0
 * Usage of PSR 1/2 as base
 * Test for PHP 7+
