@@ -30,6 +30,11 @@ final class FunctionLengthSniff implements Sniff
     public $maxLength = 50;
 
     /**
+     * @var true
+     */
+    public $ignoreDocBlocks = true;
+
+    /**
      * @return int[]
      */
     public function register(): array
@@ -72,7 +77,25 @@ final class FunctionLengthSniff implements Sniff
             return 0;
         }
 
-        return ($tokens[$token['scope_closer']]['line'] ?? 0)
-            - ($tokens[$token['scope_opener']]['line'] ?? 0);
+        $opener = $token['scope_opener'];
+        $closer = $token['scope_closer'];
+        $length = $tokens[$closer]['line'] - $tokens[$opener]['line'];
+
+        if (!$this->ignoreDocBlocks) {
+            return $length;
+        }
+
+        $decrease = 0;
+        for ($i = $opener + 1; $i < $closer; $i++) {
+            if ($tokens[$i]['code'] === T_DOC_COMMENT_OPEN_TAG) {
+                $openerLine = (int)$tokens[$i]['line'];
+                $closer = $tokens[$i]['comment_closer'] ?? null;
+                $decrease += is_numeric($closer)
+                    ? (int)$tokens[$closer]['line'] - ($openerLine - 1)
+                    : 1;
+            }
+        }
+
+        return max(0, $length - $decrease);
     }
 }
