@@ -1,6 +1,6 @@
 # Changelog
 
-## Not Released
+## 0.4.1
 * `FunctionLengthSniff` now excludes doc blocks lines from counting
 * New `LineLengthSniff` (that replaces "Generic" sniff included by "PSR2") and
   ignores long lines coming from translation functions first argument
