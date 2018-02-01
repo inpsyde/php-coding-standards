@@ -15,7 +15,9 @@
 	PSR 2 Code style.
 	See http://www.php-fig.org/psr/psr-2/
 	-->
-	<rule ref="PSR2"/>
+    <rule ref="PSR2">
+        <exclude name="Generic.Files.LineLength.TooLong"/>
+    </rule>
 
 	<!--
 	Some sanity in variables.
