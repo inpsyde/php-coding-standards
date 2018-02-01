@@ -1,5 +1,10 @@
 # Changelog
 
+## Not Released
+* `FunctionLengthSniff` now excludes doc blocks lines from counting
+* New `LineLengthSniff` (that replaces "Generic" sniff included by "PSR2") and
+  ignores long lines coming from translation functions first argument
+
 ## 0.4.0
 * Rename custom rules namespace from `CodingStandard` to `InpsydeCodingStandard`
 
