@@ -35,6 +35,16 @@ final class FunctionLengthSniff implements Sniff
     public $ignoreDocBlocks = true;
 
     /**
+     * @var true
+     */
+    public $ignoreSingleLineComments = true;
+
+    /**
+     * @var true
+     */
+    public $ignoreWhiteLines = true;
+
+    /**
      * @return int[]
      */
     public function register(): array
@@ -49,16 +59,30 @@ final class FunctionLengthSniff implements Sniff
     public function process(File $file, $position)
     {
         $length = $this->getStructureLengthInLines($file, $position);
-
-        if ($length > $this->maxLength) {
-            $error = sprintf(
-                'Your function is too long. Currently using %d lines. Can be up to %d lines.',
-                $length,
-                $this->maxLength
-            );
-
-            $file->addError($error, $position, 'TooLong');
+        if ($length <= $this->maxLength) {
+            return;
         }
+
+        $ignored = [];
+        $suffix = '';
+        $this->ignoreWhiteLines and $ignored[] = 'white lines';
+        $this->ignoreSingleLineComments and $ignored[] = 'single line comments';
+        $this->ignoreDocBlocks and $ignored[] = 'doc blocks';
+        if ($ignored) {
+            $suffix = ' (ignoring ';
+            $last = array_pop($ignored);
+            $others = implode(', ', $ignored);
+            $suffix .= $others ? "{$others} and {$last})" : "{$last})";
+        }
+
+        $error = sprintf(
+            'Your function is too long. Currently using %d lines%s, max is %d.',
+            $length,
+            $suffix,
+            $this->maxLength
+        );
+
+        $file->addError($error, $position, 'TooLong');
     }
 
     /**
@@ -77,25 +101,100 @@ final class FunctionLengthSniff implements Sniff
             return 0;
         }
 
-        $opener = $token['scope_opener'];
-        $closer = $token['scope_closer'];
-        $length = $tokens[$closer]['line'] - $tokens[$opener]['line'];
+        $start = $token['scope_opener'];
+        $end = $token['scope_closer'];
+        $length = $tokens[$end]['line'] - $tokens[$start]['line'];
 
-        if (!$this->ignoreDocBlocks) {
+        if ($length < $this->maxLength) {
             return $length;
         }
 
-        $decrease = 0;
-        for ($i = $opener + 1; $i < $closer; $i++) {
-            if ($tokens[$i]['code'] === T_DOC_COMMENT_OPEN_TAG) {
-                $openerLine = (int)$tokens[$i]['line'];
-                $closer = $tokens[$i]['comment_closer'] ?? null;
-                $decrease += is_numeric($closer)
-                    ? (int)$tokens[$closer]['line'] - ($openerLine - 1)
-                    : 1;
+        return $length - $this->collectLinesToExclude($start, $end, $tokens);
+    }
+
+    /**
+     * @param int $start
+     * @param int $end
+     * @param array $tokens
+     * @return int
+     */
+    private function collectLinesToExclude(
+        int $start,
+        int $end,
+        array $tokens
+    ): int {
+
+        $linesData = $docblocks = [];
+
+        $skipLines = [$tokens[$start + 1]['line'], $tokens[$end - 1]['line']];
+        for ($i = $start + 1; $i < $end - 1; $i++) {
+            if (in_array($tokens[$i]['line'], $skipLines, true)) {
+                continue;
             }
+
+            $docblocks = $this->docBlocksData($tokens, $i, $docblocks);
+            $linesData = $this->ignoredLinesData($tokens[$i], $linesData);
         }
 
-        return max(0, $length - $decrease);
+        $empty = array_filter(array_column($linesData, 'empty'));
+        $onlyComment = array_filter(array_column($linesData, 'only-comment'));
+
+        $toExcludeCount = array_sum($docblocks);
+        if ($this->ignoreWhiteLines) {
+            $toExcludeCount += count($empty);
+        }
+        if ($this->ignoreSingleLineComments) {
+            $toExcludeCount += count($onlyComment) - count($empty);
+        }
+
+        return $toExcludeCount;
+    }
+
+    /**
+     * @param array $token
+     * @param array $lines
+     * @return array
+     */
+    private function ignoredLinesData(array $token, array $lines): array
+    {
+        $line = $token['line'];
+        if (!array_key_exists($line, $lines)) {
+            $lines[$line] = ['empty' => true, 'only-comment' => true];
+        }
+
+        if (!in_array($token['code'], [T_COMMENT, T_WHITESPACE], true)) {
+            $lines[$line]['only-comment'] = false;
+        }
+
+        if ($token['code'] !== T_WHITESPACE) {
+            $lines[$line]['empty'] = false;
+        }
+
+        return $lines;
+    }
+
+    /**
+     * @param array $tokens
+     * @param int $position
+     * @param array $docBlocks
+     * @return array
+     */
+    private function docBlocksData(
+        array $tokens,
+        int $position,
+        array $docBlocks
+    ): array {
+        if (!$this->ignoreDocBlocks
+            || $tokens[$position]['code'] !== T_DOC_COMMENT_OPEN_TAG
+        ) {
+            return $docBlocks;
+        }
+
+        $closer = $tokens[$position]['comment_closer'] ?? null;
+        $docBlocks[] = is_numeric($closer)
+            ? 1 + ($tokens[$closer]['line'] - $tokens[$position]['line'])
+            : 1;
+
+        return $docBlocks;
     }
 }
