@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<ruleset name="Inpsyde Coding Standard">
+
+	<description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
+
+    <autoload>./Inpsyde/Helpers.php</autoload>
+    <autoload>./Inpsyde/PHPCSAliases.php</autoload>
+
+	<!--
+	PHP 7.0 and higher.
+	-->
+	<config name="testVersion" value="7.0-"/>
+
+	<!--
+	PSR 2 Code style.
+	See http://www.php-fig.org/psr/psr-2/
+	-->
+    <rule ref="PSR2">
+        <exclude name="Generic.Files.LineLength.TooLong"/>
+    </rule>
+
+	<!--
+	Some sanity in variables.
+	See https://github.com/sirbrillig/phpcs-variable-analysis
+	-->
+	<rule ref="VariableAnalysis"/>
+
+	<!--
+	Neutron standard are quality tools for PHP7 development from Automattic.
+	See https://github.com/Automattic/phpcs-neutron-standard
+	-->
+	<rule ref="NeutronStandard">
+		<exclude name="NeutronStandard.Functions.LongFunction"/>
+		<exclude name="NeutronStandard.Functions.VariableFunctions"/>
+		<exclude name="NeutronStandard.Functions.TypeHint.NoArgumentType"/>
+	</rule>
+
+    <!--
+    Some WordPress specific rules.
+    See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
+    -->
+    <rule ref="WordPress.PHP.StrictComparisons"/>
+    <rule ref="WordPress.PHP.StrictInArray"/>
+    <rule ref="WordPress.PHP.POSIXFunctions"/>
+    <rule ref="WordPress.PHP.DevelopmentFunctions"/>
+    <rule ref="WordPress.PHP.DevelopmentFunctions.error_log">
+        <type>error</type>
+    </rule>
+
+	<!--
+	No commented-out code, please. Let version control do its job.
+	-->
+	<rule ref="Squiz.PHP.CommentedOutCode">
+		<properties>
+			<property name="maxPercentage" value="45"/>
+		</properties>
+	</rule>
+
+</ruleset>
