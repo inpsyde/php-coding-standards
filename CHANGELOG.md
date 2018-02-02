@@ -1,5 +1,10 @@
 # Changelog
 
+## Not released
+* Fix a bug in `FunctionLengthSniff` which only excludes first doc block
+* `FunctionLengthSniff` also excludes (by default) blank lines and single line comments
+* Introduce `phpcs.xml`
+
 ## 0.4.1
 * `FunctionLengthSniff` now excludes doc blocks lines from counting
 * New `LineLengthSniff` (that replaces "Generic" sniff included by "PSR2") and
