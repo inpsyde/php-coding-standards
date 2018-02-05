@@ -129,4 +129,167 @@ class Helpers
 
         return $file->getTokens()[$namePosition]['content'];
     }
+
+    /**
+     * @param int $start
+     * @param int $end
+     * @param File $file
+     * @param array ...$types
+     * @return array[]
+     */
+    public static function filterTokensByType(
+        int $start,
+        int $end,
+        File $file,
+        ...$types
+    ): array {
+
+        return array_filter(
+            $file->getTokens(),
+            function (array $token, int $position) use ($start, $end, $types): bool {
+                return
+                    $position >= $start
+                    && $position <= $end
+                    && in_array($token['code'] ?? '', $types, true);
+            },
+            ARRAY_FILTER_USE_BOTH
+        );
+    }
+
+    /**
+     * @param File $file
+     * @param int $closurePosition
+     * @param bool $lookForFilters
+     * @param bool $lookForActions
+     * @return bool
+     */
+    public static function isHookClosure(
+        File $file,
+        int $closurePosition,
+        bool $lookForFilters = true,
+        bool $lookForActions = true
+    ): bool {
+
+        $tokens = $file->getTokens();
+        if (($tokens[$closurePosition]['code'] ?? '') !== T_CLOSURE) {
+            return false;
+        }
+
+        $lookForComma = $file->findPrevious(
+            [T_WHITESPACE],
+            $closurePosition - 1,
+            null,
+            true,
+            null,
+            true
+        );
+
+        if (!$lookForComma || ($tokens[$lookForComma]['code'] ?? '') !== T_COMMA) {
+            return false;
+        }
+
+        $functionCallOpen = $file->findPrevious(
+            [T_OPEN_PARENTHESIS],
+            $lookForComma - 2,
+            null,
+            false,
+            null,
+            true
+        );
+
+        if (!$functionCallOpen) {
+            return false;
+        }
+
+        $functionCall = $file->findPrevious(
+            [T_WHITESPACE],
+            $functionCallOpen - 1,
+            null,
+            true,
+            null,
+            true
+        );
+
+        $actions = [];
+        $lookForFilters and $actions[] = 'add_filter';
+        $lookForActions and $actions[] = 'add_action';
+
+        return in_array(($tokens[$functionCall]['content'] ?? ''), $actions, true);
+    }
+
+    /**
+     * @param File $file
+     * @param int $functionPosition
+     * @return array
+     */
+    public static function functionBoundaries(File $file, int $functionPosition): array
+    {
+        $tokens = $file->getTokens();
+        $functionStart = $tokens[$functionPosition]['scope_opener'] ?? 0;
+        $functionEnd = $tokens[$functionPosition]['scope_closer'] ?? 0;
+        if (!$functionStart || !$functionEnd || $functionStart >= ($functionEnd - 1)) {
+            return [-1, -1];
+        }
+
+        return [$functionStart, $functionEnd];
+    }
+
+    /**
+     * @param File $file
+     * @param int $functionPosition
+     * @return array
+     */
+    public static function countReturns(File $file, int $functionPosition): array
+    {
+        list($functionStart, $functionEnd) = self::functionBoundaries($file, $functionPosition);
+        if ($functionStart < 0 || $functionEnd <= 0) {
+            return [0, 0];
+        }
+
+        $returnTokens = self::filterTokensByType(
+            $functionStart,
+            $functionEnd,
+            $file,
+            T_RETURN
+        );
+
+        if (!$returnTokens) {
+            return [0, 0];
+        }
+
+        $nonVoidReturnCount = $voidReturnCount = 0;
+        $scopeClosers = [];
+        foreach ($returnTokens as $i => $token) {
+            if ($scopeClosers && $i === $scopeClosers[0]) {
+                array_shift($scopeClosers);
+            }
+            if ($token['type'] === 'T_FUNCTION') {
+                array_unshift($scopeClosers, $token['scope_closer']);
+            }
+            if (!$scopeClosers) {
+                Helpers::isVoidReturn($file, $i) ? $voidReturnCount++ : $nonVoidReturnCount++;
+            }
+        }
+
+        return [$nonVoidReturnCount, $voidReturnCount];
+    }
+
+    /**
+     * @param File $file
+     * @param int $returnPosition
+     * @return bool
+     */
+    public static function isVoidReturn(File $file, int $returnPosition): bool
+    {
+        $tokens = $file->getTokens();
+
+        if (($tokens[$returnPosition]['code'] ?? '') !== T_RETURN) {
+            return false;
+        }
+
+        $returnPosition++;
+        $nextToReturn = $file->findNext([T_WHITESPACE], $returnPosition, null, true, null, true);
+
+        return $nextToReturn && ($tokens[$nextToReturn]['type'] ?? '') === 'T_SEMICOLON';
+    }
 }
