@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.1
+- `ArgumentTypeDeclarationSniff` also skip function and methods that declare `@wp-hook` doc param.
+
 ## 0.5.0
 * Disabled `NeutronStandard.Functions.TypeHint` and replaced with custom sniffs
 * Added `ArgumentTypeDeclarationSniff` to replace `NeutronStandard.Functions.TypeHint` sniff for
