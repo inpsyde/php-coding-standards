@@ -256,7 +256,7 @@ class Helpers
         ) {
             return false;
         }
-        
+
         $docTokens = self::filterTokensByType($findDocStart, $findDocEnd, $file, T_DOC_COMMENT_TAG);
 
         foreach ($docTokens as $token) {
@@ -297,27 +297,20 @@ class Helpers
             return [0, 0];
         }
 
-        $returnTokens = self::filterTokensByType(
-            $functionStart,
-            $functionEnd,
-            $file,
-            T_RETURN
-        );
-
-        if (!$returnTokens) {
-            return [0, 0];
-        }
-
         $nonVoidReturnCount = $voidReturnCount = 0;
-        $scopeClosers = [];
-        foreach ($returnTokens as $i => $token) {
-            if ($scopeClosers && $i === $scopeClosers[0]) {
-                array_shift($scopeClosers);
+        $scopeClosers = new \SplStack();
+        $tokens = $file->getTokens();
+        for ($i = $functionStart + 1; $i < $functionEnd; $i++) {
+            if ($scopeClosers->count() && $scopeClosers->top() === $i) {
+                $scopeClosers->pop();
+                continue;
             }
-            if ($token['type'] === 'T_FUNCTION') {
-                array_unshift($scopeClosers, $token['scope_closer']);
+            if (in_array($tokens[$i]['code'], [T_FUNCTION, T_CLOSURE], true)) {
+                $scopeClosers->push($tokens[$i]['scope_closer']);
+                continue;
             }
-            if (!$scopeClosers) {
+
+            if (!$scopeClosers->count() && $tokens[$i]['code'] === T_RETURN) {
                 Helpers::isVoidReturn($file, $i) ? $voidReturnCount++ : $nonVoidReturnCount++;
             }
         }
