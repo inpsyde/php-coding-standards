@@ -49,7 +49,7 @@ final class ElementNameMinimalLengthSniff implements Sniff
     /**
      * @return int[]
      */
-    public function register(): array
+    public function register()
     {
         return [T_CLASS, T_TRAIT, T_INTERFACE, T_CONST, T_FUNCTION, T_VARIABLE];
     }

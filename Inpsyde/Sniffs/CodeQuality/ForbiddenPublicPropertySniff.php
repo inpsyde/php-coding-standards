@@ -29,7 +29,7 @@ final class ForbiddenPublicPropertySniff implements Sniff
     /**
      * @return int[]
      */
-    public function register(): array
+    public function register()
     {
         return [T_VARIABLE];
     }

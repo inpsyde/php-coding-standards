@@ -67,13 +67,10 @@ class LineLengthSniff implements Sniff
      *
      * @var integer
      */
-    public $lineLimit = 120;
-
+    public $lineLimit = 100;
 
     /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @return array
+     * @inheritdoc
      */
     public function register()
     {
@@ -83,19 +80,19 @@ class LineLengthSniff implements Sniff
     /**
      * @inheritdoc
      */
-    public function process(File $phpcsFile, $stackPtr)
+    public function process(File $file, $position)
     {
-        $tokens = $phpcsFile->getTokens();
-        for ($i = 1; $i < $phpcsFile->numTokens; $i++) {
+        $tokens = $file->getTokens();
+        $start = max(1, $position);
+        for ($i = $start; $i < $file->numTokens; $i++) {
             if ($tokens[$i]['column'] === 1) {
-                $this->checkLineLength($phpcsFile, $tokens, $i);
+                $this->checkLineLength($file, $tokens, $i);
             }
         }
 
-        $this->checkLineLength($phpcsFile, $tokens, $i);
+        $this->checkLineLength($file, $tokens, $i);
 
-        return ($phpcsFile->numTokens + 1);
-
+        return ($file->numTokens + 1);
     }
 
     /**
@@ -135,7 +132,6 @@ class LineLengthSniff implements Sniff
             'TooLong',
             [$this->lineLimit, $length]
         );
-
     }
 
     /**
@@ -249,5 +245,4 @@ class LineLengthSniff implements Sniff
 
         return $tokens[$next]['code'] === T_OPEN_PARENTHESIS;
     }
-
 }

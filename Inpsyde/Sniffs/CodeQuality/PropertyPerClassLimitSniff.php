@@ -33,7 +33,7 @@ final class PropertyPerClassLimitSniff implements Sniff
     /**
      * @return int[]
      */
-    public function register(): array
+    public function register()
     {
         return [T_CLASS, T_TRAIT];
     }

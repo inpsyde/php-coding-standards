@@ -32,7 +32,7 @@ final class NoElseSniff implements Sniff
     /**
      * @return int[]
      */
-    public function register(): array
+    public function register()
     {
         return [T_ELSE];
     }

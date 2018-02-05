@@ -62,7 +62,7 @@ final class MaxNestingLevelSniff implements Sniff
     /**
      * @return int[]
      */
-    public function register(): array
+    public function register()
     {
         return [T_FUNCTION, T_CLOSURE];
     }
@@ -86,8 +86,11 @@ final class MaxNestingLevelSniff implements Sniff
             return;
         }
 
-        $this->iterateTokens($token['scope_opener'], $token['scope_closer'],
-            $tokens);
+        $this->iterateTokens(
+            $token['scope_opener'],
+            $token['scope_closer'],
+            $tokens
+        );
 
         $this->nestingLevel = $this->subtractFunctionNestingLevel($token);
         $this->handleNestingLevel($this->nestingLevel);
@@ -170,7 +173,7 @@ final class MaxNestingLevelSniff implements Sniff
      */
     private function handleCaseToken(array $nestedToken)
     {
-        if (in_array($nestedToken['code'], [T_CASE, T_DEFAULT])) {
+        if (in_array($nestedToken['code'], [T_CASE, T_DEFAULT], true)) {
             array_push($this->ignoredScopeStack, $nestedToken);
 
             return;
