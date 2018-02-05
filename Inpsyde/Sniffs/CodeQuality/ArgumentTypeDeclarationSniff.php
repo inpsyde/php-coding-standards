@@ -41,6 +41,10 @@ class ArgumentTypeDeclarationSniff implements Sniff
      */
     public function process(File $file, $position)
     {
+        if (Helpers::isHookClosure($file, $position) || Helpers::isHookFunction($file, $position)) {
+            return;
+        }
+
         $tokens = $file->getTokens();
 
         $paramsStart = $tokens[$position]['parenthesis_opener'] ?? 0;
@@ -61,11 +65,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
             );
 
             $type = $tokens[$typePosition] ?? null;
-            if ($type && in_array($type['code'], self::TYPE_CODES, true)) {
-                continue;
-            }
-
-            if (!Helpers::isHookClosure($file, $position)) {
+            if ($type && !in_array($type['code'], self::TYPE_CODES, true)) {
                 $file->addWarning('Argument type is missing', $position, 'NoArgumentType');
             }
         }

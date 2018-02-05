@@ -220,6 +220,57 @@ class Helpers
     /**
      * @param File $file
      * @param int $functionPosition
+     * @return bool
+     */
+    public static function isHookFunction(File $file, int $functionPosition): bool
+    {
+        $tokens = $file->getTokens();
+        if (($tokens[$functionPosition]['code'] ?? '') !== T_FUNCTION) {
+            return false;
+        }
+
+        $findDocEnd = $file->findPrevious(
+            [T_WHITESPACE, T_FINAL, T_PUBLIC, T_ABSTRACT],
+            $functionPosition - 1,
+            null,
+            true,
+            null,
+            true
+        );
+
+        if (!$findDocEnd || ($tokens[$findDocEnd]['code'] ?? '') !== T_DOC_COMMENT_CLOSE_TAG) {
+            return false;
+        }
+
+        $findDocStart = $file->findPrevious(
+            [T_DOC_COMMENT_OPEN_TAG],
+            $findDocEnd,
+            null,
+            false,
+            null,
+            true
+        );
+
+        if (!$findDocStart
+            || ($tokens[$findDocStart]['comment_closer'] ?? '') !== $findDocEnd
+        ) {
+            return false;
+        }
+        
+        $docTokens = self::filterTokensByType($findDocStart, $findDocEnd, $file, T_DOC_COMMENT_TAG);
+
+        foreach ($docTokens as $token) {
+            if ($token['content'] === '@wp-hook') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param File $file
+     * @param int $functionPosition
      * @return array
      */
     public static function functionBoundaries(File $file, int $functionPosition): array
