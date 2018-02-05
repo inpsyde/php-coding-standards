@@ -67,7 +67,7 @@ class LineLengthSniff implements Sniff
      *
      * @var integer
      */
-    public $lineLimit = 100;
+    public $lineLimit = 120;
 
     /**
      * @inheritdoc
