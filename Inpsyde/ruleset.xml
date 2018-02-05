@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="Inpsyde Coding Standard">
+<ruleset name="Inpsyde Coding Standard" namespace="Inpsyde\InpsydeCodingStandard">
 
 	<description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
 
@@ -10,6 +10,12 @@
 	PHP 7.0 and higher.
 	-->
 	<config name="testVersion" value="7.0-"/>
+
+    <!--
+	Arguments: colors, show progress and show sniff name.
+	-->
+    <arg name="colors"/>
+    <arg value="sp"/>
 
 	<!--
 	PSR 2 Code style.
