@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0
+* Disabled `NeutronStandard.Functions.TypeHint` and replaced with custom sniffs
+* Added `ArgumentTypeDeclarationSniff` to replace `NeutronStandard.Functions.TypeHint` sniff for
+  missing argument types.
+  It does not check closures used as hook callbacks (because WP cannot be trusted on types).
+* Added `ReturnTypeDeclarationSniff` to replace `NeutronStandard.Functions.TypeHint` sniff for
+  missing or wrong return type.
+* Added `HookClosureReturnSniff` to sniff closures added to filters and missing return values and
+  closures added to action and having return values.
+
 ## 0.4.2
 * Fix a bug in `FunctionLengthSniff` which only excludes first doc block
 * `FunctionLengthSniff` also excludes (by default) blank lines and single line comments
