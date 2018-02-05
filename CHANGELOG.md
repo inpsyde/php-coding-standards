@@ -1,5 +1,9 @@
 # Changelog
 
+## Not released
+- `ReturnTypeDeclarationSniff` skipped for hook callbacks
+- Fixed a bug in return counting in helper class that affected few sniffs.
+
 ## 0.5.1
 - `ArgumentTypeDeclarationSniff` also skip function and methods that declare `@wp-hook` doc param.
 
