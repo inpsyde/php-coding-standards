@@ -65,8 +65,15 @@
 	</rule>
 
 	<!--
-	Own styles to check styles files :)
+	Use own styles :)
 	-->
-	<rule ref="./Inpsyde/Sniffs/CodeQuality"/>
+	<rule ref="./Inpsyde/Sniffs/CodeQuality/ElementNameMinimalLengthSniff.php"/>
+	<rule ref="./Inpsyde/Sniffs/CodeQuality/ForbiddenPublicPropertySniff.php"/>
+	<rule ref="./Inpsyde/Sniffs/CodeQuality/FunctionLengthSniff.php"/>
+	<rule ref="./Inpsyde/Sniffs/CodeQuality/LineLengthSniff.php"/>
+	<rule ref="./Inpsyde/Sniffs/CodeQuality/MaxNestingLevelSniff.php"/>
+	<rule ref="./Inpsyde/Sniffs/CodeQuality/NoElseSniff.php"/>
+	<rule ref="./Inpsyde/Sniffs/CodeQuality/NoSetterSniff.php"/>
+	<rule ref="./Inpsyde/Sniffs/CodeQuality/PropertyPerClassLimitSniff.php"/>
 
 </ruleset>
