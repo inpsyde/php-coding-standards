@@ -1,6 +1,6 @@
 # Changelog
 
-## Not released
+## 0.4.2
 * Fix a bug in `FunctionLengthSniff` which only excludes first doc block
 * `FunctionLengthSniff` also excludes (by default) blank lines and single line comments
 * Introduce `phpcs.xml`
