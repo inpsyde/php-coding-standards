@@ -4,6 +4,8 @@
 * Fix a bug in `FunctionLengthSniff` which only excludes first doc block
 * `FunctionLengthSniff` also excludes (by default) blank lines and single line comments
 * Introduce `phpcs.xml`
+* Small improvements to ruleset
+* Use own styles
 
 ## 0.4.1
 * `FunctionLengthSniff` now excludes doc blocks lines from counting
