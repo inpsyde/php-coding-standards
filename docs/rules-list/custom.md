@@ -2,12 +2,17 @@
 
 - InpsydeCodingStandard
     - InpsydeCodingStandard.CodeQuality
+        - InpsydeCodingStandard.CodeQuality.ArgumentTypeDeclaration
+            - InpsydeCodingStandard.CodeQuality.ArgumentTypeDeclaration.NoArgumentType
         - InpsydeCodingStandard.CodeQuality.ElementNameMinimalLength
             - InpsydeCodingStandard.CodeQuality.ElementNameMinimalLength.TooShort
         - InpsydeCodingStandard.CodeQuality.ForbiddenPublicProperty
             - InpsydeCodingStandard.CodeQuality.ForbiddenPublicProperty.Found
         - InpsydeCodingStandard.CodeQuality.FunctionLength
             - InpsydeCodingStandard.CodeQuality.FunctionLength.TooLong
+        - InpsydeCodingStandard.CodeQuality.HookClosureReturn
+            - InpsydeCodingStandard.CodeQuality.HookClosureReturn.NoReturnFromFilter 
+            - InpsydeCodingStandard.CodeQuality.HookClosureReturn.ReturnFromAction 
         - InpsydeCodingStandard.CodeQuality.MaxNestingLevel
             - InpsydeCodingStandard.CodeQuality.MaxNestingLevel.TooNested
         - InpsydeCodingStandard.CodeQuality.NoElse
@@ -16,3 +21,8 @@
             - InpsydeCodingStandard.CodeQuality.NoSetter.NoSetter
         - InpsydeCodingStandard.CodeQuality.PropertyPerClassLimit
             - InpsydeCodingStandard.CodeQuality.PropertyPerClassLimit.TooMuchProperties
+        - InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration
+            - InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration.MissingReturn
+            - InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration.IncorrectVoidReturn
+            - InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration.NoReturnType
+            - InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration.IncorrectVoidReturnType
