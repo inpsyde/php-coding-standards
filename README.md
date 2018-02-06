@@ -7,12 +7,12 @@
 The code styles are enforced via the popular [`php_codesniffer`](https://packagist.org/packages/squizlabs/php_codesniffer)
 and can be installed via Composer by the name **`inpsyde/php-coding-standards`**.
 
-It means they can be installed by adding the entry ro composer.json `require`:
+It means they can be installed by adding the entry to composer.json `require-dev`:
 
 ```json
 {
-	"require": {
-		"inpsyde/php-coding-standards": "^0.3"
+	"require-dev": {
+		"inpsyde/php-coding-standards": "^0.5"
 	}
 }
 ```
@@ -20,7 +20,7 @@ It means they can be installed by adding the entry ro composer.json `require`:
 or via command line with: 
 
 ```
-$ composer require inpsyde/php-coding-standards
+$ composer require inpsyde/php-coding-standards --dev
 ```
 
 -------------
