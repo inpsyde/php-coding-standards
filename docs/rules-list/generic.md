@@ -3,16 +3,17 @@
 - Generic
     - Generic.ControlStructures
         - Generic.ControlStructures.InlineControlStructure
-            - Generic.ControlStructures.InlineControlStructure.NotAllowed
     - Generic.Files
         - Generic.Files.ByteOrderMark
-            - Generic.Files.ByteOrderMark.Found
         - Generic.Files.LineEndings
-            - Generic.Files.LineEndings.InvalidEOLChar
         - Generic.Files.LineLength
     - Generic.Functions
         - Generic.FunctionCallArgumentSpacing
+    - Generic.Metrics   
+        - Generic.Metrics.CyclomaticComplexity    
+        - Generic.Metrics.NestingLevel
     - Generic.NamingConventions
+        - Generic.NamingConventions.ConstructorName
         - Generic.NamingConventions.UpperCaseConstantName
     - Generic.WhiteSpace
         - Generic.WhiteSpace.SuperfluousWhitespace
@@ -21,11 +22,14 @@
     - Generic.Formatting
         - Generic.Formatting.DisallowMultipleStatements
     - Generic.PHP
+        - Generic.PHP.CharacterBeforePHPOpeningTag
+        - Generic.PHP.LowerCaseConstant
         - Generic.PHP.LowerCaseKeyword
         
 - Squiz
     - Squiz.Classes
         - Squiz.Classes.ValidClassName
+        - Squiz.Classes.LowercaseClassKeywords
     - Squiz.ControlStructures
         - Squiz.ControlStructures.ControlSignature
         - Squiz.ControlStructures.ForEachLoopDeclaration
@@ -37,13 +41,16 @@
         - Squiz.Functions.LowercaseFunctionKeywords
         - Squiz.Functions.FunctionDeclarationArgumentSpacing
         - Squiz.Functions.MultiLineFunctionDeclaration
-    - Squiz.Scope
-        - Squiz.Scope.MethodScope
     - Squiz.PHP
         - Squiz.PHP.Eval
-            - Squiz.PHP.Eval.Discouraged
         - Squiz.PHP.CommentedOutCode
-            - Squiz.PHP.CommentedOutCode.Found
+        - Squiz.PHP.InnerFunctions
+        - Squiz.PHP.LowercasePHPFunctions
+        - Squiz.PHP.NonExecutableCode
+     - Squiz.Scope
+        - Squiz.Scope.MemberVarScope
+        - Squiz.Scope.MethodScope
+        - Squiz.Scope.StaticThisUsage    
     - Squiz.WhiteSpace
         - Squiz.WhiteSpace.ScopeKeywordSpacing
         - Squiz.WhiteSpace.ControlStructureSpacing

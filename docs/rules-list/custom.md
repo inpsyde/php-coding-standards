@@ -13,8 +13,6 @@
         - InpsydeCodingStandard.CodeQuality.HookClosureReturn
             - InpsydeCodingStandard.CodeQuality.HookClosureReturn.NoReturnFromFilter 
             - InpsydeCodingStandard.CodeQuality.HookClosureReturn.ReturnFromAction 
-        - InpsydeCodingStandard.CodeQuality.MaxNestingLevel
-            - InpsydeCodingStandard.CodeQuality.MaxNestingLevel.TooNested
         - InpsydeCodingStandard.CodeQuality.NoElse
             - InpsydeCodingStandard.CodeQuality.NoElse.NoElse
         - InpsydeCodingStandard.CodeQuality.NoSetter
