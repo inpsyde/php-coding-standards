@@ -1,8 +1,10 @@
 # Changelog
 
 ## Not released
-- `ReturnTypeDeclarationSniff` skipped for hook callbacks
+- Missing return type waring from `ReturnTypeDeclarationSniff` skipped for hook callbacks.
 - Fixed a bug in return counting in helper class that affected few sniffs.
+- Add several "Generic" and "Squiz" rules.
+- Add `DisallowShortOpenTagSniff` that extends the generic sniff allowing short echo.
 
 ## 0.5.1
 - `ArgumentTypeDeclarationSniff` also skip function and methods that declare `@wp-hook` doc param.
