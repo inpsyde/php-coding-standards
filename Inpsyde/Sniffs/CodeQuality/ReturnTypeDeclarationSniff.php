@@ -41,10 +41,6 @@ class ReturnTypeDeclarationSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        if (Helpers::isHookClosure($file, $position) || Helpers::isHookFunction($file, $position)) {
-            return;
-        }
-
         list($functionStart, $functionEnd) = Helpers::functionBoundaries($file, $position);
         if (!$functionStart < 0 || $functionEnd <= 0) {
             return;
@@ -100,16 +96,20 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
-        if ($hasNoReturnType) {
-            $file->addWarning('Return type is missing', $position, 'NoReturnType');
-        }
-
         if ($hasVoidReturnType) {
             $file->addError(
                 'Void return type when returning non-void',
                 $position,
                 'IncorrectVoidReturnType'
             );
+        }
+
+        if (Helpers::isHookClosure($file, $position) || Helpers::isHookFunction($file, $position)) {
+            return;
+        }
+
+        if ($hasNoReturnType) {
+            $file->addWarning('Return type is missing', $position, 'NoReturnType');
         }
     }
 
