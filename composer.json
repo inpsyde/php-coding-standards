@@ -34,6 +34,14 @@
     "sirbrillig/phpcs-variable-analysis": "^2",
     "wimg/php-compatibility": "^8.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "6.0.*"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Inpsyde\\InpsydeCodingStandard\\Tests\\": "tests/src/"
+    }
+  },
   "extra": {
     "branch-alias": {
       "dev-master": "0.4.x-dev"

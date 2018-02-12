@@ -1,12 +1,14 @@
 <?php
 /**
- * PHPCS cross-version compatibility helper.
- *
- * @package WPCS\WordPressCodingStandards
- * @link    https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
- * @license https://opensource.org/licenses/MIT MIT
- * @since   0.13.0
+ * This file contains code from "WordPress-Coding-Standards" project
+ * found at https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
+ * Copyright (c) 2009 John Godley and contributors.
+ * released under MIT license.
  */
+
+if (defined('PHP_CODESNIFFER_IN_TESTS')) {
+    return;
+}
 
 /*
  * Alias a number of PHPCS 3.x classes to their PHPCS 2.x equivalents.
