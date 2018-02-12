@@ -1,10 +1,14 @@
 # Changelog
 
-## Not released
+## 0.6.0
 - Missing return type waring from `ReturnTypeDeclarationSniff` skipped for hook callbacks.
 - Fixed a bug in return counting in helper class that affected few sniffs.
 - Add several "Generic" and "Squiz" rules.
 - Add `DisallowShortOpenTagSniff` that extends the generic sniff allowing short echo.
+- Remove `NeutronStandard.Constants.DisallowDefine` because of github.com/Automattic/phpcs-neutron-standard/issues/44
+- Renamed configuration properties for `FunctionLengthSniff`.
+- Add integration tests for custom sniffs.
+- Rename `NoASetterSniff` to `NoAccessorsSniff` and also warn for getters.
 
 ## 0.5.1
 - `ArgumentTypeDeclarationSniff` also skip function and methods that declare `@wp-hook` doc param.
