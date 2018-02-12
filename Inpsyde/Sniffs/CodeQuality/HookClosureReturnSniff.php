@@ -6,11 +6,6 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * This file contains code from "phpcs-neutron-standard" repository
- * found at https://github.com/Automattic/phpcs-neutron-standard
- * Copyright (c) Automattic
- * released under MIT license.
  */
 
 namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;

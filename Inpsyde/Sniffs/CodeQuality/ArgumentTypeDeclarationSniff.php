@@ -9,7 +9,7 @@
  *
  * This file contains code from "phpcs-neutron-standard" repository
  * found at https://github.com/Automattic/phpcs-neutron-standard
- * Copyright (c) Automattic
+ * Copyright (c) Automattic Inc.
  * released under MIT license.
  */
 
