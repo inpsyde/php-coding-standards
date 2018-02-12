@@ -1,6 +1,6 @@
 # Changelog
 
-## Not released
+## 0.7.0
 - Removed `NeutronStandard.Conditions.DisallowConditionAssignWithoutConditional`.
 - Removed `NeutronStandard.MagicMethods.DisallowMagicGet`.
 - Removed `NeutronStandard.MagicMethods.DisallowMagicSet`.
