@@ -49,7 +49,7 @@ final class ForbiddenPublicPropertySniff implements Sniff
             return;
         }
 
-        $scopeModifierToken = $this->getPropertyScopeModifier($file, $position);
+        $scopeModifierToken = $this->propertyScopeModifier($file, $position);
         if ($scopeModifierToken['code'] === T_PUBLIC) {
             $file->addError(
                 'Do not use public properties. Use method access instead.',
@@ -85,12 +85,9 @@ final class ForbiddenPublicPropertySniff implements Sniff
      * @param int $position
      * @return mixed[]
      */
-    private function getPropertyScopeModifier(File $file, int $position): array
+    private function propertyScopeModifier(File $file, int $position): array
     {
-        $scopeModifierPosition = $file->findPrevious(
-            Tokens::$scopeModifiers,
-            ($position - 1)
-        );
+        $scopeModifierPosition = $file->findPrevious(Tokens::$scopeModifiers, ($position - 1));
 
         return $file->getTokens()[$scopeModifierPosition];
     }

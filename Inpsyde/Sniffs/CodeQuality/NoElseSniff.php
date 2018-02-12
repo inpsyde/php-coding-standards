@@ -25,11 +25,6 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 final class NoElseSniff implements Sniff
 {
     /**
-     * @var string
-     */
-    const ERROR_MESSAGE = 'Do not use "else". Prefer early return statement instead.';
-
-    /**
      * @return int[]
      */
     public function register()
@@ -43,6 +38,10 @@ final class NoElseSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        $file->addWarning(self::ERROR_MESSAGE, $position, 'NoElse');
+        $file->addWarning(
+            'Do not use "else". Prefer early return statement instead.',
+            $position,
+            'ElseFound'
+        );
     }
 }

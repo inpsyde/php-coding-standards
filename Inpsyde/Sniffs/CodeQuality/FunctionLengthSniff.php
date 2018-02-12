@@ -58,7 +58,7 @@ final class FunctionLengthSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        $length = $this->getStructureLengthInLines($file, $position);
+        $length = $this->structureLinesCount($file, $position);
         if ($length <= $this->maxLength) {
             return;
         }
@@ -90,7 +90,7 @@ final class FunctionLengthSniff implements Sniff
      * @param int $position
      * @return int
      */
-    public function getStructureLengthInLines(File $file, int $position): int
+    public function structureLinesCount(File $file, int $position): int
     {
         $tokens = $file->getTokens();
         $token = $tokens[$position] ?? [];
