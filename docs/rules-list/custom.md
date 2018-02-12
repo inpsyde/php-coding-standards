@@ -14,7 +14,7 @@
             - InpsydeCodingStandard.CodeQuality.HookClosureReturn.NoReturnFromFilter 
             - InpsydeCodingStandard.CodeQuality.HookClosureReturn.ReturnFromAction 
         - InpsydeCodingStandard.CodeQuality.NoElse
-            - InpsydeCodingStandard.CodeQuality.NoElse.NoElse
+            - InpsydeCodingStandard.CodeQuality.NoElse.ElseFound
         - InpsydeCodingStandard.CodeQuality.NoAccessors
             - InpsydeCodingStandard.CodeQuality.NoAccessors.NoGetter
             - InpsydeCodingStandard.CodeQuality.NoAccessors.NoSetter
