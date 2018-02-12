@@ -37,12 +37,12 @@ final class FunctionLengthSniff implements Sniff
     /**
      * @var true
      */
-    public $ignoreSingleLineComments = true;
+    public $ignoreComments = true;
 
     /**
      * @var true
      */
-    public $ignoreWhiteLines = true;
+    public $ignoreBlankLines = true;
 
     /**
      * @return int[]
@@ -65,8 +65,8 @@ final class FunctionLengthSniff implements Sniff
 
         $ignored = [];
         $suffix = '';
-        $this->ignoreWhiteLines and $ignored[] = 'white lines';
-        $this->ignoreSingleLineComments and $ignored[] = 'single line comments';
+        $this->ignoreBlankLines and $ignored[] = 'blank lines';
+        $this->ignoreComments and $ignored[] = 'single line comments';
         $this->ignoreDocBlocks and $ignored[] = 'doc blocks';
         if ($ignored) {
             $suffix = ' (ignoring ';
@@ -126,7 +126,7 @@ final class FunctionLengthSniff implements Sniff
 
         $linesData = $docblocks = [];
 
-        $skipLines = [$tokens[$start + 1]['line'], $tokens[$end - 1]['line']];
+        $skipLines = [$tokens[$start + 1]['line'], $tokens[$end]['line']];
         for ($i = $start + 1; $i < $end - 1; $i++) {
             if (in_array($tokens[$i]['line'], $skipLines, true)) {
                 continue;
@@ -140,10 +140,10 @@ final class FunctionLengthSniff implements Sniff
         $onlyComment = array_filter(array_column($linesData, 'only-comment'));
 
         $toExcludeCount = array_sum($docblocks);
-        if ($this->ignoreWhiteLines) {
+        if ($this->ignoreBlankLines) {
             $toExcludeCount += count($empty);
         }
-        if ($this->ignoreSingleLineComments) {
+        if ($this->ignoreComments) {
             $toExcludeCount += count($onlyComment) - count($empty);
         }
 
