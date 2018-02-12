@@ -155,7 +155,7 @@ class LineLengthSniff implements Sniff
 
         while ($index > 0) {
             if ($this->isI18nFunction($tokens, $index, $file)
-                ||$this->containLongWords($tokens, $index)
+                || $this->containLongWords($tokens, $index)
             ) {
                 return true;
             }
