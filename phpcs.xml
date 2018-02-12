@@ -47,6 +47,7 @@
         <exclude name="NeutronStandard.Constants.DisallowDefine"/>
         <exclude name="NeutronStandard.MagicMethods.DisallowMagicGet"/>
         <exclude name="NeutronStandard.MagicMethods.DisallowMagicSet"/>
+        <exclude name="NeutronStandard.MagicMethods.RiskyMagicMethod"/>
         <rule ref="NeutronStandard.Whitespace.DisallowMultipleNewlines.MultipleNewlines">
             <type>warning</type>
         </rule>
