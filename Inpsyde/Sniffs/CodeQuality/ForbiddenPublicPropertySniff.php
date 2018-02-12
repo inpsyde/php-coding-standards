@@ -40,7 +40,7 @@ final class ForbiddenPublicPropertySniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        if (!Helpers::isProperty($file, $position)) {
+        if (!Helpers::variableIsProperty($file, $position)) {
             return;
         }
 

@@ -52,7 +52,7 @@ class Helpers
         $pointer = (int)$token['scope_opener'];
 
         while ($pointer) {
-            if (self::isProperty($file, $pointer)) {
+            if (self::variableIsProperty($file, $pointer)) {
                 $propertyList[] = $pointer;
             }
             $pointer = (int)$file->findNext(
@@ -67,14 +67,19 @@ class Helpers
 
     /**
      * @param File $file
-     * @param int $variablePosition
+     * @param int $position
      * @return bool
      */
-    public static function isProperty(File $file, int $variablePosition): bool
+    public static function variableIsProperty(File $file, int $position): bool
     {
+        $token = $file->getTokens()[$position];
+        if ($token['code'] !== T_VARIABLE) {
+            return false;
+        }
+
         $propertyPointer = $file->findPrevious(
             [T_STATIC, T_WHITESPACE, T_COMMENT],
-            $variablePosition - 1,
+            $position - 1,
             null,
             true
         );
@@ -91,6 +96,44 @@ class Helpers
     /**
      * @param File $file
      * @param int $position
+     * @return bool
+     */
+    public static function functionIsMethod(File $file, int $position)
+    {
+        $tokens = $file->getTokens();
+        $functionToken = $tokens[$position];
+        if ($functionToken['code'] !== T_FUNCTION) {
+            return false;
+        }
+
+        $classPointer = $file->findPrevious(
+            [T_CLASS, T_INTERFACE, T_TRAIT],
+            $position - 1
+        );
+
+        if (!$classPointer) {
+            return false;
+        }
+
+        $classToken = $tokens[$classPointer];
+        if ($classToken['level'] !== $functionToken['level'] - 1) {
+            return false;
+        }
+
+        $openerPosition = $classToken['scope_opener'] ?? -1;
+        $closerPosition = $classToken['scope_closer'] ?? -1;
+
+        return
+            $openerPosition > 0
+            && $closerPosition > 0
+            && $closerPosition > ($openerPosition + 1)
+            && $openerPosition < ($position - 1)
+            && $closerPosition > $position + 4; // 4 because: (){}
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
      * @return string
      */
     public static function tokenTypeName(File $file, int $position): string
@@ -102,7 +145,7 @@ class Helpers
         }
 
         if ($token['code'] === T_VARIABLE) {
-            if (self::isProperty($file, $position)) {
+            if (self::variableIsProperty($file, $position)) {
                 return 'Property';
             }
 
