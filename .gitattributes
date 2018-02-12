@@ -1,0 +1,10 @@
+* text eol=lf
+
+/docs/ export-ignore
+/tests/ export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/CHANGELOG.md export-ignore
+/phpcs.xml export-ignore
+/phpunit.xml.dist export-ignore
+/README.md export-ignore
