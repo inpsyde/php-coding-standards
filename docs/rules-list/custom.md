@@ -15,8 +15,9 @@
             - InpsydeCodingStandard.CodeQuality.HookClosureReturn.ReturnFromAction 
         - InpsydeCodingStandard.CodeQuality.NoElse
             - InpsydeCodingStandard.CodeQuality.NoElse.NoElse
-        - InpsydeCodingStandard.CodeQuality.NoSetter
-            - InpsydeCodingStandard.CodeQuality.NoSetter.NoSetter
+        - InpsydeCodingStandard.CodeQuality.NoAccessors
+            - InpsydeCodingStandard.CodeQuality.NoAccessors.NoGetter
+            - InpsydeCodingStandard.CodeQuality.NoAccessors.NoSetter
         - InpsydeCodingStandard.CodeQuality.PropertyPerClassLimit
             - InpsydeCodingStandard.CodeQuality.PropertyPerClassLimit.TooMuchProperties
         - InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration

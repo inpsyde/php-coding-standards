@@ -6,7 +6,9 @@
     <autoload>./Inpsyde/Helpers.php</autoload>
     <autoload>./Inpsyde/PHPCSAliases.php</autoload>
 
-    <file>./Inpsyde/Sniffs/CodeQuality</file>
+    <file>./Inpsyde/Sniffs</file>
+    <file>./tests/src</file>
+    <file>./tests/cases</file>
 
     <!--
     PHP 7.0 and higher.
@@ -41,6 +43,7 @@
         <exclude name="NeutronStandard.Functions.LongFunction"/>
         <exclude name="NeutronStandard.Functions.VariableFunctions"/>
         <exclude name="NeutronStandard.Functions.TypeHint"/>
+        <exclude name="NeutronStandard.Constants.DisallowDefine"/>
     </rule>
 
     <!--
@@ -88,7 +91,6 @@
     <!--
     Use own styles :)
     -->
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/ArgumentTypeDeclarationSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/DisallowShortOpenTagSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ElementNameMinimalLengthSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ForbiddenPublicPropertySniff.php"/>
@@ -96,8 +98,7 @@
     <rule ref="./Inpsyde/Sniffs/CodeQuality/HookClosureReturnSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/LineLengthSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/NoElseSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/NoSetterSniff.php"/>
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/NoAccessorsSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/PropertyPerClassLimitSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/ReturnTypeDeclarationSniff.php"/>
 
 </ruleset>
