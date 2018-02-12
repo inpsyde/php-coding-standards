@@ -39,6 +39,7 @@
 		<exclude name="NeutronStandard.Functions.LongFunction"/>
 		<exclude name="NeutronStandard.Functions.VariableFunctions"/>
 		<exclude name="NeutronStandard.Functions.TypeHint"/>
+		<exclude name="NeutronStandard.Constants.DisallowDefine"/>
 	</rule>
 
     <!--
