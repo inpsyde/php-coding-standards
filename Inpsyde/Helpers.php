@@ -134,6 +134,74 @@ class Helpers
     /**
      * @param File $file
      * @param int $position
+     * @return bool
+     */
+    public static function isFunctionCall(File $file, int $position): bool
+    {
+        $tokens = $file->getTokens();
+        $code = $tokens[$position]['code'] ?? -1;
+        if (!in_array($code, [T_VARIABLE, T_STRING], true)) {
+            return false;
+        }
+
+        $nextNonWhitePosition = $file->findNext(
+            [T_WHITESPACE],
+            $position + 1,
+            null,
+            true,
+            null,
+            true
+        );
+
+        if (!$nextNonWhitePosition
+            || $tokens[$nextNonWhitePosition]['code'] !== T_OPEN_PARENTHESIS
+        ) {
+            return false;
+        }
+
+        $previousNonWhite = $file->findPrevious(
+            [T_WHITESPACE],
+            $position - 1,
+            null,
+            true,
+            null,
+            true
+        );
+
+        if ($previousNonWhite && ($tokens[$previousNonWhite]['code'] ?? -1) === T_NS_SEPARATOR) {
+            $previousNonWhite = $file->findPrevious(
+                [T_WHITESPACE, T_STRING, T_NS_SEPARATOR],
+                $previousNonWhite - 1,
+                null,
+                true,
+                null,
+                true
+            );
+        }
+
+        if ($previousNonWhite && $tokens[$previousNonWhite]['code'] === T_NEW) {
+            return false;
+        }
+
+        $closeParenthesisPosition = $file->findNext(
+            [T_CLOSE_PARENTHESIS],
+            $position + 2,
+            null,
+            false,
+            null,
+            true
+        );
+
+        $parenthesisCloserPosition = $tokens[$nextNonWhitePosition]['parenthesis_closer'] ?? -1;
+
+        return
+            $closeParenthesisPosition
+            && $closeParenthesisPosition === $parenthesisCloserPosition;
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
      * @return string
      */
     public static function tokenTypeName(File $file, int $position): string
