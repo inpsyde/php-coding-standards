@@ -121,11 +121,16 @@ class ReturnTypeDeclarationSniff implements Sniff
      */
     private function returnTypeInfo(File $file, int $functionPosition, int $functionEnd): array
     {
-        $returnType = $file->findNext(
-            T_RETURN_TYPE,
-            $functionPosition + 3, // open parenthesis, close parenthesis, colon
+        $returnTypeToken = $file->findNext(
+            [T_RETURN_TYPE],
+            $functionPosition + 3, // 3: open parenthesis, close parenthesis, colon
             $functionEnd - 1
         );
+
+        $returnType = $file->getTokens()[$returnTypeToken] ?? null;
+        if ($returnType && $returnType['type'] !== "T_RETURN_TYPE") {
+            $returnType = null;
+        }
 
         $hasNonVoidReturnType = $returnType && $returnType['content'] !== 'void';
         $hasVoidReturnType = $returnType && $returnType['content'] === 'void';
