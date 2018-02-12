@@ -35,12 +35,18 @@
 	Neutron standard are quality tools for PHP7 development from Automattic.
 	See https://github.com/Automattic/phpcs-neutron-standard
 	-->
-	<rule ref="NeutronStandard">
-		<exclude name="NeutronStandard.Functions.LongFunction"/>
-		<exclude name="NeutronStandard.Functions.VariableFunctions"/>
-		<exclude name="NeutronStandard.Functions.TypeHint"/>
-		<exclude name="NeutronStandard.Constants.DisallowDefine"/>
-	</rule>
+    <rule ref="NeutronStandard">
+        <exclude name="NeutronStandard.Functions.LongFunction"/>
+        <exclude name="NeutronStandard.Functions.VariableFunctions"/>
+        <exclude name="NeutronStandard.Functions.TypeHint"/>
+        <exclude name="NeutronStandard.Conditions.DisallowConditionAssignWithoutConditional"/>
+        <exclude name="NeutronStandard.Constants.DisallowDefine"/>
+        <exclude name="NeutronStandard.MagicMethods.DisallowMagicGet"/>
+        <exclude name="NeutronStandard.MagicMethods.DisallowMagicSet"/>
+        <rule ref="NeutronStandard.Whitespace.DisallowMultipleNewlines.MultipleNewlines">
+            <type>warning</type>
+        </rule>
+    </rule>
 
     <!--
     Some WordPress specific rules.

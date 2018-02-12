@@ -43,7 +43,13 @@
         <exclude name="NeutronStandard.Functions.LongFunction"/>
         <exclude name="NeutronStandard.Functions.VariableFunctions"/>
         <exclude name="NeutronStandard.Functions.TypeHint"/>
+        <exclude name="NeutronStandard.Conditions.DisallowConditionAssignWithoutConditional"/>
         <exclude name="NeutronStandard.Constants.DisallowDefine"/>
+        <exclude name="NeutronStandard.MagicMethods.DisallowMagicGet"/>
+        <exclude name="NeutronStandard.MagicMethods.DisallowMagicSet"/>
+        <rule ref="NeutronStandard.Whitespace.DisallowMultipleNewlines.MultipleNewlines">
+            <type>warning</type>
+        </rule>
     </rule>
 
     <!--
