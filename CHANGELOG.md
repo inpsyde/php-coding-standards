@@ -6,6 +6,7 @@
 - Removed `NeutronStandard.MagicMethods.DisallowMagicSet`.
 - Made `NeutronStandard.Whitespace.DisallowMultipleNewlines.MultipleNewlines` a warning not error.
 - Added custom `AssignmentInsideConditionSniff` sniff.
+- Added custom `NoTopLevelDefineSniff` sniff.
 
 ## 0.6.0
 - Missing return type waring from `ReturnTypeDeclarationSniff` skipped for hook callbacks.
