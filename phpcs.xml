@@ -98,14 +98,16 @@
     <!--
     Use own styles :)
     -->
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/AssignmentInsideConditionSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/DisallowShortOpenTagSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ElementNameMinimalLengthSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ForbiddenPublicPropertySniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/FunctionLengthSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/HookClosureReturnSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/LineLengthSniff.php"/>
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/NoAccessorsSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/NoElseSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/NoAccessorsSniff.php"/>
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/NoTopLevelDefineSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/PropertyPerClassLimitSniff.php"/>
 
 </ruleset>
