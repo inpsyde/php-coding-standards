@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.1
+- Exclude `NeutronStandard.MagicMethods.RiskyMagicMethod`
+- Add `.gitattributes`
+- Update own styles in `phpcs`
+
 ## 0.7.0
 - Removed `NeutronStandard.Conditions.DisallowConditionAssignWithoutConditional`.
 - Removed `NeutronStandard.MagicMethods.DisallowMagicGet`.
