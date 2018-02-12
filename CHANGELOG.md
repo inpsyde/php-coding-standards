@@ -1,5 +1,12 @@
 # Changelog
 
+## Not released
+- Removed `NeutronStandard.Conditions.DisallowConditionAssignWithoutConditional`.
+- Removed `NeutronStandard.MagicMethods.DisallowMagicGet`.
+- Removed `NeutronStandard.MagicMethods.DisallowMagicSet`.
+- Made `NeutronStandard.Whitespace.DisallowMultipleNewlines.MultipleNewlines` a warning not error.
+- Added custom `AssignmentInsideConditionSniff` sniff.
+
 ## 0.6.0
 - Missing return type waring from `ReturnTypeDeclarationSniff` skipped for hook callbacks.
 - Fixed a bug in return counting in helper class that affected few sniffs.
