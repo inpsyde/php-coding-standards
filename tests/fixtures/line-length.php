@@ -74,3 +74,12 @@ class FooBarBazMeh
     }
 }
 
+/**
+ * @link https://foo.example.com/some-path/to/#a-page-that-co0ntains-some-important-information-that-you-should-really-look-at
+ *
+ * @return string
+ */
+function longComment() {
+    return;
+}
+
