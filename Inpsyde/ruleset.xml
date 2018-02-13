@@ -26,12 +26,6 @@
     </rule>
 
 	<!--
-	Some sanity in variables.
-	See https://github.com/sirbrillig/phpcs-variable-analysis
-	-->
-	<rule ref="VariableAnalysis"/>
-
-	<!--
 	Neutron standard are quality tools for PHP7 development from Automattic.
 	See https://github.com/Automattic/phpcs-neutron-standard
 	-->

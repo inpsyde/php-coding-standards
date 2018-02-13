@@ -96,13 +96,6 @@ See http://www.php-fig.org/psr/psr-1/ and http://www.php-fig.org/psr/psr-2/.
 The tree of used rules are listed in the `/docs/rules-list/psr.md` file in this repo.
 
 
-## VariableAnalysis
-
-See https://github.com/sirbrillig/phpcs-variable-analysis
-
-The tree of used rules are listed in the `/docs/rules-list/variable-analysis.md` file in this repo.
-
-
 ## Neutron Standard
 
 See https://github.com/Automattic/phpcs-neutron-standard
@@ -134,18 +127,22 @@ The tree of used rules are listed in the `/docs/rules-list/generic.md` file in t
 
 ## Custom Rules
 
-Few custom rules are also in use, highly derived from Object Calisthenics 
-see (https://github.com/object-calisthenics/phpcs-calisthenics-rules).
-
+Few custom rules are also in use.
 Customs rules are:
 
-- Only 2 levels of indentation per Method
-- Do not use "else" keyword
+- Enforce argument type declaration, with few exception (e.g. hook callbacks or `ArrayAccess` methods)
+- Ensure that any assignment inside conditions in wrapped in parenthesis
+- Disallow short open PHP tag
 - Use minimum 3 chars for names (with a few exclusions)
-- No public properties
-- No setters
-- Max 10 properties per class
-- Max 50 lines per method
+- No public class properties
+- Max 50 lines per function/method, excluding blank lines and comments-only lines.
+- Ensure that actions callbacks do not return anything, while filter callbacks return something.
+- Max 100 chars per line, excluding leading indent size and long string inWP translation functions
+- Discourage usage of getters and setters.
+- Discourage usage of `else`.
+- Discourage usage of `define` where `const` is preferable.
+- Discourage usage of more than 10 properties per class.
+- Enforce return type declaration, with few exceptions (e.g. hook callbacks or `ArrayAccess` methods)
 
 The tree of used rules are listed in the `/docs/rules-list/custom.md` file in this repo.
 
