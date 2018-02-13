@@ -21,7 +21,7 @@ interface WithAccessorsInterface {
     function setting();
 }
 
-class WithAccessors {
+class WithAccessors implements \IteratorAggregate {
 
     function thing() {
 
@@ -43,5 +43,13 @@ class WithAccessors {
     // @phpcsWarningCodeOnNextLine NoSetter
     function setTheThing($foo, $bar) {
 
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator();
     }
 }

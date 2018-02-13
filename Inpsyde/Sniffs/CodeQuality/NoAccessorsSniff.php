@@ -25,7 +25,12 @@ use PHP_CodeSniffer\Sniffs\Sniff;
  */
 final class NoAccessorsSniff implements Sniff
 {
-    public $allowSetUp = true;
+    const ALLOWED_NAMES = [
+        'getIterator',
+        'getInnerIterator',
+        'getChildren',
+        'setUp',
+    ];
 
     public $skipForFunctions = true;
 
@@ -50,7 +55,7 @@ final class NoAccessorsSniff implements Sniff
 
         $functionName = $file->getDeclarationName($position);
 
-        if (!$functionName || ($functionName === 'setUp' && $this->allowSetUp)) {
+        if (!$functionName || in_array($functionName, self::ALLOWED_NAMES, true)) {
             return;
         }
 
