@@ -54,7 +54,7 @@ final class NoAccessorsSniff implements Sniff
             return;
         }
 
-        preg_match('/^(set|get)[a-zA-Z0-9_\x7f-\xff]+/', $functionName, $matches);
+        preg_match('/^(set|get)[_A-Z0-9]+/', $functionName, $matches);
         if (!$matches) {
             return;
         }
@@ -67,6 +67,8 @@ final class NoAccessorsSniff implements Sniff
                 $position,
                 'NoSetter'
             );
+
+            return;
         }
 
         $file->addWarning(

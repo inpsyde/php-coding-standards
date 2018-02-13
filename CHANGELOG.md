@@ -1,5 +1,8 @@
 # Changelog
 
+## Not released
+- Fix bug in `NoAccessorsSniff`
+
 ## 0.7.2
 - Fix bug in `ReturnTypeDeclarationSniff` which caused wrong return type detection.
 

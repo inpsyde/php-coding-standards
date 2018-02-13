@@ -2,6 +2,14 @@
 
 // @phpcsSniff CodeQuality.NoAccessors
 
+function getting() {
+
+}
+
+function setting() {
+
+}
+
 interface WithAccessorsInterface {
 
     // @phpcsWarningCodeOnNextLine NoGetter
@@ -9,11 +17,17 @@ interface WithAccessorsInterface {
 
     // @phpcsWarningCodeOnNextLine NoSetter
     function setTheThing($foo, $bar);
+
+    function setting();
 }
 
 class WithAccessors {
 
     function thing() {
+
+    }
+
+    function setting() {
 
     }
 
