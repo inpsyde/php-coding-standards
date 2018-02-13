@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.2
+- Fix bug in `ReturnTypeDeclarationSniff` which caused wrong return type detection.
+
 ## 0.7.1
 - Exclude `NeutronStandard.MagicMethods.RiskyMagicMethod`
 - Add `.gitattributes`

@@ -121,18 +121,34 @@ function noHookCallback() {
 
 class WrapperHookWrapper {
 
-    function filterWrapper(): bool {
+    function filterWrapper(string $x, int $y): bool {
 
         // @phpcsWarningCodeOnNextLine NoReturnType
         foo('x', function() {
             return '';
         });
 
-        add_filter('x', function() {
-            return '';
+        add_filter('x', function() use($x, $y) {
+            return "$x, $y";
         });
 
         return true;
+    }
+
+    public function register()
+    {
+        add_filter('foo_bar', function (array $a): array {
+            return array_merge($a, ['x' => 'y']);
+        });
+
+        add_action(
+            'foo_bar_baz',
+            function ($x, $y) {
+                $this->filterWrapper((string)$x, (int)$y);
+            },
+            10,
+            2
+        );
     }
 
     // @phpcsWarningCodeOnNextLine NoReturnType

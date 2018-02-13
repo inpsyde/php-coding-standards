@@ -48,8 +48,7 @@ class ReturnTypeDeclarationSniff implements Sniff
 
         list($hasNonVoidReturnType, $hasVoidReturnType, $hasNoReturnType) = $this->returnTypeInfo(
             $file,
-            $position,
-            $functionEnd
+            $position
         );
 
         list($nonVoidReturnCount, $voidReturnCount) = Helpers::countReturns($file, $position);
@@ -116,18 +115,20 @@ class ReturnTypeDeclarationSniff implements Sniff
     /**
      * @param File $file
      * @param int $functionPosition
-     * @param int $functionEnd
      * @return array
      */
-    private function returnTypeInfo(File $file, int $functionPosition, int $functionEnd): array
+    private function returnTypeInfo(File $file, int $functionPosition): array
     {
+        $tokens = $file->getTokens();
+        $functionToken = $tokens[$functionPosition];
+
         $returnTypeToken = $file->findNext(
             [T_RETURN_TYPE],
             $functionPosition + 3, // 3: open parenthesis, close parenthesis, colon
-            $functionEnd - 1
+            ($functionToken['scope_opener'] ?? 0) - 1
         );
 
-        $returnType = $file->getTokens()[$returnTypeToken] ?? null;
+        $returnType = $tokens[$returnTypeToken] ?? null;
         if ($returnType && $returnType['type'] !== "T_RETURN_TYPE") {
             $returnType = null;
         }
