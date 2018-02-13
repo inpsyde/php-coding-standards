@@ -1,14 +1,14 @@
 <?php
 // @phpcsSniff CodeQuality.LineLength
 
-$a = 'a long line like next
-http://example.com/?7f4a87f2df8a8e8b8febd6631589e062=7f4a87f2df8a8e8b8febd6631589e0627f4a87f2df8a8e8b8febd6631589e0627f4a87f2df8a8e8b8febd6631589e062
-does not trigger errors because it is a single word.
-';
-
 // @phpcsWarningOnNextLine
 $b = '7f4a87f2df8a8e8b8febd6631589e062 7f4a87f2df8a8e8b8febd6631589e062 7f4a87f2df8a8e8b8febd6631589e062 7f4a87f2df8a8e8b8febd6631589e062 
 a long line like previous does trigger errors!.
+';
+
+$a = 'a long line like next
+http://example.com/?7f4a87f2df8a8e8b8febd6631589e062=7f4a87f2df8a8e8b8febd6631589e0627f4a87f2df8a8e8b8febd6631589e0627f4a87f2df8a8e8b8febd6631589e062
+does not trigger errors because it is a single word.
 ';
 
 __(
@@ -26,7 +26,8 @@ esc_html__(
     'textdomain'
 );
 
-function meh() {
+function meh()
+{
 
     _ex(
         'This line does not trigger error because it is the first argument of a translation string that cannot be split or WordPress style will complain.',
@@ -40,9 +41,11 @@ function meh() {
     );
 }
 
-class FooBarBazMeh {
+class FooBarBazMeh
+{
 
-    function meh() {
+    function meh()
+    {
 
         esc_attr_x(
             'This line does not trigger error because it is the first argument of a translation string that cannot be split or WordPress style will complain.',
@@ -55,4 +58,19 @@ class FooBarBazMeh {
             'foo bar'
         );
     }
+
+    public function render()
+    {
+        ?>
+        <p class="description">
+            <?php
+            esc_html_e(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing el. Morbi egestas, purus non luctus semper, ligula ante venenatis',
+                'ipsum'
+            );
+            ?>
+        </p>
+        <?php
+    }
 }
+

@@ -3,6 +3,8 @@
 ## Not released
 - Fix bug in `NoAccessorsSniff` and allow for a few method names related to PHP core interfaces.
 - Exclude `ArrayAccess` methods from `ReturnTypeDeclarationSniff` and `ArgumentTypeDeclarationSniff`.
+- Fix bug in `LineLengthSniff` which affected edge cases.
+- Changed default `LineLengthSniff` max length to 100, excluding leading indent.
 
 ## 0.7.2
 - Fix bug in `ReturnTypeDeclarationSniff` which caused wrong return type detection.
