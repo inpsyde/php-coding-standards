@@ -41,7 +41,10 @@ class ArgumentTypeDeclarationSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        if (Helpers::isHookClosure($file, $position) || Helpers::isHookFunction($file, $position)) {
+        if (Helpers::functionIsArrayAccess($file, $position)
+            || Helpers::isHookClosure($file, $position)
+            || Helpers::isHookFunction($file, $position)
+        ) {
             return;
         }
 

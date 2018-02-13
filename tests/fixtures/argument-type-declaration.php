@@ -213,3 +213,33 @@ interface ArgumentTypeDeclarationSniffTestFixtureInterface
 
     function d(array $foo, ArrayObject $bar);
 }
+
+class FooAccess implements ArrayAccess {
+
+    /**
+     * @inheritdoc
+     */
+    public function offsetExists($offset)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function offsetGet($offset)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function offsetSet($offset, $value)
+    {
+    }
+
+    public function offsetUnset($offset)
+    {
+    }
+}

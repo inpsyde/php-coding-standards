@@ -41,6 +41,10 @@ class ReturnTypeDeclarationSniff implements Sniff
      */
     public function process(File $file, $position)
     {
+        if (Helpers::functionIsArrayAccess($file, $position)) {
+            return;
+        }
+
         list($functionStart, $functionEnd) = Helpers::functionBoundaries($file, $position);
         if (!$functionStart < 0 || $functionEnd <= 0) {
             return;
