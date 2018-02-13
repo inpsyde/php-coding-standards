@@ -1,6 +1,6 @@
 # Changelog
 
-## Not released
+## 0.8.0
 - Fix bug in `NoAccessorsSniff` and allow for a few method names related to PHP core interfaces.
 - Exclude `ArrayAccess` methods from `ReturnTypeDeclarationSniff` and `ArgumentTypeDeclarationSniff`.
 - Fix bug in `LineLengthSniff` which affected edge cases.
