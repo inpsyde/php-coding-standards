@@ -15,6 +15,7 @@
 
 namespace Inpsyde\InpsydeCodingStandard;
 
+use PHP_CodeSniffer\Exceptions\RuntimeException as CodeSnifferRuntimeException;
 use PHP_CodeSniffer\Files\File;
 
 /**
@@ -129,6 +130,34 @@ class Helpers
             && $closerPosition > ($openerPosition + 1)
             && $openerPosition < ($position - 1)
             && $closerPosition > $position + 4; // 4 because: (){}
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return bool
+     */
+    public static function functionIsArrayAccess(File $file, int $position)
+    {
+        $token = $file->getTokens()[$position] ?? null;
+        if (!$token || $token['code'] !== T_FUNCTION) {
+            return false;
+        }
+
+        try {
+            return in_array(
+                $file->getDeclarationName($position),
+                [
+                    'offsetSet',
+                    'offsetGet',
+                    'offsetUnset',
+                    'offsetExists',
+                ],
+                true
+            );
+        } catch (CodeSnifferRuntimeException $exception) {
+            return false;
+        }
     }
 
     /**
