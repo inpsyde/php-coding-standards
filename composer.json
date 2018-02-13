@@ -31,7 +31,7 @@
     "dealerdirect/phpcodesniffer-composer-installer": "^0.4",
     "wp-coding-standards/wpcs": "^0.14",
     "automattic/phpcs-neutron-standard": "^1",
-    "sirbrillig/phpcs-variable-analysis": "^2",
+    "sirbrillig/phpcs-variable-analysis": "2 - 2.0.5 || >= 2.0.7 < 3",
     "wimg/php-compatibility": "^8.0"
   },
   "require-dev": {
