@@ -17,6 +17,7 @@ namespace Inpsyde\InpsydeCodingStandard;
 
 use PHP_CodeSniffer\Exceptions\RuntimeException as CodeSnifferRuntimeException;
 use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Util\Tokens;
 
 /**
  * @package php-coding-standards
@@ -437,7 +438,7 @@ class Helpers
             return [0, 0];
         }
 
-        $nonVoidReturnCount = $voidReturnCount = 0;
+        $nonVoidReturnCount = $voidReturnCount = $nullReturnCount = 0;
         $scopeClosers = new \SplStack();
         $tokens = $file->getTokens();
         for ($i = $functionStart + 1; $i < $functionEnd; $i++) {
@@ -452,10 +453,11 @@ class Helpers
 
             if (!$scopeClosers->count() && $tokens[$i]['code'] === T_RETURN) {
                 Helpers::isVoidReturn($file, $i) ? $voidReturnCount++ : $nonVoidReturnCount++;
+                Helpers::isNullReturn($file, $i) and $nullReturnCount++;
             }
         }
 
-        return [$nonVoidReturnCount, $voidReturnCount];
+        return [$nonVoidReturnCount, $voidReturnCount, $nullReturnCount];
     }
 
     /**
@@ -473,7 +475,88 @@ class Helpers
 
         $returnPosition++;
         $nextToReturn = $file->findNext([T_WHITESPACE], $returnPosition, null, true, null, true);
+        $nextToReturnType = $tokens[$nextToReturn]['code'] ?? '';
 
-        return $nextToReturn && ($tokens[$nextToReturn]['type'] ?? '') === 'T_SEMICOLON';
+        return in_array($nextToReturnType, [T_SEMICOLON, T_NULL], true);
+    }
+
+    /**
+     * @param File $file
+     * @param int $returnPosition
+     * @return bool
+     */
+    public static function isNullReturn(File $file, int $returnPosition): bool
+    {
+        $tokens = $file->getTokens();
+
+        if (($tokens[$returnPosition]['code'] ?? '') !== T_RETURN) {
+            return false;
+        }
+
+        $returnPosition++;
+        $nextToReturn = $file->findNext([T_WHITESPACE], $returnPosition, null, true, null, true);
+        $nextToReturnType = $tokens[$nextToReturn]['code'] ?? '';
+
+        return $nextToReturnType === T_NULL;
+    }
+
+    /**
+     * @param string $tag
+     * @param File $file
+     * @param int $functionPosition
+     * @return string[]
+     */
+    public static function functionDocBlockTag(
+        string $tag,
+        File $file,
+        int $functionPosition
+    ): array {
+
+        $tokens = $file->getTokens();
+        if (!array_key_exists($functionPosition, $tokens)
+            || !in_array($tokens[$functionPosition]['code'], [T_FUNCTION, T_CLOSURE], true)
+        ) {
+            return [];
+        }
+
+        $exclude = array_values(Tokens::$methodPrefixes);
+        $exclude[] = T_WHITESPACE;
+
+        $lastBeforeFunc = $file->findPrevious($exclude, $functionPosition - 1, null, true);
+
+        if (!$lastBeforeFunc
+            || !array_key_exists($lastBeforeFunc, $tokens)
+            || $tokens[$lastBeforeFunc]['code'] !== T_DOC_COMMENT_CLOSE_TAG
+            || empty($tokens[$lastBeforeFunc]['comment_opener'])
+            || $tokens[$lastBeforeFunc]['comment_opener'] >= $lastBeforeFunc
+        ) {
+            return [];
+        }
+
+        $tags = [];
+        $inTag = false;
+        $start = $tokens[$lastBeforeFunc]['comment_opener'] + 1;
+        $end = $lastBeforeFunc - 1;
+
+        for ($i = $start; $i < $end; $i++) {
+
+            if ($inTag && $tokens[$i]['code'] === T_DOC_COMMENT_STRING) {
+                $tags[] .= $tokens[$i]['content'];
+                continue;
+            }
+
+            if ($inTag && $tokens[$i]['code'] !== T_DOC_COMMENT_WHITESPACE) {
+                $inTag = false;
+                continue;
+            }
+
+            if ($tokens[$i]['code'] === T_DOC_COMMENT_TAG
+                && (ltrim($tokens[$i]['content'], '@') === ltrim($tag, '@'))
+            ) {
+                $inTag = true;
+            }
+        }
+
+        return $tags;
     }
 }

@@ -57,37 +57,38 @@ function g(): bool
     return false;
 }
 
-add_filter('x', function() {
+add_filter('x', function () {
     return '';
 });
 
-add_filter('x', function(): string {
+add_filter('x', function (): string {
     return '';
 });
 
 // @phpcsErrorCodeOnNextLine IncorrectVoidReturnType
-add_filter('x', function(): void {
+add_filter('x', function (): void {
     return '0';
 });
 
 // @phpcsErrorCodeOnNextLine MissingReturn
-add_filter('x', function(): string {
+add_filter('x', function (): string {
     return;
 });
 
 // @phpcsWarningCodeOnNextLine NoReturnType
-foo('x', function() {
+foo('x', function () {
     return '';
 });
 
-function filter_wrapper(): bool {
+function filter_wrapper(): bool
+{
 
     // @phpcsWarningCodeOnNextLine NoReturnType
-    foo('x', function() {
+    foo('x', function () {
         return '';
     });
 
-    add_filter('x', function() {
+    add_filter('x', function () {
         return '';
     });
 
@@ -98,7 +99,8 @@ function filter_wrapper(): bool {
  * @return string
  * @wp-hook Meh
  */
-function hookCallback() {
+function hookCallback()
+{
     return 'x';
 }
 
@@ -106,29 +108,31 @@ function hookCallback() {
  * @return bool
  * @wp-hook Meh
  */
-function badHookCallback(): bool {
-    // @phpcsErrorCodeOnPreviousLine MissingReturn
+function badHookCallback(): bool // @phpcsErrorCodeOnThisLine MissingReturn
+{
     return;
 }
 
 /**
  * @return string
  */
-function noHookCallback() {
-    // @phpcsWarningCodeOnPreviousLine NoReturnType
+function noHookCallback() // @phpcsWarningCodeOnThisLine NoReturnType
+{
     return 'x';
 }
 
-class WrapperHookWrapper {
+class WrapperHookWrapper
+{
 
-    function filterWrapper(string $x, int $y): bool {
+    function filterWrapper(string $x, int $y): bool
+    {
 
         // @phpcsWarningCodeOnNextLine NoReturnType
-        foo('x', function() {
+        foo('x', function () {
             return '';
         });
 
-        add_filter('x', function() use($x, $y) {
+        add_filter('x', function () use ($x, $y) {
             return "$x, $y";
         });
 
@@ -152,7 +156,8 @@ class WrapperHookWrapper {
     }
 
     // @phpcsWarningCodeOnNextLine NoReturnType
-    function problematicMethod() {
+    function problematicMethod()
+    {
         return 'x';
     }
 
@@ -160,12 +165,14 @@ class WrapperHookWrapper {
      * @return string
      * @wp-hook Meh
      */
-    function hookMethod() {
+    function hookMethod()
+    {
         return 'x';
     }
 
-    function problematicMethodTwo(): bool {
-        // @phpcsErrorCodeOnPreviousLine IncorrectVoidReturn
+    // @phpcsErrorCodeOnNextLine IncorrectVoidReturn
+    function problematicMethodTwo(): bool
+    {
         if (true) {
             return true;
         }
@@ -173,13 +180,15 @@ class WrapperHookWrapper {
         return;
     }
 
-    function problematicMethodThree(): void {
-        // @phpcsErrorCodeOnPreviousLine IncorrectVoidReturnType
+    // @phpcsErrorCodeOnNextLine IncorrectVoidReturnType
+    function problematicMethodThree(): void
+    {
         return 'x';
     }
 }
 
-interface LoremIpsum {
+interface LoremIpsum
+{
 
     public function test1();
 
@@ -191,10 +200,11 @@ interface LoremIpsum {
     /**
      * @return bool
      */
-    public function test3(): bool ;
+    public function test3(): bool;
 }
 
-class FooAccess implements ArrayAccess {
+class FooAccess implements ArrayAccess
+{
 
     /**
      * @inheritdoc
@@ -221,5 +231,67 @@ class FooAccess implements ArrayAccess {
 
     public function offsetUnset($offset)
     {
+    }
+
+    /**
+     * @return \ArrayAccess|null
+     */
+    public function iMaybeReturnNull()
+    {
+        if (rand(1, 4) === 3) {
+            return null;
+        }
+
+        if (rand(1, 4) > 2) {
+            return null;
+        }
+
+        return new \ArrayObject();
+    }
+
+    /**
+     * @return \ArrayAccess|null
+     */
+    public function iShouldReturnNullButReturnVoid() // @phpcsWarningCodeOnThisLine NoReturnType
+    {
+        if (rand(1, 4) === 3) {
+            return null;
+        }
+
+        if (rand(1, 4) > 2) {
+            return;
+        }
+
+        return new \ArrayObject();
+    }
+
+    /**
+     * @return \ArrayAccess|null
+     */
+    public function iShouldReturnNull() // @phpcsWarningCodeOnThisLine NoReturnType
+    {
+        return new \ArrayObject();
+    }
+
+    /**
+     * @return \ArrayAccess|null|\ArrayObject
+     */
+    public function iReturnALotOfStuff() // @phpcsWarningCodeOnThisLine NoReturnType
+    {
+        if (rand(1, 4) > 2) {
+            return null;
+        }
+
+        return new \ArrayObject();
+    }
+
+    // @phpcsErrorCodeOnNextLine IncorrectVoidReturn
+    public function iReturnWrongNull() : \ArrayAccess
+    {
+        if (rand(1, 4) > 2) {
+            return null;
+        }
+
+        return new \ArrayObject();
     }
 }

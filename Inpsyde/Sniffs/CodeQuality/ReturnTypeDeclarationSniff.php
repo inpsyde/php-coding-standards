@@ -18,6 +18,7 @@ namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
 use Inpsyde\InpsydeCodingStandard\Helpers;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
+use PHPCompatibility;
 
 class ReturnTypeDeclarationSniff implements Sniff
 {
@@ -55,7 +56,10 @@ class ReturnTypeDeclarationSniff implements Sniff
             $position
         );
 
-        list($nonVoidReturnCount, $voidReturnCount) = Helpers::countReturns($file, $position);
+        list($nonVoidReturnCount, $voidReturnCount, $nullReturnCount) = Helpers::countReturns(
+            $file,
+            $position
+        );
 
         $this->maybeErrors(
             $hasNonVoidReturnType,
@@ -63,6 +67,7 @@ class ReturnTypeDeclarationSniff implements Sniff
             $hasNoReturnType,
             $nonVoidReturnCount,
             $voidReturnCount,
+            $nullReturnCount,
             $file,
             $position
         );
@@ -74,6 +79,7 @@ class ReturnTypeDeclarationSniff implements Sniff
      * @param bool $hasNoReturnType
      * @param int $nonVoidReturnCount
      * @param int $voidReturnCount
+     * @param int $nullReturnCount
      * @param File $file
      * @param int $position
      */
@@ -83,6 +89,7 @@ class ReturnTypeDeclarationSniff implements Sniff
         bool $hasNoReturnType,
         int $nonVoidReturnCount,
         int $voidReturnCount,
+        int $nullReturnCount,
         File $file,
         int $position
     ) {
@@ -108,6 +115,15 @@ class ReturnTypeDeclarationSniff implements Sniff
         }
 
         if (Helpers::isHookClosure($file, $position) || Helpers::isHookFunction($file, $position)) {
+            return;
+        }
+
+        if ($nullReturnCount
+            && $nonVoidReturnCount
+            && ($nullReturnCount === $voidReturnCount)
+            && !$this->areNullableReturnTypesSupported()
+            && $this->hasReturnNullDocBloc($file, $position)
+        ) {
             return;
         }
 
@@ -142,5 +158,46 @@ class ReturnTypeDeclarationSniff implements Sniff
         $hasNoReturnType = !$returnType;
 
         return [$hasNonVoidReturnType, $hasVoidReturnType, $hasNoReturnType];
+    }
+
+    /**
+     * @param File $file
+     * @param int $functionPosition
+     * @return bool
+     */
+    private function hasReturnNullDocBloc(File $file, int $functionPosition): bool
+    {
+        $return = Helpers::functionDocBlockTag('@return', $file, $functionPosition);
+        if (!$return) {
+            return false;
+        }
+
+        $returnContentParts = preg_split('~\s+~', reset($return));
+        $returnTypes = $returnContentParts ? explode('|', reset($returnContentParts)) : [];
+        $returnTypes and $returnTypes = array_map('strtolower', $returnTypes);
+
+        return
+            $returnTypes
+            && count($returnTypes) < 3
+            && !in_array('mixed', $returnTypes, true)
+            && in_array('null', $returnTypes, true);
+    }
+
+    /**
+     * Return true if _min_ supported version is PHP 7.1.
+     *
+     * @return bool
+     */
+    private function areNullableReturnTypesSupported(): bool
+    {
+        $testVersion = trim(PHPCompatibility\PHPCSHelper::getConfigData('testVersion') ?: '');
+        if (!$testVersion) {
+            return false;
+        }
+
+        preg_match('`^(\d+\.\d+)(?:\s*-\s*(?:\d+\.\d+)?)?$`', $testVersion, $matches);
+        $min = $matches[1] ?? null;
+
+        return $min && version_compare($min, '7.1', '>=');
     }
 }
