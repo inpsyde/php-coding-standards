@@ -10,13 +10,13 @@
 
 namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
 
-use PHP_CodeSniffer\Standards\Generic\Sniffs\PHP\DisallowShortOpenTagSniff as GenericShortOpenTagSniff;
+use PHP_CodeSniffer\Standards\Generic\Sniffs\PHP as Generic;
 
 /**
  * @package php-coding-standards
  * @license http://opensource.org/licenses/MIT MIT
  */
-final class DisallowShortOpenTagSniff extends GenericShortOpenTagSniff
+final class DisallowShortOpenTagSniff extends Generic\DisallowShortOpenTagSniff
 {
     /**
      * @return int[]
