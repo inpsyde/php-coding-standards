@@ -146,6 +146,19 @@ Customs rules are:
 
 The tree of used rules are listed in the `/docs/rules-list/custom.md` file in this repo.
 
+### Notes
+
+#### Skip `InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration.NoReturnType` via doc bloc
+
+As of v0.9, when there's no return type declared for a function, but it has a docbloc like:
+`@return {$type}|null` and the function _actually_ contains both `null` and not-null return
+points **no** warning is shown.
+However, if min PHP version is set to 7.1 via php-compatibility `testVersion` config, the warning
+**is** shown, because in PHP 7.1 there's the availability for nullable return types.
+Also note that the warning **is** shown in case:
+ - the `@return` docbloc declares more than one not-null types, e.g. `@return Foo|Bar|null`
+ - the `@return` docbloc types contains "mixed", e.g. `@return mixed|null`.
+
 -------------
 
 # Removing or Disabling Rules
