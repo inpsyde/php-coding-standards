@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Tests;
+namespace Inpsyde\CodingStandard\Tests;
 
 use PHPUnit\Framework\Exception;
 

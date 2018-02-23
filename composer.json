@@ -38,7 +38,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Inpsyde\\InpsydeCodingStandard\\Tests\\": "tests/src/"
+      "Inpsyde\\CodingStandard\\Tests\\": "tests/src/"
     }
   },
   "extra": {

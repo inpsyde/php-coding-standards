@@ -4,12 +4,12 @@
 namespace {
 
     // @phpcsSniffPropertiesStart
-    $psr4 = ["\\Inpsyde\\InpsydeCodingStandard\\Tests\\" => "tests/"];
+    $psr4 = ["\\Inpsyde\\CodingStandard\\Tests\\" => "tests/"];
     $exclude = ["\\I\\Am\\Excluded\\Psr4Fixture"];
     // @phpcsSniffPropertiesEnd
 }
 
-namespace Inpsyde\InpsydeCodingStandard\Tests\fixtures {
+namespace Inpsyde\CodingStandard\Tests\fixtures {
 
     class Psr4Fixture
     {
@@ -23,7 +23,7 @@ namespace Inpsyde\InpsydeCodingStandard\Tests\fixtures {
     }
 }
 
-namespace Inpsyde\InpsydeCodingStandard\Foo\Bar {
+namespace Inpsyde\CodingStandard\Foo\Bar {
 
     // @phpcsErrorCodeOnNextLine InvalidPSR4
     interface ThisIsWrong
@@ -32,7 +32,7 @@ namespace Inpsyde\InpsydeCodingStandard\Foo\Bar {
     }
 }
 
-namespace Inpsyde\InpsydeCodingStandard\Tests\Bar {
+namespace Inpsyde\CodingStandard\Tests\Bar {
 
     // @phpcsErrorCodeOnNextLine InvalidPSR4
     trait ThisIsWrong

@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Tests\Cases;
+namespace Inpsyde\CodingStandard\Tests\Cases;
 
-use Inpsyde\InpsydeCodingStandard\Tests\FixtureContentParser;
-use Inpsyde\InpsydeCodingStandard\Tests\SniffMessages;
-use Inpsyde\InpsydeCodingStandard\Tests\SniffMessagesExtractor;
+use Inpsyde\CodingStandard\Tests\FixtureContentParser;
+use Inpsyde\CodingStandard\Tests\SniffMessages;
+use Inpsyde\CodingStandard\Tests\SniffMessagesExtractor;
 use PHP_CodeSniffer\Files\LocalFile;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Ruleset;

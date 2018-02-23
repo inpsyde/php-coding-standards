@@ -1,6 +1,6 @@
 <?php
 
-namespace Inpsyde\InpsydeCodingStandard\Tests\Fixtures;
+namespace Inpsyde\CodingStandard\Tests\Fixtures;
 
 // @phpcsSniff CodeQuality.NoTopLevelDefine
 

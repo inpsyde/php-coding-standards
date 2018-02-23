@@ -1,8 +1,8 @@
 # Changelog
 
 ## Not released
-- Renamed sniffs namespace (**breaking change**). Sniff are now referenced via `Inpsyde.CodeQuality...`
-  instead of `InpsydeCodingStandard.CodeQuality...`
+- Renamed sniffs namespace (**breaking change**).
+  Sniff are now referenced via `Inpsyde.CodeQuality...` instead of `InpsydeCodingStandard.CodeQuality...`
 - Add `Psr4Sniff` to check PSR-4 compliance of files that contain classes auto-loadable entities.
 
 ## 0.9.0
