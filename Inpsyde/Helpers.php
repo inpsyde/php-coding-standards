@@ -559,4 +559,43 @@ class Helpers
 
         return $tags;
     }
+
+    public static function findNamespace(File $file, int $position): array
+    {
+        $tokens = $file->getTokens();
+        $namespacePos = $file->findPrevious([T_NAMESPACE], $position - 1);
+        if (!$namespacePos || !array_key_exists($namespacePos, $tokens)) {
+            return [null, null];
+        }
+
+        $end = $file->findNext(
+            [T_SEMICOLON, T_OPEN_CURLY_BRACKET],
+            $namespacePos + 1,
+            null,
+            false,
+            null,
+            true
+        );
+
+        if (!$end || !array_key_exists($end, $tokens)) {
+            return [null, null];
+        }
+
+        if ($tokens[$end]['code'] === T_OPEN_CURLY_BRACKET
+            && ! empty($tokens[$end]['scope_closer'])
+            && $tokens[$end]['scope_closer'] < $position
+        ) {
+            return [null, null];
+        }
+
+        $namespace = '';
+        for ($i = $namespacePos + 1; $i < $end; $i++) {
+            $code = $tokens[$i]['code'] ?? null;
+            if (in_array($code, [T_STRING, T_NS_SEPARATOR], true)) {
+                $namespace .= $tokens[$i]['content'] ?? '';
+            }
+        }
+
+        return [$namespacePos, $namespace];
+    }
 }

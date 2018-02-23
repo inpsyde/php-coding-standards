@@ -20,6 +20,10 @@
             - InpsydeCodingStandard.CodeQuality.NoAccessors.NoSetter
         - InpsydeCodingStandard.CodeQuality.PropertyPerClassLimit
             - InpsydeCodingStandard.CodeQuality.PropertyPerClassLimit.TooMuchProperties
+        - InpsydeCodingStandard.CodeQuality.Psr4
+            - InpsydeCodingStandard.CodeQuality.Psr4.WrongFilename
+            - InpsydeCodingStandard.CodeQuality.Psr4.NotInPSR4
+            - InpsydeCodingStandard.CodeQuality.Psr4.InvalidPSR4
         - InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration
             - InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration.MissingReturn
             - InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration.IncorrectVoidReturn

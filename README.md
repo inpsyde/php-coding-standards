@@ -143,10 +143,11 @@ Customs rules are:
 - Discourage usage of `define` where `const` is preferable.
 - Discourage usage of more than 10 properties per class.
 - Enforce return type declaration, with few exceptions (e.g. hook callbacks or `ArrayAccess` methods)
+- Check PSR-4 compliance
 
 The tree of used rules are listed in the `/docs/rules-list/custom.md` file in this repo.
 
-### Notes
+### Notes & Configuration
 
 #### Skip `InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration.NoReturnType` via doc bloc
 
@@ -158,6 +159,44 @@ However, if min PHP version is set to 7.1 via php-compatibility `testVersion` co
 Also note that the warning **is** shown in case:
  - the `@return` docbloc declares more than one not-null types, e.g. `@return Foo|Bar|null`
  - the `@return` docbloc types contains "mixed", e.g. `@return mixed|null`.
+ 
+ 
+#### PSR-4 Configuration
+`InpsydeCodingStandard.CodeQuality.Psr4` rule needs some configuration to check namespace and
+class file paths.
+Without configuration the only thing the sniff does is to check that class name and file name match.
+The needed configuration mimics the PSR-4 configuration in `composer.json`.
+Assuming a `composer.json` like:
+```json
+{
+  "autoload": {
+      "psr-4": {
+        "Inpsyde\\Foo\\": "src/",
+        "Inpsyde\\Foo\\Bar\\Baz\\": "baz/"
+      }
+    }
+}
+```
+the rule configuration should be:
+```xml
+<rule ref="InpsydeCodingStandard.CodeQuality.Psr4">
+    <properties>
+        <property name="psr4" type="array" value="Inpsyde\Foo=>src,Inpsyde\Foo\Bar\Baz=>baz" />
+    </properties>
+</rule>
+```
+Please note that when a PSR-4 configuration is given, *all* autoloadable entities (classes/interfaces/trait)
+are checked to be compliant.
+If there are entities in the sniffer target paths that are not PSR-4 compliant (e.g. loaded via classmap
+or not autoloaded at all) those should be excluded via `exclude` property, e.g.
+```xml
+<rule ref="InpsydeCodingStandard.CodeQuality.Psr4">
+    <properties>
+        <property name="psr4" type="array" value="Inpsyde\SomePlugin=>src" />
+        <property name="exclude" type="array" value="Inpsyde\ExcludeThis,Inpsyde\AndThis" />
+    </properties>
+</rule>
+```
 
 -------------
 

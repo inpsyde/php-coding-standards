@@ -1,5 +1,8 @@
 # Changelog
 
+## Not released
+- Add `Psr4Sniff` to check PSR-4 compliance of files that contain classes auto-loadable entities.
+
 ## 0.9.0
 - `ReturnTypeDeclarationSniff` do no warn for missing return type when a docbloc like:
   `@return {aType}|null` exists for the function.
