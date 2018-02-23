@@ -114,7 +114,9 @@ class ReturnTypeDeclarationSniff implements Sniff
             );
         }
 
-        if (PhpcsHelpers::isHookClosure($file, $position) || PhpcsHelpers::isHookFunction($file, $position)) {
+        if (PhpcsHelpers::isHookClosure($file, $position)
+            || PhpcsHelpers::isHookFunction($file, $position)
+        ) {
             return;
         }
 
