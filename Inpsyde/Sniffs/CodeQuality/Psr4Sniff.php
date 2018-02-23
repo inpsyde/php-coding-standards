@@ -52,18 +52,29 @@ final class Psr4Sniff implements Sniff
             $entityType = $code === T_TRAIT ? 'trait' : 'interface';
         }
 
-        $this->exclude = $this->normalizeExcluded($this->exclude);
+        if (!$this->psr4 || !is_array($this->psr4)) {
+            $this->checkFilenameOnly($file, $position, $className, $entityType);
 
-        $validNamespace = is_array($this->psr4) && $this->psr4
-            ? $this->checkNamespace($file, $position, $entityType, $className)
-            : true;
-
-        if (!$validNamespace) {
             return;
         }
 
-        $fileName = basename($file->getFilename());
-        if ($fileName === "{$className}.php") {
+        $this->exclude = is_array($this->exclude) ? $this->normalizeExcluded($this->exclude) : [];
+        $this->checkPsr4($file, $position, $entityType, $className);
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @param string $className
+     * @param string $entityType
+     */
+    private function checkFilenameOnly(
+        File $file,
+        int $position,
+        string $className,
+        string $entityType
+    ) {
+        if (basename($file->getFilename()) === "{$className}.php") {
             return;
         }
 
@@ -72,7 +83,7 @@ final class Psr4Sniff implements Sniff
                 "File containing %s '%s' is named '%s' instead of '%s'.",
                 $entityType,
                 $className,
-                $fileName,
+                $file->getFilename(),
                 "{$className}.php"
             ),
             $position,
@@ -87,55 +98,57 @@ final class Psr4Sniff implements Sniff
      * @param string $className
      * @return bool
      */
-    private function checkNamespace(
+    private function checkPsr4(
         File $file,
         int $position,
         string $entityType,
         string $className
     ) {
 
-        list($namespacePos, $namespace) = PhpcsHelpers::findNamespace($file, $position);
+        list(, $namespace) = PhpcsHelpers::findNamespace($file, $position);
 
         $fullyQualifiedName = "{$namespace}\\{$className}";
         if (in_array($fullyQualifiedName, $this->exclude, true)) {
             return true;
         }
 
-        list($baseNamespace, $baseFolder) = $this->classPsr4Info($namespace);
+        $filePath = str_replace('\\', '/', $file->getFilename());
 
-        if (!$baseNamespace || !$namespacePos) {
-            $file->addError(
-                sprintf(
-                    "Namespace '%s' is not compliant with given PSR-4 configuration.",
-                    $namespace
-                ),
-                $namespacePos,
-                'NotInPSR4'
-            );
+        foreach ($this->psr4 as $baseNamespace => $folder) {
+            $baseNamespace = trim($baseNamespace, '\\');
+            if (strpos($namespace, $baseNamespace) !== 0) {
+                continue;
+            }
 
-            return false;
-        }
+            $folder = trim(str_replace('\\', '/', $folder), './');
+            $folderSplit = explode("/{$folder}/", $filePath);
+            if (count($folderSplit) < 2) {
+                continue;
+            }
 
-        $namespaceRemain = trim(substr($namespace, strlen($baseNamespace)), '\\');
-        $expectedDirChunks = explode('\\', $namespaceRemain);
-        array_unshift($expectedDirChunks, $baseFolder);
+            $relativePath = array_pop($folderSplit);
+            if (basename($relativePath) !== "{$className}.php") {
+                continue;
+            }
 
-        $classPath = dirname($file->getFilename());
-        $classDirChunks = explode('/', str_replace('\\', '/', $classPath));
-        $actualDirChunks = array_slice($classDirChunks, -1 * count($expectedDirChunks));
+            $relativeNamespace = str_replace('/', '\\', dirname($relativePath));
+            $expectedNamespace = $relativeNamespace === '.'
+                ? $baseNamespace
+                : "{$baseNamespace}\\{$relativeNamespace}";
 
-        if ($expectedDirChunks === $actualDirChunks) {
-            return true;
+            if ("{$expectedNamespace}\\{$className}" === "{$namespace}\\{$className}") {
+                return true;
+            }
         }
 
         $file->addError(
             sprintf(
-                "%s '%s', located in folder '%s', is not compliant with PSR-4 configuration.",
+                "%s '%s', located at '%s', is not compliant with PSR-4 configuration.",
                 ucfirst($entityType),
                 $fullyQualifiedName,
-                $classPath
+                $filePath
             ),
-            $namespacePos,
+            $position,
             'InvalidPSR4'
         );
 
@@ -154,25 +167,5 @@ final class Psr4Sniff implements Sniff
             },
             $excluded
         );
-    }
-
-    /**
-     * @param string $namespace
-     * @return array
-     */
-    private function classPsr4Info(string $namespace): array
-    {
-        $classBaseNamespace = null;
-        $classBaseFolder = null;
-        foreach ($this->psr4 as $baseNamespace => $folder) {
-            $baseNamespace = trim($baseNamespace, '\\');
-            if (strpos($namespace, $baseNamespace) === 0) {
-                $classBaseNamespace = $baseNamespace;
-                $classBaseFolder = trim(str_replace('\\', '/', $folder), './');
-                break;
-            }
-        }
-
-        return [$classBaseNamespace, $classBaseFolder];
     }
 }

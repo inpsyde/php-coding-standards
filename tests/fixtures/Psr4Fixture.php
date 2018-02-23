@@ -9,7 +9,6 @@ namespace {
     // @phpcsSniffPropertiesEnd
 }
 
-
 namespace Inpsyde\InpsydeCodingStandard\Tests\fixtures {
 
     class Psr4Fixture
@@ -17,25 +16,25 @@ namespace Inpsyde\InpsydeCodingStandard\Tests\fixtures {
 
     }
 
-    // @phpcsErrorCodeOnNextLine WrongFilename
+    // @phpcsErrorCodeOnNextLine InvalidPSR4
     class ThisIsWrong
     {
 
     }
 }
 
-// @phpcsErrorCodeOnNextLine NotInPSR4
 namespace Inpsyde\InpsydeCodingStandard\Foo\Bar {
 
+    // @phpcsErrorCodeOnNextLine InvalidPSR4
     interface ThisIsWrong
     {
 
     }
 }
 
-// @phpcsErrorCodeOnNextLine InvalidPSR4
 namespace Inpsyde\InpsydeCodingStandard\Tests\Bar {
 
+    // @phpcsErrorCodeOnNextLine InvalidPSR4
     trait ThisIsWrong
     {
 
