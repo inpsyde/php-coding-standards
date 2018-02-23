@@ -13,7 +13,7 @@
  * released under BSD license.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
@@ -22,7 +22,7 @@ use PHP_CodeSniffer\Files\File;
  * Modified version of the `LineLengthSniff` from "Generic" standard that
  * ignores long lines when they contain string
  *
- * @package Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality
+ * @package Inpsyde\Sniffs\CodeQuality
  */
 class LineLengthSniff implements Sniff
 {

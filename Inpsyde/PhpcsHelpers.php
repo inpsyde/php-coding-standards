@@ -13,7 +13,7 @@
  * released under MIT license.
  */
 
-namespace Inpsyde\InpsydeCodingStandard;
+namespace Inpsyde;
 
 use PHP_CodeSniffer\Exceptions\RuntimeException as CodeSnifferRuntimeException;
 use PHP_CodeSniffer\Files\File;
@@ -23,7 +23,7 @@ use PHP_CodeSniffer\Util\Tokens;
  * @package php-coding-standards
  * @license http://opensource.org/licenses/MIT MIT
  */
-class Helpers
+class PhpcsHelpers
 {
     const CODE_TO_TYPE_MAP = [
         T_CONST => 'Constant',
@@ -452,8 +452,8 @@ class Helpers
             }
 
             if (!$scopeClosers->count() && $tokens[$i]['code'] === T_RETURN) {
-                Helpers::isVoidReturn($file, $i) ? $voidReturnCount++ : $nonVoidReturnCount++;
-                Helpers::isNullReturn($file, $i) and $nullReturnCount++;
+                PhpcsHelpers::isVoidReturn($file, $i) ? $voidReturnCount++ : $nonVoidReturnCount++;
+                PhpcsHelpers::isNullReturn($file, $i) and $nullReturnCount++;
             }
         }
 

@@ -149,7 +149,7 @@ The tree of used rules are listed in the `/docs/rules-list/custom.md` file in th
 
 ### Notes & Configuration
 
-#### Skip `InpsydeCodingStandard.CodeQuality.ReturnTypeDeclaration.NoReturnType` via doc bloc
+#### Skip `InpsydeCodeQuality.ReturnTypeDeclaration.NoReturnType` via doc bloc
 
 As of v0.9, when there's no return type declared for a function, but it has a docbloc like:
 `@return {$type}|null` and the function _actually_ contains both `null` and not-null return
@@ -162,7 +162,7 @@ Also note that the warning **is** shown in case:
  
  
 #### PSR-4 Configuration
-`InpsydeCodingStandard.CodeQuality.Psr4` rule needs some configuration to check namespace and
+`InpsydeCodeQuality.Psr4` rule needs some configuration to check namespace and
 class file paths.
 Without configuration the only thing the sniff does is to check that class name and file name match.
 The needed configuration mimics the PSR-4 configuration in `composer.json`.
@@ -179,7 +179,7 @@ Assuming a `composer.json` like:
 ```
 the rule configuration should be:
 ```xml
-<rule ref="InpsydeCodingStandard.CodeQuality.Psr4">
+<rule ref="InpsydeCodeQuality.Psr4">
     <properties>
         <property name="psr4" type="array" value="Inpsyde\Foo=>src,Inpsyde\Foo\Bar\Baz=>baz" />
     </properties>
@@ -190,7 +190,7 @@ are checked to be compliant.
 If there are entities in the sniffer target paths that are not PSR-4 compliant (e.g. loaded via classmap
 or not autoloaded at all) those should be excluded via `exclude` property, e.g.
 ```xml
-<rule ref="InpsydeCodingStandard.CodeQuality.Psr4">
+<rule ref="InpsydeCodeQuality.Psr4">
     <properties>
         <property name="psr4" type="array" value="Inpsyde\SomePlugin=>src" />
         <property name="exclude" type="array" value="Inpsyde\ExcludeThis,Inpsyde\AndThis" />

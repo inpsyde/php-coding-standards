@@ -13,9 +13,9 @@
  * released under MIT license.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\InpsydeCodingStandard\Helpers;
+use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
@@ -60,14 +60,14 @@ final class ElementNameMinimalLengthSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        $elementName = Helpers::tokenName($file, $position);
+        $elementName = PhpcsHelpers::tokenName($file, $position);
         $elementNameLength = mb_strlen($elementName);
 
         if ($this->shouldBeSkipped($elementNameLength, $elementName)) {
             return;
         }
 
-        $typeName = Helpers::tokenTypeName($file, $position);
+        $typeName = PhpcsHelpers::tokenTypeName($file, $position);
         $message = sprintf(
             '%s name "%s" is only %d chars long. Must be at least %d.',
             $typeName,

@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\InpsydeCodingStandard\Helpers;
+use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
@@ -38,7 +38,7 @@ final class NoTopLevelDefineSniff implements Sniff
 
         if (($token['content'] ?? '') !== 'define'
             || ($token['level'] ?? -1) !== 0
-            || !Helpers::isFunctionCall($file, $position)
+            || !PhpcsHelpers::isFunctionCall($file, $position)
         ) {
             return;
         }

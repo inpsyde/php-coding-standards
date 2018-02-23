@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
 use PHP_CodeSniffer\Standards\Generic\Sniffs\PHP as Generic;
 

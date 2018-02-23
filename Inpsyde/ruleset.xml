@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<ruleset name="Inpsyde Coding Standard" namespace="Inpsyde\InpsydeCodingStandard">
+<ruleset name="Inpsyde Coding Standard">
 
 	<description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
 
-    <autoload>./Helpers.php</autoload>
+    <autoload>./PhpcsHelpers.php</autoload>
     <autoload>./PHPCSAliases.php</autoload>
 
 	<!--

@@ -3,7 +3,7 @@
 
     <description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
 
-    <autoload>./Inpsyde/Helpers.php</autoload>
+    <autoload>./Inpsyde/PhpcsHelpers.php</autoload>
     <autoload>./Inpsyde/PHPCSAliases.php</autoload>
 
     <file>./Inpsyde/Sniffs</file>

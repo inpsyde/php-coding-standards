@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\InpsydeCodingStandard\Helpers;
+use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 
@@ -29,18 +29,18 @@ class HookClosureReturnSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        if (!Helpers::isHookClosure($file, $position)) {
+        if (!PhpcsHelpers::isHookClosure($file, $position)) {
             return;
         }
 
-        list($functionStart, $functionEnd) = Helpers::functionBoundaries($file, $position);
+        list($functionStart, $functionEnd) = PhpcsHelpers::functionBoundaries($file, $position);
         if (!$functionStart < 0 || $functionEnd <= 0) {
             return;
         }
 
-        list($nonVoidReturnCount, $voidReturnCount) = Helpers::countReturns($file, $position);
+        list($nonVoidReturnCount, $voidReturnCount) = PhpcsHelpers::countReturns($file, $position);
 
-        $isFilterClosure = Helpers::isHookClosure($file, $position, true, false);
+        $isFilterClosure = PhpcsHelpers::isHookClosure($file, $position, true, false);
 
         if ($isFilterClosure && (!$nonVoidReturnCount || $voidReturnCount)) {
             $file->addError(

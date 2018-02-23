@@ -13,9 +13,9 @@
  * released under MIT license.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\InpsydeCodingStandard\Helpers;
+use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 
@@ -41,9 +41,9 @@ class ArgumentTypeDeclarationSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        if (Helpers::functionIsArrayAccess($file, $position)
-            || Helpers::isHookClosure($file, $position)
-            || Helpers::isHookFunction($file, $position)
+        if (PhpcsHelpers::functionIsArrayAccess($file, $position)
+            || PhpcsHelpers::isHookClosure($file, $position)
+            || PhpcsHelpers::isHookFunction($file, $position)
         ) {
             return;
         }
@@ -57,7 +57,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
             return;
         }
 
-        $variables = Helpers::filterTokensByType($paramsStart, $paramsEnd, $file, T_VARIABLE);
+        $variables = PhpcsHelpers::filterTokensByType($paramsStart, $paramsEnd, $file, T_VARIABLE);
 
         foreach (array_keys($variables) as $varPosition) {
             $typePosition = $file->findPrevious(

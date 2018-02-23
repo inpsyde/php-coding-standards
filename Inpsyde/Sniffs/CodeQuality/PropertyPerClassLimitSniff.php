@@ -13,9 +13,9 @@
  * released under MIT license.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\InpsydeCodingStandard\Helpers;
+use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
@@ -44,7 +44,7 @@ final class PropertyPerClassLimitSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        $count = count(Helpers::classPropertiesTokenIndexes($file, $position));
+        $count = count(PhpcsHelpers::classPropertiesTokenIndexes($file, $position));
 
         if ($count > $this->maxCount) {
             $tokenType = $file->getTokens()[$position]['content'];

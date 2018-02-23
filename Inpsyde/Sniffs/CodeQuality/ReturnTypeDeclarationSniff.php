@@ -13,9 +13,9 @@
  * released under MIT license.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\InpsydeCodingStandard\Helpers;
+use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 use PHPCompatibility;
@@ -42,11 +42,11 @@ class ReturnTypeDeclarationSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        if (Helpers::functionIsArrayAccess($file, $position)) {
+        if (PhpcsHelpers::functionIsArrayAccess($file, $position)) {
             return;
         }
 
-        list($functionStart, $functionEnd) = Helpers::functionBoundaries($file, $position);
+        list($functionStart, $functionEnd) = PhpcsHelpers::functionBoundaries($file, $position);
         if (!$functionStart < 0 || $functionEnd <= 0) {
             return;
         }
@@ -56,7 +56,7 @@ class ReturnTypeDeclarationSniff implements Sniff
             $position
         );
 
-        list($nonVoidReturnCount, $voidReturnCount, $nullReturnCount) = Helpers::countReturns(
+        list($nonVoidReturnCount, $voidReturnCount, $nullReturnCount) = PhpcsHelpers::countReturns(
             $file,
             $position
         );
@@ -114,7 +114,7 @@ class ReturnTypeDeclarationSniff implements Sniff
             );
         }
 
-        if (Helpers::isHookClosure($file, $position) || Helpers::isHookFunction($file, $position)) {
+        if (PhpcsHelpers::isHookClosure($file, $position) || PhpcsHelpers::isHookFunction($file, $position)) {
             return;
         }
 
@@ -167,7 +167,7 @@ class ReturnTypeDeclarationSniff implements Sniff
      */
     private function hasReturnNullDocBloc(File $file, int $functionPosition): bool
     {
-        $return = Helpers::functionDocBlockTag('@return', $file, $functionPosition);
+        $return = PhpcsHelpers::functionDocBlockTag('@return', $file, $functionPosition);
         if (!$return) {
             return false;
         }

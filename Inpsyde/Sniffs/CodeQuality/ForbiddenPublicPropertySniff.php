@@ -13,9 +13,9 @@
  * released under MIT license.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\InpsydeCodingStandard\Helpers;
+use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Util\Tokens;
@@ -40,7 +40,7 @@ final class ForbiddenPublicPropertySniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        if (!Helpers::variableIsProperty($file, $position)) {
+        if (!PhpcsHelpers::variableIsProperty($file, $position)) {
             return;
         }
 

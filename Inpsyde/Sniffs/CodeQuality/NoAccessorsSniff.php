@@ -13,9 +13,9 @@
  * released under MIT license.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\InpsydeCodingStandard\Helpers;
+use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
@@ -49,7 +49,7 @@ final class NoAccessorsSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        if ($this->skipForFunctions && !Helpers::functionIsMethod($file, $position)) {
+        if ($this->skipForFunctions && !PhpcsHelpers::functionIsMethod($file, $position)) {
             return;
         }
 

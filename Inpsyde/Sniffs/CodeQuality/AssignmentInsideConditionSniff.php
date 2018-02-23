@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\InpsydeCodingStandard\Helpers;
+use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Util\Tokens;
@@ -78,7 +78,7 @@ final class AssignmentInsideConditionSniff implements Sniff
         File $file
     ): array {
 
-        $assignmentTokens = Helpers::filterTokensByType(
+        $assignmentTokens = PhpcsHelpers::filterTokensByType(
             $ifOpenerPosition + 1,
             $ifCloserPosition - 1,
             $file,
@@ -123,7 +123,7 @@ final class AssignmentInsideConditionSniff implements Sniff
             return false;
         }
 
-        $parenthesisInBetween = Helpers::filterTokensByType(
+        $parenthesisInBetween = PhpcsHelpers::filterTokensByType(
             $insideIfOpenParenthesisPosition + 1,
             $insideIfCloserParenthesisPosition - 1,
             $file,

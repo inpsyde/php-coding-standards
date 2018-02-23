@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Inpsyde\InpsydeCodingStandard\Sniffs\CodeQuality;
+namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\InpsydeCodingStandard\Helpers;
+use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
@@ -94,7 +94,7 @@ final class Psr4Sniff implements Sniff
         string $className
     ) {
 
-        list($namespacePos, $namespace) = Helpers::findNamespace($file, $position);
+        list($namespacePos, $namespace) = PhpcsHelpers::findNamespace($file, $position);
 
         $fullyQualifiedName = "{$namespace}\\{$className}";
         if (in_array($fullyQualifiedName, $this->exclude, true)) {

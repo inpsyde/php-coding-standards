@@ -9,7 +9,7 @@
  */
 
 putenv('SNIFFS_PATH=' . realpath(dirname(__DIR__) . '/Inpsyde/Sniffs'));
-putenv('SNIFFS_NAMESPACE=' . 'Inpsyde\\InpsydeCodingStandard\\Sniffs');
+putenv('SNIFFS_NAMESPACE=' . 'Inpsyde\\Sniffs');
 putenv('FIXTURES_PATH=' . realpath(__DIR__ . '/fixtures'));
 
 $vendor = dirname(__DIR__) . '/vendor/';
@@ -19,5 +19,5 @@ if (!realpath($vendor)) {
 
 require_once($vendor . 'autoload.php');
 require_once($vendor . 'squizlabs/php_codesniffer/tests/bootstrap.php');
-require_once(dirname(__DIR__) . '/Inpsyde/Helpers.php');
+require_once(dirname(__DIR__) . '/Inpsyde/PhpcsHelpers.php');
 unset($vendor);
