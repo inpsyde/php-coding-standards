@@ -74,7 +74,12 @@ final class SniffMessages
      */
     public function messageLines(): array
     {
-        return array_keys($this->messages);
+        $messageLines = array_keys($this->messages);
+        if ($this->messagesContainTotal) {
+            return $messageLines;
+        }
+
+        return array_unique(array_merge($this->errorLines(), $this->warningLines(), $messageLines));
     }
 
     /**

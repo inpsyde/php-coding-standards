@@ -144,17 +144,23 @@ class FixturesTest extends TestCase
 
         $expectedTotal = $expected->total();
         $actualTotal = $actual->total();
+        $unexpected = array_diff($actual->messageLines(), $expected->messageLines());
+        $notRaised = array_diff($expected->messageLines(), $actual->messageLines());
+        $mismatch = array_unique(array_merge($unexpected, $notRaised));
 
         self::assertSame(
             $expectedTotal,
             $actualTotal,
             sprintf(
                 'Fixture \'%s\', for sniff \'%s\', expected a total of %d messages, '
-                . 'but actually a total of %d messages found.',
+                . 'but actually a total of %d messages found.'
+                . ' (mismatch found at %s %s)',
                 $fixtureFile,
                 $sniffClass,
                 $expectedTotal,
-                $actualTotal
+                $actualTotal,
+                count($mismatch) === 1 ? 'line' : 'lines:',
+                implode(', ', $mismatch)
             )
         );
     }
