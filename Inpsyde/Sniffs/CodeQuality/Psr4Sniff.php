@@ -59,7 +59,7 @@ final class Psr4Sniff implements Sniff
         }
 
         $this->exclude = is_array($this->exclude) ? $this->normalizeExcluded($this->exclude) : [];
-        $this->checkPsr4($file, $position, $entityType, $className);
+        $this->checkPsr4($file, $position, $className, $entityType);
     }
 
     /**
@@ -94,22 +94,21 @@ final class Psr4Sniff implements Sniff
     /**
      * @param File $file
      * @param int $position
-     * @param string $entityType
      * @param string $className
-     * @return bool
+     * @param string $entityType
      */
     private function checkPsr4(
         File $file,
         int $position,
-        string $entityType,
-        string $className
+        string $className,
+        string $entityType
     ) {
 
         list(, $namespace) = PhpcsHelpers::findNamespace($file, $position);
 
         $fullyQualifiedName = "{$namespace}\\{$className}";
         if (in_array($fullyQualifiedName, $this->exclude, true)) {
-            return true;
+            return;
         }
 
         $filePath = str_replace('\\', '/', $file->getFilename());
@@ -137,7 +136,7 @@ final class Psr4Sniff implements Sniff
                 : "{$baseNamespace}\\{$relativeNamespace}";
 
             if ("{$expectedNamespace}\\{$className}" === "{$namespace}\\{$className}") {
-                return true;
+                return;
             }
         }
 
@@ -151,8 +150,6 @@ final class Psr4Sniff implements Sniff
             $position,
             'InvalidPSR4'
         );
-
-        return false;
     }
 
     /**
