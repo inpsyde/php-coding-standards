@@ -12,7 +12,7 @@ It means they can be installed by adding the entry to composer.json `require-dev
 ```json
 {
 	"require-dev": {
-		"inpsyde/php-coding-standards": "^0.9"
+		"inpsyde/php-coding-standards": "~0.10.0"
 	}
 }
 ```
@@ -114,6 +114,15 @@ See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.
 
 The tree of used rules are listed in the `/docs/rules-list/wordpress.md` file in this repo.
 
+## PHPCompatibility
+
+See https://github.com/wimg/PHPCompatibility.
+
+It allows to analyse code for compatibility with higher and lower versions of PHP.
+The default target version is PHP 7.0+.
+
+Target version can be changed via custom `phpcs.xml`.
+
 
 ## Generic Rules
 
@@ -127,76 +136,28 @@ The tree of used rules are listed in the `/docs/rules-list/generic.md` file in t
 
 ## Custom Rules
 
-Few custom rules are also in use.
-Customs rules are:
+Some custom rules are also in use. They are:
 
-- Enforce argument type declaration, with few exception (e.g. hook callbacks or `ArrayAccess` methods)
-- Ensure that any assignment inside conditions in wrapped in parenthesis
-- Disallow short open PHP tag
-- Use minimum 3 chars for names (with a few exclusions)
-- No public class properties
-- Max 50 lines per function/method, excluding blank lines and comments-only lines.
-- Ensure that actions callbacks do not return anything, while filter callbacks return something.
-- Max 100 chars per line, excluding leading indent size and long string inWP translation functions
-- Discourage usage of getters and setters.
-- Discourage usage of `else`.
-- Discourage usage of `define` where `const` is preferable.
-- Discourage usage of more than 10 properties per class.
-- Enforce return type declaration, with few exceptions (e.g. hook callbacks or `ArrayAccess` methods)
-- Check PSR-4 compliance
+| Sniff name | Description | Has Config | Has Notes |
+|:-----------|:------------|:----------:|:---------:|
+| `ArgumentTypeDeclarationSniff`|Enforce argument type declaration, with few exception (e.g. hook callbacks or `ArrayAccess` methods)|||
+| `AssignmentInsideConditionSniff`|Ensure that any assignment inside conditions in wrapped in parenthesis|||
+| `DisallowShortOpenTagSniff`|Disallow short open PHP tag (short echo tag allowed).|||
+| `ElementNameMinimalLengthSniff`|Use minimum 3 chars for names (with a few exclusions)|✓||
+| `ForbiddenPublicPropertySniff`|No public class properties|||
+| `FunctionLengthSniff`|Max 50 lines per function/method, excluding blank lines and comments-only lines.|✓||
+| `HookClosureReturnSniff`|Ensure that actions callbacks do not return anything, while filter callbacks return something.|||
+| `LineLengthSniff`|Max 100 chars per line, excluding leading indent space and long string in WP translation functions|✓||
+| `NoAccessorsSniff`|Discourage usage of getters and setters.|||
+| `NoElseSniff`|Discourage usage of `else`.|||
+| `NoTopLevelDefineSniff`|Discourage usage of `define` where `const` is preferable.|||
+| `PropertyPerClassLimitSniff`|Discourage usage of more than 10 properties per class.|✓||
+| `Psr4Sniff`|Check PSR-4 compliance|✓||
+| `ReturnTypeDeclarationSniff`|Enforce return type declaration, with few exceptions (e.g. hook callbacks or `ArrayAccess` methods)||✓|
 
-The tree of used rules are listed in the `/docs/rules-list/custom.md` file in this repo.
+For **notes and configuration** see `/docs/rules-list/inpsyde-rules-configuration.md` file in this repo.
 
-### Notes & Configuration
-
-#### Skip `Inpsyde.CodeQuality.ReturnTypeDeclaration.NoReturnType` via doc bloc
-
-As of v0.9, when there's no return type declared for a function, but it has a docbloc like:
-`@return {$type}|null` and the function _actually_ contains both `null` and not-null return
-points **no** warning is shown.
-However, if min PHP version is set to 7.1 via php-compatibility `testVersion` config, the warning
-**is** shown, because in PHP 7.1 there's the availability for nullable return types.
-Also note that the warning **is** shown in case:
- - the `@return` docbloc declares more than one not-null types, e.g. `@return Foo|Bar|null`
- - the `@return` docbloc types contains "mixed", e.g. `@return mixed|null`.
- 
- 
-#### PSR-4 Configuration
-`Inpsyde.CodeQuality.Psr4` rule needs some configuration to check namespace and
-class file paths.
-Without configuration the only thing the sniff does is to check that class name and file name match.
-The needed configuration mimics the PSR-4 configuration in `composer.json`.
-Assuming a `composer.json` like:
-```json
-{
-  "autoload": {
-      "psr-4": {
-        "Inpsyde\\Foo\\": "src/",
-        "Inpsyde\\Foo\\Bar\\Baz\\": "baz/"
-      }
-    }
-}
-```
-the rule configuration should be:
-```xml
-<rule ref="Inpsyde.CodeQuality.Psr4">
-    <properties>
-        <property name="psr4" type="array" value="Inpsyde\Foo=>src,Inpsyde\Foo\Bar\Baz=>baz" />
-    </properties>
-</rule>
-```
-Please note that when a PSR-4 configuration is given, *all* autoloadable entities (classes/interfaces/trait)
-are checked to be compliant.
-If there are entities in the sniffer target paths that are not PSR-4 compliant (e.g. loaded via classmap
-or not autoloaded at all) those should be excluded via `exclude` property, e.g.
-```xml
-<rule ref="Inpsyde.CodeQuality.Psr4">
-    <properties>
-        <property name="psr4" type="array" value="Inpsyde\SomePlugin=>src" />
-        <property name="exclude" type="array" value="Inpsyde\ExcludeThis,Inpsyde\AndThis" />
-    </properties>
-</rule>
-```
+The tree of rules are listed in the `/docs/rules-list/custom.md` file in this repo.
 
 -------------
 
