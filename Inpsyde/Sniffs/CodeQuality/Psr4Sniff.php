@@ -107,8 +107,10 @@ final class Psr4Sniff implements Sniff
         list(, $namespace) = PhpcsHelpers::findNamespace($file, $position);
 
         $fullyQualifiedName = "{$namespace}\\{$className}";
-        if (in_array($fullyQualifiedName, $this->exclude, true)) {
-            return;
+        foreach ($this->exclude as $excluded) {
+            if (strpos($fullyQualifiedName, $excluded) === 0) {
+                return;
+            }
         }
 
         $filePath = str_replace('\\', '/', $file->getFilename());
