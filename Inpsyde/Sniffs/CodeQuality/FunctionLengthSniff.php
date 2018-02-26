@@ -65,6 +65,7 @@ final class FunctionLengthSniff implements Sniff
 
         $ignored = [];
         $suffix = '';
+        $this->normalizeIgnoreFlags();
         $this->ignoreBlankLines and $ignored[] = 'blank lines';
         $this->ignoreComments and $ignored[] = 'single line comments';
         $this->ignoreDocBlocks and $ignored[] = 'doc blocks';
@@ -196,5 +197,20 @@ final class FunctionLengthSniff implements Sniff
             : 1;
 
         return $docBlocks;
+    }
+
+    private function normalizeIgnoreFlags()
+    {
+        $flags = [
+            'ignoreBlankLines',
+            'ignoreComments',
+            'ignoreDocBlocks',
+        ];
+
+        foreach ($flags as $flag) {
+            if (is_string($this->{$flag})) {
+                $this->{$flag} = (bool)filter_var($this->{$flag}, FILTER_VALIDATE_BOOLEAN);
+            }
+        }
     }
 }
