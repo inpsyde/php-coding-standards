@@ -110,6 +110,8 @@ That is possible via `maxCount` property, e.g.:
 </rule>
 ```
 
+-----
+
 
 ## Inpsyde.CodeQuality.Psr4
 
