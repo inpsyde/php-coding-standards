@@ -1,9 +1,11 @@
 # Changelog
 
-## Not released
+## 0.10.0
 - Renamed sniffs namespace (**breaking change**).
   Sniff are now referenced via `Inpsyde.CodeQuality...` instead of `InpsydeCodingStandard.CodeQuality...`
 - Add `Psr4Sniff` to check PSR-4 compliance of files that contain classes auto-loadable entities.
+- Minor tweaks to sniff.
+- Improved documentation for custom sniffs and their configuration.
 
 ## 0.9.0
 - `ReturnTypeDeclarationSniff` do no warn for missing return type when a docbloc like:
