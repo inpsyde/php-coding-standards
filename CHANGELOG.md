@@ -1,5 +1,8 @@
 # Changelog
 
+## Not released
+- Fix false positive in `ReturnTypeDeclarationSniff` with nullable types.
+
 ## 0.10.0
 - Renamed sniffs namespace (**breaking change**).
   Sniff are now referenced via `Inpsyde.CodeQuality...` instead of `InpsydeCodingStandard.CodeQuality...`

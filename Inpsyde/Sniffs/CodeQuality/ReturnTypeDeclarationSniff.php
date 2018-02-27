@@ -51,15 +51,21 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
-        list($hasNonVoidReturnType, $hasVoidReturnType, $hasNoReturnType) = $this->returnTypeInfo(
-            $file,
-            $position
-        );
+        list(
+            $hasNonVoidReturnType,
+            $hasVoidReturnType,
+            $hasNoReturnType,
+            $hasNullable
+            ) = $this->returnTypeInfo($file, $position);
 
         list($nonVoidReturnCount, $voidReturnCount, $nullReturnCount) = PhpcsHelpers::countReturns(
             $file,
             $position
         );
+
+        if ($hasNullable) {
+            $voidReturnCount -= $nullReturnCount;
+        }
 
         $this->maybeErrors(
             $hasNonVoidReturnType,
@@ -151,15 +157,27 @@ class ReturnTypeDeclarationSniff implements Sniff
         );
 
         $returnType = $tokens[$returnTypeToken] ?? null;
-        if ($returnType && $returnType['type'] !== "T_RETURN_TYPE") {
-            $returnType = null;
+        if ($returnType && $returnType['code'] !== T_RETURN_TYPE) {
+            return [false, false, true, false];
         }
 
-        $hasNonVoidReturnType = $returnType && $returnType['content'] !== 'void';
-        $hasVoidReturnType = $returnType && $returnType['content'] === 'void';
-        $hasNoReturnType = !$returnType;
+        $start = $tokens[$functionPosition]['parenthesis_closer'] + 1;
+        $end = $tokens[$functionPosition]['scope_opener'];
+        $hasNullable = false;
+        for ($i = $start; $i < $end; $i++) {
+            if ($tokens[$i]['code'] === T_NULLABLE) {
+                $hasNullable = true;
+                break;
+            }
+            if ($tokens[$i]['code'] === T_WHITESPACE) {
+                continue;
+            }
+        }
 
-        return [$hasNonVoidReturnType, $hasVoidReturnType, $hasNoReturnType];
+        $hasNonVoidReturnType = $returnType['content'] !== 'void';
+        $hasVoidReturnType = $returnType['content'] === 'void';
+
+        return [$hasNonVoidReturnType, $hasVoidReturnType, false, $hasNullable];
     }
 
     /**
