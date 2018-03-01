@@ -44,6 +44,7 @@ final class ElementNameMinimalLengthSniff implements Sniff
         'go',
         'it',
         'db',
+        'is',
     ];
 
     /**

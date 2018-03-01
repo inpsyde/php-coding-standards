@@ -16,8 +16,10 @@ That is possible via `minLength` property, e.g.:
 It is also possible to configure the whitelist of allowed names with less than 3 (or whatever
 the minimal length is configured to) characters.
 By default the whitelisted names are:
+
  - `'i'`
  - `'id'`
+ - `'is'`
  - `'to'`
  - `'up'`
  - `'ok'`

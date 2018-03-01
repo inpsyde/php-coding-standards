@@ -2,6 +2,7 @@
 
 ## Not released
 - Fix false positive in `ReturnTypeDeclarationSniff` with nullable types.
+- Add `is` to the list of allowed short names.
 
 ## 0.10.0
 - Renamed sniffs namespace (**breaking change**).
