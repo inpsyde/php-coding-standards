@@ -73,7 +73,6 @@ class ReturnTypeDeclarationSniff implements Sniff
             $hasNoReturnType,
             $nonVoidReturnCount,
             $voidReturnCount,
-            $nullReturnCount,
             $file,
             $position
         );
@@ -85,7 +84,6 @@ class ReturnTypeDeclarationSniff implements Sniff
      * @param bool $hasNoReturnType
      * @param int $nonVoidReturnCount
      * @param int $voidReturnCount
-     * @param int $nullReturnCount
      * @param File $file
      * @param int $position
      */
@@ -95,7 +93,6 @@ class ReturnTypeDeclarationSniff implements Sniff
         bool $hasNoReturnType,
         int $nonVoidReturnCount,
         int $voidReturnCount,
-        int $nullReturnCount,
         File $file,
         int $position
     ) {
@@ -126,10 +123,7 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
-        if ($nullReturnCount
-            && $nonVoidReturnCount
-            && ($nullReturnCount === $voidReturnCount)
-            && !$this->areNullableReturnTypesSupported()
+        if (!$this->areNullableReturnTypesSupported()
             && $this->hasReturnNullDocBloc($file, $position)
         ) {
             return;

@@ -252,7 +252,7 @@ class FooAccess implements ArrayAccess
     /**
      * @return \ArrayAccess|null
      */
-    public function iShouldReturnNullButReturnVoid() // @phpcsWarningCodeOnThisLine NoReturnType
+    public function iShouldReturnNullButReturnVoid()
     {
         if (rand(1, 4) === 3) {
             return null;
@@ -268,7 +268,7 @@ class FooAccess implements ArrayAccess
     /**
      * @return \ArrayAccess|null
      */
-    public function iShouldReturnNull() // @phpcsWarningCodeOnThisLine NoReturnType
+    public function iShouldReturnNull()
     {
         return new \ArrayObject();
     }
