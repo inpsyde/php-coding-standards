@@ -5,6 +5,9 @@
 - Relax check for missing return type when `{aType}|null` doc bloc is present.
 - Add `is` to the list of allowed short names.
 - Added `FunctionBodyStartSniff` to deal with blank lines on top of functions body.
+- Added `VariablesNameSniff`.
+- Improved `PhpcsHelpers::variableIsProperty()`.
+- Improved failure handling in FixturesTest.
 
 ## 0.10.0
 - Renamed sniffs namespace (**breaking change**).
