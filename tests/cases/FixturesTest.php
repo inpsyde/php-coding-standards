@@ -37,10 +37,22 @@ class FixturesTest extends TestCase
             $this->validateFixture($fixtureFile, $parser, $failures);
         }
 
+        $previous = null;
         /** @var \Throwable $failure */
         foreach ($failures as $failure) {
-            $exception = $failure instanceof \Exception ? $failure : null;
-            throw new AssertionFailedError($failure->getMessage(), $failure->getCode(), $exception);
+            if (!$failure instanceof \Throwable) {
+                continue;
+            }
+
+            $previous = new AssertionFailedError(
+                $failure->getMessage(),
+                $failure->getCode(),
+                $previous
+            );
+        }
+
+        if ($previous) {
+            throw $previous;
         }
     }
 
@@ -120,9 +132,10 @@ class FixturesTest extends TestCase
         string $where,
         string $actualCode = null
     ) {
+
         $message = is_string($code)
-            ? sprintf("Expected %s code '%s' was not found", $type, $code)
-            : sprintf("Expected %s code was not found", $type, $code);
+            ? sprintf('Expected %s code \'%s\' was not found', $type, $code)
+            : sprintf('Expected %s was not found', $type);
 
         $code === true
             ? static::assertNotNull($actualCode, "{$message} {$where}.")
