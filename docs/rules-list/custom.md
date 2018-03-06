@@ -33,3 +33,6 @@
             - Inpsyde.CodeQuality.ReturnTypeDeclaration.IncorrectVoidReturn
             - Inpsyde.CodeQuality.ReturnTypeDeclaration.NoReturnType
             - Inpsyde.CodeQuality.ReturnTypeDeclaration.IncorrectVoidReturnType
+        - Inpsyde.CodeQuality.VariablesName
+            - Inpsyde.CodeQuality.VariablesName.CamelCaseVar
+            - Inpsyde.CodeQuality.VariablesName.SnakeCaseVar

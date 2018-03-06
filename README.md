@@ -155,6 +155,7 @@ Some custom rules are also in use. They are:
 | `PropertyPerClassLimitSniff`|Discourage usage of more than 10 properties per class.|✓|||
 | `Psr4Sniff`|Check PSR-4 compliance|✓|||
 | `ReturnTypeDeclarationSniff`|Enforce return type declaration, with few exceptions (e.g. hook callbacks or `ArrayAccess` methods)||✓||
+| `VariablesNameSniff`|Check variable (and properties) names|✓|✓||
 
 For **notes and configuration** see `/docs/rules-list/inpsyde-rules-configuration.md` file in this repo.
 

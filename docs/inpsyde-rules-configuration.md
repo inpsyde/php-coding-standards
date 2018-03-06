@@ -249,3 +249,47 @@ Also note that the warning **is** shown in case:
  - the `@return` docbloc types contains "mixed", e.g. `@return mixed|null`.
  
 -----
+
+
+## Inpsyde.CodeQuality.VariablesName
+
+This sniff can be configured to enforce either `$camelCase` (default) or `$snake_case` variable names.
+
+To change the check type, use `checkType` property, and set it to either: `"camelCase"` or `"snake_case"`
+(any other value will be ignored and default will be applied).
+
+```xml
+<rule ref="Inpsyde.CodeQuality.VariablesName">
+    <properties>
+        <property name="checkType" value="snake_case" />
+    </properties>
+</rule>
+```
+
+By default, the sniff applies check to both local variables and class properties.
+
+It is possible to ignore either local variables or class properties respectively via `ignoreLocalVars`
+and `ignoreProperties` properties.
+
+E.g.:
+
+```xml
+<rule ref="Inpsyde.CodeQuality.VariablesName">
+    <properties>
+        <property name="ignoreLocalVars" value="true" />
+    </properties>
+</rule>
+```
+
+No matter the check type used (`"camelCase"` or `"snake_case"`), PHP super globals variables and
+WordPress global variables are always ignored.
+
+It is possible to also ignore some other names via the `ignoredNames` property:
+
+```xml
+<rule ref="Inpsyde.CodeQuality.VariablesName">
+    <properties>
+        <property name="ignoredNames" type="array" value="ALLOWED,allowed_snake" />
+    </properties>
+</rule>
+```
