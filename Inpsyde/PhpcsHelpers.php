@@ -74,25 +74,46 @@ class PhpcsHelpers
      */
     public static function variableIsProperty(File $file, int $position): bool
     {
-        $token = $file->getTokens()[$position];
+        $tokens = $file->getTokens();
+        $token = $tokens[$position];
         if ($token['code'] !== T_VARIABLE) {
             return false;
         }
 
-        $propertyPointer = $file->findPrevious(
-            [T_STATIC, T_WHITESPACE, T_COMMENT],
-            $position - 1,
-            null,
-            true
-        );
+        $classes = [T_CLASS, T_ANON_CLASS, T_TRAIT];
 
-        $propertyPointerToken = $file->getTokens()[$propertyPointer] ?? [];
+        $classPointer = $file->findPrevious($classes, $position - 1);
+        if (!$classPointer
+            || !array_key_exists($classPointer, $tokens)
+            || !in_array($tokens[$classPointer]['code'], $classes, true)
+        ) {
+            return false;
+        }
 
-        return in_array(
-            ($propertyPointerToken['code'] ?? ''),
-            [T_PRIVATE, T_PROTECTED, T_PUBLIC, T_VAR],
-            true
-        );
+        $opener = $tokens[$classPointer]['scope_opener'] ?? -1;
+        $closer = $tokens[$classPointer]['scope_closer'] ?? -1;
+
+        if ($opener <= 0
+            || $closer <= 0
+            || $closer <= $opener
+            || $closer <= $position
+            || $opener >= $position
+        ) {
+            return false;
+        }
+
+        $exclude = Tokens::$emptyTokens;
+        $exclude[] = T_STATIC;
+        $propertyModifierPointer = $file->findPrevious($exclude, $position - 1, null, true);
+        if (!$propertyModifierPointer || !array_key_exists($propertyModifierPointer, $tokens)) {
+            return false;
+        }
+
+        $propertyModifierCode = $tokens[$propertyModifierPointer]['code'] ?? '';
+        $modifiers = Tokens::$scopeModifiers;
+        $modifiers[] = T_VAR;
+
+        return in_array($propertyModifierCode, $modifiers, true);
     }
 
     /**
