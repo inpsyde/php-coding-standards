@@ -8,6 +8,10 @@
             - Inpsyde.CodeQuality.ElementNameMinimalLength.TooShort
         - Inpsyde.CodeQuality.ForbiddenPublicProperty
             - Inpsyde.CodeQuality.ForbiddenPublicProperty.Found
+        - Inpsyde.CodeQuality.FunctionBodyStart
+            - Inpsyde.CodeQuality.FunctionBodyStart.WrongForSingleLineSignature
+            - Inpsyde.CodeQuality.FunctionBodyStart.WrongForMultiLineDeclaration
+            - Inpsyde.CodeQuality.FunctionBodyStart.WrongForSingleLineDeclaration
         - Inpsyde.CodeQuality.FunctionLength
             - Inpsyde.CodeQuality.FunctionLength.TooLong
         - Inpsyde.CodeQuality.HookClosureReturn

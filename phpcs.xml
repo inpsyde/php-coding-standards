@@ -96,6 +96,7 @@
     <rule ref="./Inpsyde/Sniffs/CodeQuality/DisallowShortOpenTagSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ElementNameMinimalLengthSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ForbiddenPublicPropertySniff.php"/>
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/FunctionBodyStartSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/FunctionLengthSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/LineLengthSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/NoAccessorsSniff.php"/>

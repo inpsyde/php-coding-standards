@@ -138,22 +138,23 @@ The tree of used rules are listed in the `/docs/rules-list/generic.md` file in t
 
 Some custom rules are also in use. They are:
 
-| Sniff name | Description | Has Config | Has Notes |
-|:-----------|:------------|:----------:|:---------:|
-| `ArgumentTypeDeclarationSniff`|Enforce argument type declaration, with few exception (e.g. hook callbacks or `ArrayAccess` methods)|||
-| `AssignmentInsideConditionSniff`|Ensure that any assignment inside conditions in wrapped in parenthesis|||
-| `DisallowShortOpenTagSniff`|Disallow short open PHP tag (short echo tag allowed).|||
-| `ElementNameMinimalLengthSniff`|Use minimum 3 chars for names (with a few exclusions)|✓||
-| `ForbiddenPublicPropertySniff`|No public class properties|||
-| `FunctionLengthSniff`|Max 50 lines per function/method, excluding blank lines and comments-only lines.|✓||
-| `HookClosureReturnSniff`|Ensure that actions callbacks do not return anything, while filter callbacks return something.|||
-| `LineLengthSniff`|Max 100 chars per line, excluding leading indent space and long string in WP translation functions|✓||
-| `NoAccessorsSniff`|Discourage usage of getters and setters.|||
-| `NoElseSniff`|Discourage usage of `else`.|||
-| `NoTopLevelDefineSniff`|Discourage usage of `define` where `const` is preferable.|||
-| `PropertyPerClassLimitSniff`|Discourage usage of more than 10 properties per class.|✓||
-| `Psr4Sniff`|Check PSR-4 compliance|✓||
-| `ReturnTypeDeclarationSniff`|Enforce return type declaration, with few exceptions (e.g. hook callbacks or `ArrayAccess` methods)||✓|
+| Sniff name | Description | Has Config | Has Notes | Auto-Fixable |
+|:-----------|:------------|:----------:|:---------:|:------------:|
+| `ArgumentTypeDeclarationSniff`|Enforce argument type declaration, with few exception (e.g. hook callbacks or `ArrayAccess` methods)||||
+| `AssignmentInsideConditionSniff`|Ensure that any assignment inside conditions in wrapped in parenthesis||||
+| `DisallowShortOpenTagSniff`|Disallow short open PHP tag (short echo tag allowed).||||
+| `ElementNameMinimalLengthSniff`|Use minimum 3 chars for names (with a few exclusions)|✓|||
+| `ForbiddenPublicPropertySniff`|No public class properties||||
+| `FunctionBodyStartSniff`|Handle blank line at start of function body when necessary.||✓|✓|
+| `FunctionLengthSniff`|Max 50 lines per function/method, excluding blank lines and comments-only lines.|✓|||
+| `HookClosureReturnSniff`|Ensure that actions callbacks do not return anything, while filter callbacks return something.||||
+| `LineLengthSniff`|Max 100 chars per line, excluding leading indent space and long string in WP translation functions|✓|||
+| `NoAccessorsSniff`|Discourage usage of getters and setters.||||
+| `NoElseSniff`|Discourage usage of `else`.||||
+| `NoTopLevelDefineSniff`|Discourage usage of `define` where `const` is preferable.||||
+| `PropertyPerClassLimitSniff`|Discourage usage of more than 10 properties per class.|✓|||
+| `Psr4Sniff`|Check PSR-4 compliance|✓|||
+| `ReturnTypeDeclarationSniff`|Enforce return type declaration, with few exceptions (e.g. hook callbacks or `ArrayAccess` methods)||✓||
 
 For **notes and configuration** see `/docs/rules-list/inpsyde-rules-configuration.md` file in this repo.
 

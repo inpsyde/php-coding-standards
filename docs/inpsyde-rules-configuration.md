@@ -38,6 +38,63 @@ By default the whitelisted names are:
 </rule>
 ```
 
+-----
+
+
+## Inpsyde.CodeQuality.FunctionBodyStart
+
+This sniff enforces a blank line on top of function body when the function declaration spans
+across multiple lines, e.g.:
+
+```php
+function foo(
+    string $foo,
+    string $bar
+): bool {
+
+    echo $foo . $bar;
+    
+    return true;
+}
+```
+
+while blank line is forbidden for functions whose argument declaration is in one line and the
+opened curly bracket is on next line, e.g.:
+
+```php
+function foo(string $foo, string $bar, string $baz): bool
+{
+    echo $foo . $bar;
+    
+    return true;
+}
+```
+
+Blank line is also required if the opened curly bracket is on the same line (not PSR 1/2 compliant):
+
+```php
+function foo(string $foo, string $bar, string $baz): bool {
+
+    echo $foo . $bar;
+    
+    return true;
+}
+```
+
+A special case is when the first line of body contains a comment, in that case no blank line is required
+before the comment, e.g.:
+
+```php
+function foo(
+    string $foo,
+    string $bar
+): bool {
+    // This is ok.
+    echo $foo . $bar;
+    
+    return true;
+}
+```
 
 -----
 
