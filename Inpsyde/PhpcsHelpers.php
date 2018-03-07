@@ -37,31 +37,31 @@ class PhpcsHelpers
      * @param int $position
      * @return mixed[]
      */
-    public static function classPropertiesTokenIndexes(
-        File $file,
-        int $position
-    ): array {
+    public static function classPropertiesTokenIndexes(File $file, int $position): array
+    {
         $tokens = $file->getTokens();
-        $token = $tokens[$position] ?? [];
 
-        if (!array_key_exists('scope_opener', $token)
-            || !array_key_exists('scope_closer', $token)
+        if (!in_array($tokens[$position]['code'] ?? '', [T_CLASS, T_ANON_CLASS, T_TRAIT], true)) {
+            return [];
+        }
+
+        $opener = $tokens[$position]['scope_opener'] ?? -1;
+        $closer = $tokens[$position]['scope_closer'] ?? -1;
+
+        if ($opener <= 0
+            || $closer <= 0
+            || $closer <= $opener
+            || $closer <= $position
+            || $opener >= $position
         ) {
             return [];
         }
 
         $propertyList = [];
-        $pointer = (int)$token['scope_opener'];
-
-        while ($pointer) {
-            if (self::variableIsProperty($file, $pointer)) {
-                $propertyList[] = $pointer;
+        for ($i = $opener + 1; $i < $closer; $i++) {
+            if (self::variableIsProperty($file, $i)) {
+                $propertyList[] = $i;
             }
-            $pointer = (int)$file->findNext(
-                T_VARIABLE,
-                ($pointer + 1),
-                $token['scope_closer']
-            );
         }
 
         return $propertyList;
@@ -75,8 +75,8 @@ class PhpcsHelpers
     public static function variableIsProperty(File $file, int $position): bool
     {
         $tokens = $file->getTokens();
-        $token = $tokens[$position];
-        if ($token['code'] !== T_VARIABLE) {
+        $varToken = $tokens[$position];
+        if ($varToken['code'] !== T_VARIABLE) {
             return false;
         }
 
@@ -85,6 +85,7 @@ class PhpcsHelpers
         $classPointer = $file->findPrevious($classes, $position - 1);
         if (!$classPointer
             || !array_key_exists($classPointer, $tokens)
+            || $tokens[$classPointer]['level'] ?? -1 !== (($varToken['level'] ?? -1) - 1)
             || !in_array($tokens[$classPointer]['code'], $classes, true)
         ) {
             return false;
@@ -125,33 +126,29 @@ class PhpcsHelpers
     {
         $tokens = $file->getTokens();
         $functionToken = $tokens[$position];
-        if ($functionToken['code'] !== T_FUNCTION) {
+        if (($functionToken['code'] ?? '') !== T_VARIABLE) {
             return false;
         }
 
-        $classPointer = $file->findPrevious(
-            [T_CLASS, T_INTERFACE, T_TRAIT],
-            $position - 1
-        );
+        $classes = [T_CLASS, T_ANON_CLASS, T_TRAIT, T_INTERFACE];
+        $classPointer = $file->findPrevious($classes, $position - 1);
 
-        if (!$classPointer) {
+        if (!$classPointer
+            || !array_key_exists($classPointer, $tokens)
+            || $tokens[$classPointer]['level'] ?? -1 !== (($functionToken['level'] ?? -1) - 1)
+            || !in_array($tokens[$classPointer]['code'] ?? '', $classes, true)
+        ) {
             return false;
         }
 
-        $classToken = $tokens[$classPointer];
-        if ($classToken['level'] !== $functionToken['level'] - 1) {
-            return false;
-        }
-
-        $openerPosition = $classToken['scope_opener'] ?? -1;
-        $closerPosition = $classToken['scope_closer'] ?? -1;
+        $opener = $tokens[$classPointer]['scope_opener'] ?? -1;
+        $closer = $tokens[$classPointer]['scope_closer'] ?? -1;
 
         return
-            $openerPosition > 0
-            && $closerPosition > 0
-            && $closerPosition > ($openerPosition + 1)
-            && $openerPosition < ($position - 1)
-            && $closerPosition > $position + 4; // 4 because: (){}
+            $opener > 0
+            && $closer > 1
+            && $closer > ($position + 3)
+            && $opener < $position;
     }
 
     /**
@@ -162,7 +159,7 @@ class PhpcsHelpers
     public static function functionIsArrayAccess(File $file, int $position)
     {
         $token = $file->getTokens()[$position] ?? null;
-        if (!$token || $token['code'] !== T_FUNCTION) {
+        if (!$token || $token['code'] !== T_FUNCTION || !self::functionIsMethod($file, $position)) {
             return false;
         }
 
@@ -376,7 +373,7 @@ class PhpcsHelpers
         $lookForFilters and $actions[] = 'add_filter';
         $lookForActions and $actions[] = 'add_action';
 
-        return in_array(($tokens[$functionCall]['content'] ?? ''), $actions, true);
+        return in_array($tokens[$functionCall]['content'] ?? '', $actions, true);
     }
 
     /**
@@ -472,7 +469,7 @@ class PhpcsHelpers
                 continue;
             }
 
-            if (!$scopeClosers->count() && $tokens[$i]['code'] === T_RETURN) {
+            if ($tokens[$i]['code'] === T_RETURN && !$scopeClosers->count()) {
                 PhpcsHelpers::isVoidReturn($file, $i) ? $voidReturnCount++ : $nonVoidReturnCount++;
                 PhpcsHelpers::isNullReturn($file, $i) and $nullReturnCount++;
             }
@@ -581,6 +578,11 @@ class PhpcsHelpers
         return $tags;
     }
 
+    /**
+     * @param File $file
+     * @param int $position
+     * @return array
+     */
     public static function findNamespace(File $file, int $position): array
     {
         $tokens = $file->getTokens();
@@ -603,7 +605,7 @@ class PhpcsHelpers
         }
 
         if ($tokens[$end]['code'] === T_OPEN_CURLY_BRACKET
-            && ! empty($tokens[$end]['scope_closer'])
+            && !empty($tokens[$end]['scope_closer'])
             && $tokens[$end]['scope_closer'] < $position
         ) {
             return [null, null];
