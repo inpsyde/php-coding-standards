@@ -33,18 +33,32 @@
     Neutron standard are quality tools for PHP7 development from Automattic.
     See https://github.com/Automattic/phpcs-neutron-standard
     -->
-    <rule ref="NeutronStandard">
-        <exclude name="NeutronStandard.Functions.LongFunction"/>
-        <exclude name="NeutronStandard.Functions.VariableFunctions"/>
-        <exclude name="NeutronStandard.Functions.TypeHint"/>
-        <exclude name="NeutronStandard.Conditions.DisallowConditionAssignWithoutConditional"/>
-        <exclude name="NeutronStandard.Constants.DisallowDefine"/>
-        <exclude name="NeutronStandard.MagicMethods.DisallowMagicGet"/>
-        <exclude name="NeutronStandard.MagicMethods.DisallowMagicSet"/>
-        <exclude name="NeutronStandard.MagicMethods.RiskyMagicMethod"/>
-        <rule ref="NeutronStandard.Whitespace.DisallowMultipleNewlines.MultipleNewlines">
-            <type>warning</type>
-        </rule>
+    <rule ref="NeutronStandard.Arrays.DisallowLongformArray">
+        <type>warning</type>
+    </rule>
+    <rule ref="NeutronStandard.AssignAlign.DisallowAssignAlign">
+        <type>warning</type>
+    </rule>
+    <rule ref="NeutronStandard.Extract.DisallowExtract">
+        <type>warning</type>
+    </rule>
+    <rule ref="NeutronStandard.Functions.DisallowCallUserFunc">
+        <type>warning</type>
+    </rule>
+    <rule ref="NeutronStandard.Globals.DisallowGlobalFunctions">
+        <type>warning</type>
+    </rule>
+    <rule ref="NeutronStandard.MagicMethods.DisallowMagicSerialize">
+        <type>warning</type>
+    </rule>
+    <rule ref="NeutronStandard.StrictTypes.RequireStrictTypes">
+        <type>warning</type>
+    </rule>
+    <rule ref="NeutronStandard.Whitespace.DisallowMultipleNewlines">
+        <type>warning</type>
+    </rule>
+    <rule ref="NeutronStandard.Whitespace.RequireNewlineBetweenFunctions">
+        <type>warning</type>
     </rule>
 
     <!--

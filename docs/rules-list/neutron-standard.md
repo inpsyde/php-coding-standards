@@ -3,22 +3,18 @@
 - NeutronStandard
     - NeutronStandard.Arrays
         - NeutronStandard.Arrays.DisallowLongformArray
-            - NeutronStandard.Arrays.DisallowLongformArray.LongformArray
+    - NeutronStandard.AssignAlign
+        - NeutronStandard.AssignAlign.DisallowAssignAlign
     - NeutronStandard.Extract
         - NeutronStandard.Extract.DisallowExtract
-            - NeutronStandard.Extract.DisallowExtract.Extract
     - NeutronStandard.Functions
         - NeutronStandard.Functions.DisallowCallUserFunc
-            - NeutronStandard.Functions.DisallowCallUserFunc.CallUserFunc
     - NeutronStandard.Globals
         - NeutronStandard.Globals.DisallowGlobalFunctions
-            - NeutronStandard.Globals.DisallowGlobalFunctions.GlobalFunctions
     - NeutronStandard.MagicMethods
         - NeutronStandard.MagicMethods.DisallowMagicSerialize
-            - NeutronStandard.MagicMethods.DisallowMagicSerialize.MagicSerialize
     - NeutronStandard.StrictTypes
         - NeutronStandard.StrictTypes.RequireStrictTypes
-            - NeutronStandard.StrictTypes.RequireStrictTypes.StrictTypes
     - NeutronStandard.Whitespace
         - NeutronStandard.Whitespace.DisallowMultipleNewlines
-            - NeutronStandard.Whitespace.DisallowMultipleNewlines.MultipleNewlines
+        - NeutronStandard.Whitespace.RequireNewlineBetweenFunctions
