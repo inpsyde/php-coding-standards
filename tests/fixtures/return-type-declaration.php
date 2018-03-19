@@ -1,16 +1,16 @@
 <?php
 // @phpcsSniff CodeQuality.ReturnTypeDeclaration
 
-// @phpcsWarningCodeOnNextLine NoReturnType
-function a()
-{
-    return 'x';
-}
-
 // @phpcsErrorCodeOnNextLine IncorrectVoidReturnType
 function c(): void
 {
     return true;
+}
+
+// @phpcsWarningCodeOnNextLine NoReturnType
+function a()
+{
+    return 'x';
 }
 
 function aa($foo)
@@ -55,6 +55,89 @@ function g(): bool
     }
 
     return false;
+}
+
+function gen(string $content): \Generator {
+    $line = strtok($content, "\n");
+    while ($line !== false) {
+        $line = strtok("\n");
+        yield is_string($line) ? trim($line) : '';
+    }
+}
+
+// @phpcsErrorCodeOnNextLine GeneratorReturnTypeWithoutYield
+function genNoYield(string $content): \Generator {
+    $line = strtok($content, "\n");
+    while ($line !== false) {
+        $line = strtok("\n");
+        is_string($line) ? trim($line) : '';
+    }
+
+    return true;
+}
+
+// @phpcsWarningCodeOnNextLine NoGeneratorReturnType
+function yieldNoGen(string $content) {
+    $line = strtok($content, "\n");
+    while ($line !== false) {
+        $line = strtok("\n");
+        yield is_string($line) ? trim($line) : '';
+    }
+}
+
+// @phpcsErrorCodeOnNextLine IncorrectReturnTypeForGenerator
+function yieldWrongReturn(string $content): int {
+    $line = strtok($content, "\n");
+    while ($line !== false) {
+        $line = strtok("\n");
+        yield is_string($line) ? trim($line) : '';
+    }
+
+    return 1;
+}
+
+function yieldIteratorReturn(string $content): \Iterator {
+    $line = strtok($content, "\n");
+    while ($line !== false) {
+        $line = strtok("\n");
+        yield is_string($line) ? trim($line) : '';
+    }
+
+    return 1;
+}
+
+
+function genFrom(): \Generator {
+
+    $gen = function(int $x): int {
+        if ($x < 0) {
+            return 0;
+        }
+
+        if ($x > 100) {
+            return 100;
+        }
+
+        return $x;
+    };
+
+    $data = array_map($gen, range(-100, 100));
+    yield from $data;
+}
+
+// @phpcsWarningCodeOnNextLine InvalidGeneratorManyReturns
+function genMultiReturn(): \Generator {
+    if (defined('MEH_MEH')) {
+        return 1;
+    }
+
+    yield from [1,2];
+
+    if (defined('MEH')) {
+        return 1;
+    }
+
+    return 2;
 }
 
 add_filter('x', function () {

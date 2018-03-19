@@ -47,7 +47,8 @@ class ReturnTypeDeclarationSniff implements Sniff
         }
 
         list($functionStart, $functionEnd) = PhpcsHelpers::functionBoundaries($file, $position);
-        if (!$functionStart < 0 || $functionEnd <= 0) {
+
+        if (($functionStart < 0) || ($functionEnd <= 0)) {
             return;
         }
 
@@ -55,7 +56,8 @@ class ReturnTypeDeclarationSniff implements Sniff
             $hasNonVoidReturnType,
             $hasVoidReturnType,
             $hasNoReturnType,
-            $hasNullable
+            $hasNullableReturn,
+            $returnsGenerator
             ) = $this->returnTypeInfo($file, $position);
 
         list($nonVoidReturnCount, $voidReturnCount, $nullReturnCount) = PhpcsHelpers::countReturns(
@@ -63,7 +65,21 @@ class ReturnTypeDeclarationSniff implements Sniff
             $position
         );
 
-        if ($hasNullable) {
+        $yieldCount = $this->countYield($functionStart, $functionEnd, $file);
+
+        if ($yieldCount || $returnsGenerator) {
+            $this->maybeGeneratorErrors(
+                $yieldCount,
+                $returnsGenerator,
+                $nonVoidReturnCount,
+                $file,
+                $position
+            );
+
+            return;
+        }
+
+        if ($hasNullableReturn) {
             $voidReturnCount -= $nullReturnCount;
         }
 
@@ -96,6 +112,7 @@ class ReturnTypeDeclarationSniff implements Sniff
         File $file,
         int $position
     ) {
+
         if ($hasNonVoidReturnType && ($nonVoidReturnCount === 0 || $voidReturnCount > 0)) {
             $msg = 'Return type with';
             $file->addError(
@@ -135,6 +152,87 @@ class ReturnTypeDeclarationSniff implements Sniff
     }
 
     /**
+     * @param int $yieldCount
+     * @param bool $returnsGenerator
+     * @param int $nonVoidReturnCount
+     * @param File $file
+     * @param int $position
+     */
+    private function maybeGeneratorErrors(
+        int $yieldCount,
+        bool $returnsGenerator,
+        int $nonVoidReturnCount,
+        File $file,
+        int $position
+    ) {
+
+        if ($nonVoidReturnCount > 1) {
+            $file->addWarning(
+                'A generator should only contain a single return point.',
+                $position,
+                'InvalidGeneratorManyReturns'
+            );
+        }
+
+        if ($yieldCount && $returnsGenerator) {
+            return;
+        }
+
+        if (!$yieldCount) {
+            $file->addError(
+                'Found a generator return type in non-yielding function.',
+                $position,
+                'GeneratorReturnTypeWithoutYield'
+            );
+
+            return;
+        }
+
+        if (!$nonVoidReturnCount) {
+            $file->addWarning(
+                'Found a function that yield values but missing Generator return type.',
+                $position,
+                'NoGeneratorReturnType'
+            );
+
+            return;
+        }
+
+        $returnType = $this->returnTypeContent($file, $position);
+        if ($returnType === 'Traversable' || $returnType === 'Iterator') {
+            return;
+        }
+
+        $file->addError(
+            'Found a function that yield values but declare a return type different than Generator.',
+            $position,
+            'IncorrectReturnTypeForGenerator'
+        );
+    }
+
+    /**
+     * @param File $file
+     * @param int $functionPosition
+     * @return string
+     */
+    private function returnTypeContent(File $file, int $functionPosition): string
+    {
+        $tokens = $file->getTokens();
+        $returnTypeToken = $file->findNext(
+            [T_RETURN_TYPE],
+            $functionPosition + 3, // 3: open parenthesis, close parenthesis, colon
+            ($tokens[$functionPosition]['scope_opener'] ?? 0) - 1
+        );
+
+        $returnType = $tokens[$returnTypeToken] ?? null;
+        if (!$returnType || $returnType['code'] !== T_RETURN_TYPE) {
+            return '';
+        }
+
+        return ltrim($returnType['content'] ?? '', '\\');
+    }
+
+    /**
      * @param File $file
      * @param int $functionPosition
      * @return array
@@ -142,17 +240,11 @@ class ReturnTypeDeclarationSniff implements Sniff
     private function returnTypeInfo(File $file, int $functionPosition): array
     {
         $tokens = $file->getTokens();
-        $functionToken = $tokens[$functionPosition];
 
-        $returnTypeToken = $file->findNext(
-            [T_RETURN_TYPE],
-            $functionPosition + 3, // 3: open parenthesis, close parenthesis, colon
-            ($functionToken['scope_opener'] ?? 0) - 1
-        );
+        $returnTypeContent = $this->returnTypeContent($file, $functionPosition);
 
-        $returnType = $tokens[$returnTypeToken] ?? null;
-        if ($returnType && $returnType['code'] !== T_RETURN_TYPE) {
-            return [false, false, true, false];
+        if (!$returnTypeContent) {
+            return [false, false, true, false, false];
         }
 
         $start = $tokens[$functionPosition]['parenthesis_closer'] + 1;
@@ -168,10 +260,11 @@ class ReturnTypeDeclarationSniff implements Sniff
             }
         }
 
-        $hasNonVoidReturnType = $returnType['content'] !== 'void';
-        $hasVoidReturnType = $returnType['content'] === 'void';
+        $hasNonVoidReturnType = $returnTypeContent !== 'void';
+        $hasVoidReturnType = $returnTypeContent === 'void';
+        $returnsGenerator = $returnTypeContent === 'Generator';
 
-        return [$hasNonVoidReturnType, $hasVoidReturnType, false, $hasNullable];
+        return [$hasNonVoidReturnType, $hasVoidReturnType, false, $hasNullable, $returnsGenerator];
     }
 
     /**
@@ -213,5 +306,27 @@ class ReturnTypeDeclarationSniff implements Sniff
         $min = $matches[1] ?? null;
 
         return $min && version_compare($min, '7.1', '>=');
+    }
+
+    /**
+     * @param int $functionStart
+     * @param int $functionEnd
+     * @return int
+     */
+    private function countYield(int $functionStart, int $functionEnd, File $file): int
+    {
+        $count = 0;
+        $tokens = $file->getTokens();
+        for ($i = $functionStart + 1; $i < $functionEnd; $i++) {
+            if ($tokens[$i]['code'] === T_CLOSURE) {
+                $i = $tokens[$i]['scope_closer'];
+                continue;
+            }
+            if ($tokens[$i]['code'] === T_YIELD || $tokens[$i]['code'] === T_YIELD_FROM) {
+                $count++;
+            }
+        }
+
+        return $count;
     }
 }
