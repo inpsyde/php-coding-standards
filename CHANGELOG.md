@@ -1,6 +1,6 @@
 # Changelog
 
-## Not released
+## 0.11.0
 - Fix false positive in `ReturnTypeDeclarationSniff` with nullable types.
 - Relax check for missing return type when `{aType}|null` doc bloc is present.
 - Add `is` to the list of allowed short names.
@@ -8,6 +8,8 @@
 - Added `VariablesNameSniff`.
 - Improved `PhpcsHelpers::variableIsProperty()`.
 - Improved failure handling in FixturesTest.
+- Use NeutronStandard by opting-in rules instead of opting-out
+- Properly handle Generators and return types.
 
 ## 0.10.0
 - Renamed sniffs namespace (**breaking change**).
