@@ -48,12 +48,7 @@ class PhpcsHelpers
         $opener = $tokens[$position]['scope_opener'] ?? -1;
         $closer = $tokens[$position]['scope_closer'] ?? -1;
 
-        if ($opener <= 0
-            || $closer <= 0
-            || $closer <= $opener
-            || $closer <= $position
-            || $opener >= $position
-        ) {
+        if ($opener <= 0 || $closer <= 0 || $closer <= $opener || $closer <= $position) {
             return [];
         }
 
@@ -126,7 +121,7 @@ class PhpcsHelpers
     {
         $tokens = $file->getTokens();
         $functionToken = $tokens[$position];
-        if (($functionToken['code'] ?? '') !== T_VARIABLE) {
+        if (($functionToken['code'] ?? '') !== T_FUNCTION) {
             return false;
         }
 
