@@ -58,7 +58,7 @@ $ vendor/bin/phpcs --help
 ## Configuration File
 
 To do not have to pass all the arguments to the command line, and to also be able to do
-customization it is also possible to create a `phpcs.xml` file that contains something like this:
+customization it is also possible to create a `phpcs.xml.dist` file that contains something like this:
 
 ```xml
 <?xml version="1.0"?>
