@@ -1,5 +1,8 @@
 # Changelog
 
+## not released
+- Fix bug in `Psr4Sniff` when class has not namespace.
+
 ## 0.11.0
 - Fix false positive in `ReturnTypeDeclarationSniff` with nullable types.
 - Relax check for missing return type when `{aType}|null` doc bloc is present.

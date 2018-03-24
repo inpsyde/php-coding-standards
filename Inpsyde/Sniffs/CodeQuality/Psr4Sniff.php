@@ -21,9 +21,9 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 final class Psr4Sniff implements Sniff
 {
     /**
-     * @var string|null
+     * @var array
      */
-    public $psr4 = null;
+    public $psr4;
 
     /**
      * @var array
@@ -74,6 +74,7 @@ final class Psr4Sniff implements Sniff
         string $className,
         string $entityType
     ) {
+
         if (basename($file->getFilename()) === "{$className}.php") {
             return;
         }
@@ -105,8 +106,9 @@ final class Psr4Sniff implements Sniff
     ) {
 
         list(, $namespace) = PhpcsHelpers::findNamespace($file, $position);
+        $namespace = is_string($namespace) ? "{$namespace}\\" : '';
 
-        $fullyQualifiedName = "{$namespace}\\{$className}";
+        $fullyQualifiedName = $namespace . $className;
         foreach ($this->exclude as $excluded) {
             if (strpos($fullyQualifiedName, $excluded) === 0) {
                 return;
