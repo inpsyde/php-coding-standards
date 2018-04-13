@@ -490,7 +490,22 @@ class PhpcsHelpers
         $nextToReturn = $file->findNext([T_WHITESPACE], $returnPosition, null, true, null, true);
         $nextToReturnType = $tokens[$nextToReturn]['code'] ?? '';
 
-        return in_array($nextToReturnType, [T_SEMICOLON, T_NULL], true);
+        if ($nextToReturnType === T_SEMICOLON) {
+            return true;
+        }
+
+        if ($nextToReturnType !== T_NULL) {
+            return false;
+        }
+
+        $returnPosition = $nextToReturn + 1;
+        $followedBySemicolon = ($tokens[$returnPosition]['code'] ?? '') === T_SEMICOLON;
+
+        if (!$followedBySemicolon) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -510,7 +525,18 @@ class PhpcsHelpers
         $nextToReturn = $file->findNext([T_WHITESPACE], $returnPosition, null, true, null, true);
         $nextToReturnType = $tokens[$nextToReturn]['code'] ?? '';
 
-        return $nextToReturnType === T_NULL;
+        if ($nextToReturnType !== T_NULL) {
+            return false;
+        }
+
+        $returnPosition = $nextToReturn + 1;
+        $followedBySemicolon = ($tokens[$returnPosition]['code'] ?? '') === T_SEMICOLON;
+
+        if (!$followedBySemicolon) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

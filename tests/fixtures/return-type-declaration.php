@@ -57,7 +57,14 @@ function g(): bool
     return false;
 }
 
-function gen(string $content): \Generator {
+// @phpcsErrorCodeOnNextLine IncorrectVoidReturnType
+function h(): void
+{
+    return null === true;
+}
+
+function gen(string $content): \Generator
+{
     $line = strtok($content, "\n");
     while ($line !== false) {
         $line = strtok("\n");
@@ -66,7 +73,8 @@ function gen(string $content): \Generator {
 }
 
 // @phpcsErrorCodeOnNextLine GeneratorReturnTypeWithoutYield
-function genNoYield(string $content): \Generator {
+function genNoYield(string $content): \Generator
+{
     $line = strtok($content, "\n");
     while ($line !== false) {
         $line = strtok("\n");
@@ -77,7 +85,8 @@ function genNoYield(string $content): \Generator {
 }
 
 // @phpcsWarningCodeOnNextLine NoGeneratorReturnType
-function yieldNoGen(string $content) {
+function yieldNoGen(string $content)
+{
     $line = strtok($content, "\n");
     while ($line !== false) {
         $line = strtok("\n");
@@ -86,7 +95,8 @@ function yieldNoGen(string $content) {
 }
 
 // @phpcsErrorCodeOnNextLine IncorrectReturnTypeForGenerator
-function yieldWrongReturn(string $content): int {
+function yieldWrongReturn(string $content): int
+{
     $line = strtok($content, "\n");
     while ($line !== false) {
         $line = strtok("\n");
@@ -96,7 +106,8 @@ function yieldWrongReturn(string $content): int {
     return 1;
 }
 
-function yieldIteratorReturn(string $content): \Iterator {
+function yieldIteratorReturn(string $content): \Iterator
+{
     $line = strtok($content, "\n");
     while ($line !== false) {
         $line = strtok("\n");
@@ -107,9 +118,10 @@ function yieldIteratorReturn(string $content): \Iterator {
 }
 
 
-function genFrom(): \Generator {
+function genFrom(): \Generator
+{
 
-    $gen = function(int $x): int {
+    $gen = function (int $x): int {
         if ($x < 0) {
             return 0;
         }
@@ -126,12 +138,13 @@ function genFrom(): \Generator {
 }
 
 // @phpcsWarningCodeOnNextLine InvalidGeneratorManyReturns
-function genMultiReturn(): \Generator {
+function genMultiReturn(): \Generator
+{
     if (defined('MEH_MEH')) {
         return 1;
     }
 
-    yield from [1,2];
+    yield from [1, 2];
 
     if (defined('MEH')) {
         return 1;
@@ -369,7 +382,7 @@ class FooAccess implements ArrayAccess
     }
 
     // @phpcsErrorCodeOnNextLine IncorrectVoidReturn
-    public function iReturnWrongNull() : \ArrayAccess
+    public function iReturnWrongNull(): \ArrayAccess
     {
         if (rand(1, 4) > 2) {
             return null;
