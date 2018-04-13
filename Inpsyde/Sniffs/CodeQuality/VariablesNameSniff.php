@@ -40,6 +40,7 @@ class VariablesNameSniff implements Sniff
         '$required_php_version',
         '$required_mysql_version',
         '$super_admins',
+        '$interim_login',
     ];
 
     /**
