@@ -63,6 +63,10 @@ function h(): void
     return null === true;
 }
 
+function hh(): void {
+    return null;
+}
+
 function gen(string $content): \Generator
 {
     $line = strtok($content, "\n");
