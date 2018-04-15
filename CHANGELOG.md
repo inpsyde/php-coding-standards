@@ -1,6 +1,6 @@
 # Changelog
 
-## not released
+## 0.12.0
 - Fix bug in `Psr4Sniff` when class has not namespace.
 - Allow @wp-hook ignore of return type for private and protected methods
 - Only check public accessors (by default)
