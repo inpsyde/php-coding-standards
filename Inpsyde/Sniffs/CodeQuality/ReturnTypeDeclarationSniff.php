@@ -79,9 +79,7 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
-        if ($hasNullableReturn) {
-            $voidReturnCount -= $nullReturnCount;
-        }
+        $hasNullableReturn or $voidReturnCount += $nullReturnCount;
 
         $this->maybeErrors(
             $hasNonVoidReturnType,

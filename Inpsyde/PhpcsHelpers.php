@@ -465,8 +465,11 @@ class PhpcsHelpers
             }
 
             if ($tokens[$i]['code'] === T_RETURN && !$scopeClosers->count()) {
-                PhpcsHelpers::isVoidReturn($file, $i) ? $voidReturnCount++ : $nonVoidReturnCount++;
-                PhpcsHelpers::isNullReturn($file, $i) and $nullReturnCount++;
+                $void = PhpcsHelpers::isVoidReturn($file, $i);
+                $null = PhpcsHelpers::isNullReturn($file, $i);
+                $void and $voidReturnCount++;
+                $null and $nullReturnCount++;
+                (!$void && !$null) and $nonVoidReturnCount++;
             }
         }
 
@@ -476,9 +479,10 @@ class PhpcsHelpers
     /**
      * @param File $file
      * @param int $returnPosition
+     * @param bool $includeNull
      * @return bool
      */
-    public static function isVoidReturn(File $file, int $returnPosition): bool
+    public static function isVoidReturn(File $file, int $returnPosition, $includeNull = false): bool
     {
         $tokens = $file->getTokens();
 
@@ -487,21 +491,12 @@ class PhpcsHelpers
         }
 
         $returnPosition++;
-        $nextToReturn = $file->findNext([T_WHITESPACE], $returnPosition, null, true, null, true);
-        $nextToReturnType = $tokens[$nextToReturn]['code'] ?? '';
+        $exclude = Tokens::$emptyTokens;
+        $includeNull and $exclude[] = T_NULL;
 
-        if ($nextToReturnType === T_SEMICOLON) {
-            return true;
-        }
+        $nextToReturn = $file->findNext($exclude, $returnPosition, null, true, null, true);
 
-        if ($nextToReturnType !== T_NULL) {
-            return false;
-        }
-
-        $returnPosition = $nextToReturn + 1;
-        $followedBySemicolon = ($tokens[$returnPosition]['code'] ?? '') === T_SEMICOLON;
-
-        return $followedBySemicolon;
+        return ($tokens[$nextToReturn]['code'] ?? '') === T_SEMICOLON;
     }
 
     /**
@@ -511,16 +506,9 @@ class PhpcsHelpers
      */
     public static function isNullReturn(File $file, int $returnPosition): bool
     {
-        $tokens = $file->getTokens();
-
-        if (($tokens[$returnPosition]['code'] ?? '') !== T_RETURN) {
-            return false;
-        }
-
-        $returnPosition++;
-        $nextToReturn = $file->findNext([T_WHITESPACE, T_NULL], $returnPosition, null, true, null, true);
-
-        return ($tokens[$nextToReturn]['code'] ?? '') === T_SEMICOLON;
+        return
+            !self::isVoidReturn($file, $returnPosition, false)
+            && self::isVoidReturn($file, $returnPosition, true);
     }
 
     /**

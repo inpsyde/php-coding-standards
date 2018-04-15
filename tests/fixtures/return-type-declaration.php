@@ -1,6 +1,16 @@
 <?php
 // @phpcsSniff CodeQuality.ReturnTypeDeclaration
 
+// @phpcsErrorCodeOnNextLine IncorrectVoidReturn
+function iReturnWrongNull(): \ArrayAccess
+{
+    if (rand(1, 4) > 2) {
+        return null;
+    }
+
+    return new \ArrayObject();
+}
+
 // @phpcsErrorCodeOnNextLine IncorrectVoidReturnType
 function c(): void
 {
@@ -65,6 +75,10 @@ function h(): void
 
 function hh(): void {
     return null;
+}
+
+function hhComment(): void {
+    return /* I return void */ ;
 }
 
 function gen(string $content): \Generator
