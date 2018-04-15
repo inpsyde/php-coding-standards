@@ -1,11 +1,14 @@
 # Changelog
 
+## Not released
+- Whitelist PHP core methods for not having return or argument type declaration.
+
 ## 0.12.0
 - Fix bug in `Psr4Sniff` when class has not namespace.
-- Allow @wp-hook ignore of return type for private and protected methods
-- Only check public accessors (by default)
-- Fix bug in checking return type
-- Allow filters callbacks to return `null` on purpose
+- Allow @wp-hook ignore of return type for private and protected methods.
+- Only check public accessors (by default).
+- Fix bug in checking return type.
+- Allow filters callbacks to return `null` on purpose.
 
 ## 0.11.0
 - Fix false positive in `ReturnTypeDeclarationSniff` with nullable types.
@@ -15,7 +18,7 @@
 - Added `VariablesNameSniff`.
 - Improved `PhpcsHelpers::variableIsProperty()`.
 - Improved failure handling in FixturesTest.
-- Use NeutronStandard by opting-in rules instead of opting-out
+- Use NeutronStandard by opting-in rules instead of opting-out.
 - Properly handle Generators and return types.
 
 ## 0.10.0

@@ -243,3 +243,15 @@ class FooAccess implements ArrayAccess {
     {
     }
 }
+
+class SerializeTest implements \Serializable {
+
+    public function serialize()
+    {
+        return '';
+    }
+
+    public function unserialize($serialized)
+    {
+    }
+}

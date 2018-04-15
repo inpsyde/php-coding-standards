@@ -28,6 +28,11 @@ class ArgumentTypeDeclarationSniff implements Sniff
         T_SELF,
     ];
 
+    const METHODS_WHITELIST = [
+        'unserialize',
+        'seek',
+    ];
+
     /**
      * @inheritdoc
      */
@@ -44,6 +49,10 @@ class ArgumentTypeDeclarationSniff implements Sniff
         if (PhpcsHelpers::functionIsArrayAccess($file, $position)
             || PhpcsHelpers::isHookClosure($file, $position)
             || PhpcsHelpers::isHookFunction($file, $position)
+            || (
+                PhpcsHelpers::functionIsMethod($file, $position)
+                && in_array($file->getDeclarationName($position), self::METHODS_WHITELIST, true)
+            )
         ) {
             return;
         }

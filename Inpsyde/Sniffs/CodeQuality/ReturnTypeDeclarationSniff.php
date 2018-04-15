@@ -29,6 +29,19 @@ class ReturnTypeDeclarationSniff implements Sniff
         T_SELF,
     ];
 
+    const METHODS_WHITELIST = [
+        '__to_string',
+        'serialize',
+        'jsonSerialize',
+        'getIterator',
+        'getInnerIterator',
+        'getChildren',
+        'current',
+        'key',
+        'valid',
+        'count',
+    ];
+
     /**
      * @inheritdoc
      */
@@ -140,6 +153,12 @@ class ReturnTypeDeclarationSniff implements Sniff
 
         if (!$this->areNullableReturnTypesSupported()
             && $this->hasReturnNullDocBloc($file, $position)
+        ) {
+            return;
+        }
+
+        if (PhpcsHelpers::functionIsMethod($file, $position)
+            && in_array($file->getDeclarationName($position), self::METHODS_WHITELIST, true)
         ) {
             return;
         }

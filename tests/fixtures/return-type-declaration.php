@@ -409,3 +409,20 @@ class FooAccess implements ArrayAccess
         return new \ArrayObject();
     }
 }
+
+class JsonSerializeTest implements \JsonSerializable, \Serializable {
+
+    public function jsonSerialize()
+    {
+        return '';
+    }
+
+    public function serialize()
+    {
+        return '';
+    }
+
+    public function unserialize($serialized)
+    {
+    }
+}
