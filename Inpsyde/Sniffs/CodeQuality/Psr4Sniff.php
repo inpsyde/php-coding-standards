@@ -107,8 +107,10 @@ final class Psr4Sniff implements Sniff
 
         list(, $namespace) = PhpcsHelpers::findNamespace($file, $position);
         $namespace = is_string($namespace) ? "{$namespace}\\" : '';
+        $namespace = rtrim($namespace, '\\');
 
-        $fullyQualifiedName = $namespace . $className;
+        $fullyQualifiedName = $namespace . "\\{$className}";
+
         foreach ($this->exclude as $excluded) {
             if (strpos($fullyQualifiedName, $excluded) === 0) {
                 return;
@@ -130,6 +132,7 @@ final class Psr4Sniff implements Sniff
             }
 
             $relativePath = array_pop($folderSplit);
+
             if (basename($relativePath) !== "{$className}.php") {
                 continue;
             }

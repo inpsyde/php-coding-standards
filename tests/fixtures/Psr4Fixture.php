@@ -23,6 +23,15 @@ namespace Inpsyde\CodingStandard\Tests\fixtures {
     }
 }
 
+namespace Inpsyde\CodingStandard\Tests\fixtures\Foo {
+
+    // @phpcsErrorCodeOnNextLine InvalidPSR4
+    class Psr4Fixture
+    {
+
+    }
+}
+
 namespace Inpsyde\CodingStandard\Foo\Bar {
 
     // @phpcsErrorCodeOnNextLine InvalidPSR4
