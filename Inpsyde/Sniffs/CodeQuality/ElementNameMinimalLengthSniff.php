@@ -45,6 +45,7 @@ final class ElementNameMinimalLengthSniff implements Sniff
         'it',
         'db',
         'is',
+        'wp',
     ];
 
     /**
