@@ -69,6 +69,13 @@ function foo_bar_baz(): bool {
         }
     );
 
+    add_filter(
+        'hook',
+        function () {
+            return null;
+        }
+    );
+
     return true;
 }
 

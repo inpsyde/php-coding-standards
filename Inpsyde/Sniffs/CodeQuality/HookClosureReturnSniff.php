@@ -34,11 +34,18 @@ class HookClosureReturnSniff implements Sniff
         }
 
         list($functionStart, $functionEnd) = PhpcsHelpers::functionBoundaries($file, $position);
-        if (!$functionStart < 0 || $functionEnd <= 0) {
+        if ($functionStart < 0 || $functionEnd <= 0) {
             return;
         }
 
-        list($nonVoidReturnCount, $voidReturnCount) = PhpcsHelpers::countReturns($file, $position);
+        list(
+            $nonVoidReturnCount,
+            $voidReturnCount,
+            $nullReturnsCount
+        ) = PhpcsHelpers::countReturns($file, $position);
+
+        // Allow a filter to return null on purpose
+        $nonVoidReturnCount += $nullReturnsCount;
 
         $isFilterClosure = PhpcsHelpers::isHookClosure($file, $position, true, false);
 
