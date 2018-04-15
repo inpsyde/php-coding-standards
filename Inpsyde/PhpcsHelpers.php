@@ -384,7 +384,7 @@ class PhpcsHelpers
         }
 
         $findDocEnd = $file->findPrevious(
-            [T_WHITESPACE, T_FINAL, T_PUBLIC, T_ABSTRACT],
+            [T_WHITESPACE, T_FINAL, T_PUBLIC, T_PRIVATE, T_PROTECTED, T_ABSTRACT],
             $functionPosition - 1,
             null,
             true,
