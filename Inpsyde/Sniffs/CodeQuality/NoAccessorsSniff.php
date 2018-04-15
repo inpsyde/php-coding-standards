@@ -18,6 +18,7 @@ namespace Inpsyde\Sniffs\CodeQuality;
 use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Util\Tokens;
 
 /**
  * @package php-coding-standards
@@ -33,6 +34,8 @@ final class NoAccessorsSniff implements Sniff
     ];
 
     public $skipForFunctions = true;
+
+    public $skipForNonPublic = true;
 
     /**
      * @return int[]
@@ -54,9 +57,26 @@ final class NoAccessorsSniff implements Sniff
         }
 
         $functionName = $file->getDeclarationName($position);
-
         if (!$functionName || in_array($functionName, self::ALLOWED_NAMES, true)) {
             return;
+        }
+
+        if ($this->skipForNonPublic && PhpcsHelpers::functionIsMethod($file, $position)) {
+            $modifierPointerPosition = $file->findPrevious(
+                [T_WHITESPACE, T_ABSTRACT],
+                $position - 1,
+                null,
+                true,
+                null,
+                true
+            );
+            $modifierPointer = $file->getTokens()[$modifierPointerPosition] ?? null;
+            if (!in_array($modifierPointer['code'], Tokens::$scopeModifiers, true)) {
+                $modifierPointer = null;
+            }
+            if ($modifierPointer && $modifierPointer['code'] !== T_PUBLIC) {
+                return;
+            }
         }
 
         preg_match('/^(set|get)[_A-Z0-9]+/', $functionName, $matches);

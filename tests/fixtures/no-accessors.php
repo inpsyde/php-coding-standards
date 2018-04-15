@@ -40,8 +40,7 @@ class WithAccessors implements \IteratorAggregate {
 
     }
 
-    // @phpcsWarningCodeOnNextLine NoSetter
-    function setTheThing($foo, $bar) {
+    private function setTheThing($foo, $bar) {
 
     }
 
