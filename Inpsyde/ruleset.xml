@@ -64,9 +64,9 @@
     <rule ref="WordPress.VIP.SessionVariableUsage"/>
     <rule ref="WordPress.VIP.SessionFunctionsUsage"/>
     <rule ref="WordPress.VIP.SuperGlobalInputUsage"/>
-    <rule ref="WordPress.VIP.ValidatedSanitizedInput"/>
-    <rule ref="WordPress.XSS.EscapeOutput"/>
-    <rule ref="WordPress.CSRF.NonceVerification"/>
+    <rule ref="WordPress.Security.ValidatedSanitizedInput"/>
+    <rule ref="WordPress.Security.EscapeOutput"/>
+    <rule ref="WordPress.Security.NonceVerification"/>
     <rule ref="WordPress.WP.AlternativeFunctions.curl"/>
     <rule ref="WordPress.WP.DiscouragedConstants"/>
     <rule ref="WordPress.WP.I18n"/>
