@@ -12,7 +12,7 @@ It means they can be installed by adding the entry to composer.json `require-dev
 ```json
 {
 	"require-dev": {
-		"inpsyde/php-coding-standards": "~0.12.0"
+		"inpsyde/php-coding-standards": "~0.13.0"
 	}
 }
 ```

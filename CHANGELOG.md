@@ -1,7 +1,8 @@
 # Changelog
 
-## Not released
+## 0.13.0
 - Whitelist PHP core methods for not having return or argument type declaration.
+- Fix WordPress security rules names.
 
 ## 0.12.0
 - Fix bug in `Psr4Sniff` when class has not namespace.
