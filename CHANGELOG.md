@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.13.1
+- Revert WordPress security rules names changed in `0.13.0`
+
 ## 0.13.0
 - Whitelist PHP core methods for not having return or argument type declaration.
 - Fix WordPress security rules names.
