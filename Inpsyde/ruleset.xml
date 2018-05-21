@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <ruleset name="Inpsyde Coding Standard">
 
-	<description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
+    <description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
 
     <autoload>./PhpcsHelpers.php</autoload>
     <autoload>./PHPCSAliases.php</autoload>
 
-	<!--
-	PHP 7.0 and higher.
-	-->
-	<config name="testVersion" value="7.0-"/>
+    <!--
+    PHP 7.0 and higher.
+    -->
+    <config name="testVersion" value="7.0-"/>
 
     <!--
 	Arguments: colors, show progress and show sniff name.
@@ -17,18 +17,18 @@
     <arg name="colors"/>
     <arg value="sp"/>
 
-	<!--
-	PSR 2 Code style.
-	See http://www.php-fig.org/psr/psr-2/
-	-->
+    <!--
+    PSR 2 Code style.
+    See http://www.php-fig.org/psr/psr-2/
+    -->
     <rule ref="PSR2">
         <exclude name="Generic.Files.LineLength.TooLong"/>
     </rule>
 
-	<!--
-	Neutron standard are quality tools for PHP7 development from Automattic.
-	See https://github.com/Automattic/phpcs-neutron-standard
-	-->
+    <!--
+    Neutron standard are quality tools for PHP7 development from Automattic.
+    See https://github.com/Automattic/phpcs-neutron-standard
+    -->
     <rule ref="NeutronStandard.Arrays.DisallowLongformArray">
         <type>warning</type>
     </rule>
@@ -64,9 +64,9 @@
     <rule ref="WordPress.VIP.SessionVariableUsage"/>
     <rule ref="WordPress.VIP.SessionFunctionsUsage"/>
     <rule ref="WordPress.VIP.SuperGlobalInputUsage"/>
-    <rule ref="WordPress.Security.ValidatedSanitizedInput"/>
-    <rule ref="WordPress.Security.EscapeOutput"/>
-    <rule ref="WordPress.Security.NonceVerification"/>
+    <rule ref="WordPress.VIP.ValidatedSanitizedInput"/>
+    <rule ref="WordPress.XSS.EscapeOutput"/>
+    <rule ref="WordPress.CSRF.NonceVerification"/>
     <rule ref="WordPress.WP.AlternativeFunctions.curl"/>
     <rule ref="WordPress.WP.DiscouragedConstants"/>
     <rule ref="WordPress.WP.I18n"/>
@@ -93,9 +93,9 @@
         <type>error</type>
     </rule>
 
-	<!--
-	Generic
-	-->
+    <!--
+    Generic
+    -->
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="absoluteComplexity" value="50"/>
