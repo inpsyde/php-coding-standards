@@ -1,6 +1,6 @@
 # Changelog
 
-## NOT RELEASED
+## 0.13.3
 - Fixed false positive "missing argument type declaration" when param are passed by-reference.
 - Make `ReturnTypeDeclarationSniff` compatible with PHPCS 3.3
 
