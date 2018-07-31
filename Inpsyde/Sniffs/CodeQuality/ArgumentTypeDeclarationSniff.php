@@ -70,7 +70,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
 
         foreach (array_keys($variables) as $varPosition) {
             $typePosition = $file->findPrevious(
-                [T_WHITESPACE, T_ELLIPSIS],
+                [T_WHITESPACE, T_ELLIPSIS, T_BITWISE_AND],
                 $varPosition - 1,
                 $paramsStart + 1,
                 true

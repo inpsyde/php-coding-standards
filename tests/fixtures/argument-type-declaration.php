@@ -1,6 +1,10 @@
 <?php
 // @phpcsSniff CodeQuality.ArgumentTypeDeclaration
 
+array_walk($slugs, function (string &$slug) {
+    $slug = sanitize_key($slug);
+});
+
 // @phpcsWarningOnNextLine
 function a($foo)
 {
