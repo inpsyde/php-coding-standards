@@ -234,6 +234,11 @@ class ReturnTypeDeclarationSniff implements Sniff
      */
     private function returnTypeContent(File $file, int $functionPosition): string
     {
+        $info = $file->getMethodProperties($functionPosition);
+        if (array_key_exists('return_type', $info) && is_string($info['return_type'])) {
+            return ltrim($info['return_type'], '\\');
+        }
+
         $tokens = $file->getTokens();
         $returnTypeToken = $file->findNext(
             [T_RETURN_TYPE],

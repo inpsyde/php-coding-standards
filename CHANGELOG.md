@@ -2,6 +2,7 @@
 
 ## NOT RELEASED
 - Fixed false positive "missing argument type declaration" when param are passed by-reference.
+- Make `ReturnTypeDeclarationSniff` compatible with PHPCS 3.3
 
 ## 0.13.2 
 - Changed "squizlabs/php_codesniffer" in composer.json to "~3.2.3"
