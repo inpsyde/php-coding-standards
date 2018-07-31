@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.13.2 (NOT RELEASED)
+- Changed "squizlabs/php_codesniffer" in composer.json to "~3.2.3"
+
 ## 0.13.1
 - Revert WordPress security rules names changed in `0.13.0`
 
