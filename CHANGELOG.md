@@ -1,5 +1,8 @@
 # Changelog
 
+## NOT RELEASED
+- Fix function with nullable type return and returning null (and nothing else) considered invalid.
+
 ## 0.13.3
 - Fixed false positive "missing argument type declaration" when param are passed by-reference.
 - Make `ReturnTypeDeclarationSniff` compatible with PHPCS 3.3

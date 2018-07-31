@@ -1,6 +1,17 @@
 <?php
 // @phpcsSniff CodeQuality.ReturnTypeDeclaration
 
+public function hooks(): ?array
+{
+    return null;
+}
+
+// @phpcsWarningCodeOnNextLine NoReturnType
+function a()
+{
+    return 'x';
+}
+
 // @phpcsErrorCodeOnNextLine IncorrectVoidReturn
 function iReturnWrongNull(): \ArrayAccess
 {
@@ -15,12 +26,6 @@ function iReturnWrongNull(): \ArrayAccess
 function c(): void
 {
     return true;
-}
-
-// @phpcsWarningCodeOnNextLine NoReturnType
-function a()
-{
-    return 'x';
 }
 
 function aa($foo)

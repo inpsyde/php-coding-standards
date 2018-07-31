@@ -92,13 +92,13 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
-        $hasNullableReturn or $voidReturnCount += $nullReturnCount;
-
         $this->maybeErrors(
             $hasNonVoidReturnType,
             $hasVoidReturnType,
             $hasNoReturnType,
+            $hasNullableReturn,
             $nonVoidReturnCount,
+            $nullReturnCount,
             $voidReturnCount,
             $file,
             $position
@@ -108,21 +108,30 @@ class ReturnTypeDeclarationSniff implements Sniff
     /**
      * @param bool $hasNonVoidReturnType
      * @param bool $hasVoidReturnType
+     * @param bool $hasNullableReturn
      * @param bool $hasNoReturnType
      * @param int $nonVoidReturnCount
      * @param int $voidReturnCount
+     * @param int $nullReturnCount
      * @param File $file
      * @param int $position
+     * @throws \PHP_CodeSniffer\Exceptions\RuntimeException
      */
     private function maybeErrors(
         bool $hasNonVoidReturnType,
         bool $hasVoidReturnType,
         bool $hasNoReturnType,
+        bool $hasNullableReturn,
         int $nonVoidReturnCount,
+        int $nullReturnCount,
         int $voidReturnCount,
         File $file,
         int $position
     ) {
+
+        $hasNullableReturn
+            ? $nonVoidReturnCount += $nullReturnCount
+            : $voidReturnCount += $nullReturnCount;
 
         if ($hasNonVoidReturnType && ($nonVoidReturnCount === 0 || $voidReturnCount > 0)) {
             $msg = 'Return type with';
