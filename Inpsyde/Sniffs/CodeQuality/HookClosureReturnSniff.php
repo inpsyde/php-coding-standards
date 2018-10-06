@@ -19,7 +19,7 @@ class HookClosureReturnSniff implements Sniff
     /**
      * @inheritdoc
      */
-    public function register()
+    public function register(): array
     {
         return [T_CLOSURE];
     }

@@ -33,7 +33,7 @@ final class Psr4Sniff implements Sniff
     /**
      * @return int[]
      */
-    public function register()
+    public function register(): array
     {
         return [T_CLASS, T_INTERFACE, T_TRAIT];
     }

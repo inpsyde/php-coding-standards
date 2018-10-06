@@ -1,4 +1,6 @@
-<?php
+<?php declare(strict_types=1);
+// phpcs:disable PSR1.Files.SideEffects
+
 /**
  * This file contains code from "WordPress-Coding-Standards" project
  * found at https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
@@ -39,20 +41,28 @@ if (!defined('WPCS_PHPCS_ALIASES_SET')) {
 
     // PHPCS classes which are being extended by WPCS sniffs.
     if (!class_exists('\PHP_CodeSniffer_Standards_AbstractVariableSniff')) {
-        class_alias('PHP_CodeSniffer\Sniffs\AbstractVariableSniff',
-            '\PHP_CodeSniffer_Standards_AbstractVariableSniff');
+        class_alias(
+            'PHP_CodeSniffer\Sniffs\AbstractVariableSniff',
+            '\PHP_CodeSniffer_Standards_AbstractVariableSniff'
+        );
     }
     if (!class_exists('\PEAR_Sniffs_NamingConventions_ValidFunctionNameSniff')) {
-        class_alias('PHP_CodeSniffer\Standards\PEAR\Sniffs\NamingConventions\ValidFunctionNameSniff',
-            '\PEAR_Sniffs_NamingConventions_ValidFunctionNameSniff');
+        class_alias(
+            'PHP_CodeSniffer\Standards\PEAR\Sniffs\NamingConventions\ValidFunctionNameSniff',
+            '\PEAR_Sniffs_NamingConventions_ValidFunctionNameSniff'
+        );
     }
     if (!class_exists('\Squiz_Sniffs_WhiteSpace_OperatorSpacingSniff')) {
-        class_alias('PHP_CodeSniffer\Standards\Squiz\Sniffs\WhiteSpace\OperatorSpacingSniff',
-            '\Squiz_Sniffs_WhiteSpace_OperatorSpacingSniff');
+        class_alias(
+            'PHP_CodeSniffer\Standards\Squiz\Sniffs\WhiteSpace\OperatorSpacingSniff',
+            '\Squiz_Sniffs_WhiteSpace_OperatorSpacingSniff'
+        );
     }
     if (!class_exists('\Squiz_Sniffs_WhiteSpace_SemicolonSpacingSniff')) {
-        class_alias('PHP_CodeSniffer\Standards\Squiz\Sniffs\WhiteSpace\SemicolonSpacingSniff',
-            '\Squiz_Sniffs_WhiteSpace_SemicolonSpacingSniff');
+        class_alias(
+            'PHP_CodeSniffer\Standards\Squiz\Sniffs\WhiteSpace\SemicolonSpacingSniff',
+            '\Squiz_Sniffs_WhiteSpace_SemicolonSpacingSniff'
+        );
     }
 
     define('WPCS_PHPCS_ALIASES_SET', true);
@@ -74,13 +84,18 @@ if (!defined('WPCS_PHPCS_ALIASES_SET')) {
         }
 
         // PHPCS handles the Test and Sniff classes without problem.
-        if (stripos($class, '\Tests\\') !== false || stripos($class,
-                '\Sniffs\\') !== false) {
+        if (stripos($class, '\Tests\\') !== false || stripos(
+            $class,
+            '\Sniffs\\'
+        ) !== false) {
             return;
         }
 
-        $file = dirname(__DIR__) . DIRECTORY_SEPARATOR . strtr($class, '\\',
-                DIRECTORY_SEPARATOR) . '.php';
+        $file = dirname(__DIR__) . DIRECTORY_SEPARATOR . strtr(
+            $class,
+            '\\',
+            DIRECTORY_SEPARATOR
+        ) . '.php';
 
         if (file_exists($file)) {
             include_once $file;

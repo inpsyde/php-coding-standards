@@ -23,7 +23,7 @@ final class NoTopLevelDefineSniff implements Sniff
     /**
      * @return int[]
      */
-    public function register()
+    public function register(): array
     {
         return [T_STRING];
     }

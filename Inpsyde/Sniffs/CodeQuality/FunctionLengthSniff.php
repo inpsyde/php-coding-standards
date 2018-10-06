@@ -47,7 +47,7 @@ final class FunctionLengthSniff implements Sniff
     /**
      * @return int[]
      */
-    public function register()
+    public function register(): array
     {
         return [T_FUNCTION];
     }
@@ -185,6 +185,7 @@ final class FunctionLengthSniff implements Sniff
         int $position,
         array $docBlocks
     ): array {
+
         if (!$this->ignoreDocBlocks
             || $tokens[$position]['code'] !== T_DOC_COMMENT_OPEN_TAG
         ) {

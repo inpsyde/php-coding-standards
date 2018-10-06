@@ -117,7 +117,7 @@ class PhpcsHelpers
      * @param int $position
      * @return bool
      */
-    public static function functionIsMethod(File $file, int $position)
+    public static function functionIsMethod(File $file, int $position): bool
     {
         $tokens = $file->getTokens();
         $functionToken = $tokens[$position];
@@ -151,7 +151,7 @@ class PhpcsHelpers
      * @param int $position
      * @return bool
      */
-    public static function functionIsArrayAccess(File $file, int $position)
+    public static function functionIsArrayAccess(File $file, int $position): bool
     {
         $token = $file->getTokens()[$position] ?? null;
         if (!$token || $token['code'] !== T_FUNCTION || !self::functionIsMethod($file, $position)) {
@@ -183,6 +183,7 @@ class PhpcsHelpers
     {
         $tokens = $file->getTokens();
         $code = $tokens[$position]['code'] ?? -1;
+
         if (!in_array($code, [T_VARIABLE, T_STRING], true)) {
             return false;
         }
@@ -288,7 +289,7 @@ class PhpcsHelpers
      * @param int $start
      * @param int $end
      * @param File $file
-     * @param array ...$types
+     * @param string[] ...$types
      * @return array[]
      */
     public static function filterTokensByType(
@@ -482,8 +483,12 @@ class PhpcsHelpers
      * @param bool $includeNull
      * @return bool
      */
-    public static function isVoidReturn(File $file, int $returnPosition, $includeNull = false): bool
-    {
+    public static function isVoidReturn(
+        File $file,
+        int $returnPosition,
+        bool $includeNull = false
+    ): bool {
+
         $tokens = $file->getTokens();
 
         if (($tokens[$returnPosition]['code'] ?? '') !== T_RETURN) {
@@ -550,7 +555,6 @@ class PhpcsHelpers
         $end = $lastBeforeFunc - 1;
 
         for ($i = $start; $i < $end; $i++) {
-
             if ($inTag && $tokens[$i]['code'] === T_DOC_COMMENT_STRING) {
                 $tags[] .= $tokens[$i]['content'];
                 continue;

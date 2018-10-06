@@ -51,7 +51,7 @@ final class ElementNameMinimalLengthSniff implements Sniff
     /**
      * @return int[]
      */
-    public function register()
+    public function register(): array
     {
         return [T_CLASS, T_TRAIT, T_INTERFACE, T_CONST, T_FUNCTION, T_VARIABLE];
     }
@@ -90,6 +90,7 @@ final class ElementNameMinimalLengthSniff implements Sniff
         int $elementNameLength,
         string $elementName
     ): bool {
+
         if ($elementNameLength >= $this->minLength) {
             return true;
         }

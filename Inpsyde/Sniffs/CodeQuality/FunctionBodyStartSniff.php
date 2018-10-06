@@ -19,7 +19,7 @@ class FunctionBodyStartSniff implements Sniff
     /**
      * @return int[]
      */
-    public function register()
+    public function register(): array
     {
         return [T_FUNCTION];
     }
@@ -105,7 +105,7 @@ class FunctionBodyStartSniff implements Sniff
             return [
                 $code,
                 "In functions {$where}, function body should start with a blank line.",
-                $openerLine + 2
+                $openerLine + 2,
             ];
         }
 
@@ -119,7 +119,7 @@ class FunctionBodyStartSniff implements Sniff
         return [
             'WrongForSingleLineDeclaration',
             $message,
-            $openerLine + 1
+            $openerLine + 1,
         ];
     }
 

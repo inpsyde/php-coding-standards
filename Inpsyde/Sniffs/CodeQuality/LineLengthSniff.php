@@ -72,7 +72,7 @@ class LineLengthSniff implements Sniff
     /**
      * @inheritdoc
      */
-    public function register()
+    public function register(): array
     {
         return [T_OPEN_TAG];
     }
@@ -80,7 +80,7 @@ class LineLengthSniff implements Sniff
     /**
      * @inheritdoc
      */
-    public function process(File $file, $position)
+    public function process(File $file, $position): int
     {
         $longLinesData = $this->collectLongLinesData($file, max(1, $position));
         if (!$longLinesData) {

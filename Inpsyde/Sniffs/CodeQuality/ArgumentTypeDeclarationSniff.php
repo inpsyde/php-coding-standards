@@ -36,7 +36,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
     /**
      * @inheritdoc
      */
-    public function register()
+    public function register(): array
     {
         return [T_FUNCTION, T_CLOSURE];
     }

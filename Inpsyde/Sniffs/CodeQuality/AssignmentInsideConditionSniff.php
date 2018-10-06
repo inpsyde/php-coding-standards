@@ -24,7 +24,7 @@ final class AssignmentInsideConditionSniff implements Sniff
     /**
      * @return int[]
      */
-    public function register()
+    public function register(): array
     {
         return [T_IF, T_ELSEIF];
     }
@@ -102,7 +102,8 @@ final class AssignmentInsideConditionSniff implements Sniff
         int $insideIfAssignmentPosition,
         int $ifOpenerPosition,
         File $file
-    ) {
+    ): bool {
+
         $insideIfOpenParenthesisPosition = $file->findPrevious(
             T_OPEN_PARENTHESIS,
             $insideIfAssignmentPosition - 1,
