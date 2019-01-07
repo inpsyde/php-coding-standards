@@ -2,6 +2,7 @@
 
 ## NOT RELEASED
 - Fix function with nullable type return and returning null (and nothing else) considered invalid.
+- Update composer.json dependencies for PHPCompatibility.
 
 ## 0.13.3
 - Fixed false positive "missing argument type declaration" when param are passed by-reference.
