@@ -102,7 +102,8 @@ final class AssignmentInsideConditionSniff implements Sniff
         int $insideIfAssignmentPosition,
         int $ifOpenerPosition,
         File $file
-    ) {
+    ): bool {
+
         $insideIfOpenParenthesisPosition = $file->findPrevious(
             T_OPEN_PARENTHESIS,
             $insideIfAssignmentPosition - 1,

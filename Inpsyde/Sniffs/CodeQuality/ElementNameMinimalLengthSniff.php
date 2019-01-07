@@ -90,6 +90,7 @@ final class ElementNameMinimalLengthSniff implements Sniff
         int $elementNameLength,
         string $elementName
     ): bool {
+
         if ($elementNameLength >= $this->minLength) {
             return true;
         }
