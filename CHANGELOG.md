@@ -1,7 +1,8 @@
 # Changelog
 
-## NOT RELEASED
+## 0.13.4
 - Fix function with nullable type return and returning null (and nothing else) considered invalid.
+- Replace abandoned wimg/php-compatibility with phpcompatibility/php-compatibility.
 
 ## 0.13.3
 - Fixed false positive "missing argument type declaration" when param are passed by-reference.
