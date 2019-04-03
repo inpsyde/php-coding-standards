@@ -18,7 +18,7 @@ namespace Inpsyde\Sniffs\CodeQuality;
 use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
-use PHPCompatibility;
+use PHP_CodeSniffer\Config;
 
 class ReturnTypeDeclarationSniff implements Sniff
 {
@@ -30,7 +30,6 @@ class ReturnTypeDeclarationSniff implements Sniff
     ];
 
     const METHODS_WHITELIST = [
-        '__to_string',
         'serialize',
         'jsonSerialize',
         'getIterator',
@@ -166,8 +165,9 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
+        $name = $file->getDeclarationName($position);
         if (PhpcsHelpers::functionIsMethod($file, $position)
-            && in_array($file->getDeclarationName($position), self::METHODS_WHITELIST, true)
+            && (in_array($name, self::METHODS_WHITELIST, true) || strpos($name, '__') === 0)
         ) {
             return;
         }
@@ -328,7 +328,7 @@ class ReturnTypeDeclarationSniff implements Sniff
      */
     private function areNullableReturnTypesSupported(): bool
     {
-        $testVersion = trim(PHPCompatibility\PHPCSHelper::getConfigData('testVersion') ?: '');
+        $testVersion = trim(Config::getConfigData('testVersion') ?: '');
         if (!$testVersion) {
             return false;
         }
