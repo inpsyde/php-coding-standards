@@ -95,7 +95,7 @@ class FunctionBodyStartSniff implements Sniff
         $startWithComment = in_array($tokens[$bodyStart]['code'], Tokens::$emptyTokens, true);
 
         if (!$startWithComment && ($isMultiLineDeclare || $isSingleLineSignature)) {
-            $where = $isSingleLineSignature === 'SingleLineSignature'
+            $where = $isSingleLineSignature
                 ? 'with single-line signature and open curly bracket on same line'
                 : 'where arguments declaration spans across multiple lines';
             $code = $isSingleLineSignature
