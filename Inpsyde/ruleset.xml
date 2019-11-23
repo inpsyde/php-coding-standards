@@ -18,10 +18,10 @@
     <arg value="sp"/>
 
     <!--
-    PSR 2 Code style.
-    See http://www.php-fig.org/psr/psr-2/
+    PSR 12 Code style.
+    See http://www.php-fig.org/psr/psr-12/
     -->
-    <rule ref="PSR2">
+    <rule ref="PSR12">
         <exclude name="Generic.Files.LineLength.TooLong"/>
     </rule>
 
