@@ -279,32 +279,26 @@ class Foo
 ## PhpStorm
 
 After having installed the package as explained above in the _"Installation"_ section,
-open PhpStorm settings, and navigate the settings:
+open PhpStorm settings, and navigate to
 
-`Language & Frameworks` ->  `PHP` -> `Code Sniffer`
+`Language & Frameworks` ->  `PHP` -> `Quality Tools` -> `PHP_CodeSniffer`
 
-There will be a dropdown with label _"Configuration"_, choose _"Local"_.
-Next to the dropdown there will be a button with _"..."_ and once clicked will show a dialog
-were it is possible to select the path for the Code Sniffer executable.
-Navigate inside the `vendor` folder a found the file: `/vendor/bin/phpcs` (`phpcs.bat` in Windows).
+Choose _"Local"_ in the _"Configuration"_ dropdown.
+Click the _"..."_ button next to the dropdown, it will show a dialog
+where you need to specify the path for the Code Sniffer executable (it should be in the `vendor` directory).
+Enter `vendor/bin/phpcs` (`vendor/bin/phpcs.bat` on Windows). 
+Click the _"Validate"_ button next to the path input field, if everything is fine
+a success message will be shown at the bottom of the window.
 
-Next to the input for path selection there's a button _"Validate"_, click it, if everything is fine
-a success message will be shown.
-
-At this point navigate to the settings:
+Navigate to
 
 `Editor` ->  `Inspections`
 
-From the list of inspections, expand the _"PHP"_ one and scroll down to _"PHP Code Sniffer validation"_
-to enable it.
+Type `codesniffer` in the search field before the list of inspections, select `PHP` -> `Quality Tools` -> `PHP_CodeSniffer validation` and enable it using the checkbox in the list, press _"Apply"_.
 
-When selecting _"PHP Code Sniffer validation"_ inspections, on the right there a dropdown to select the
-code style.
+Select  _"PHP_CodeSniffer validation"_, press the refresh icon next to the _"Coding standard"_ dropdown on the right and choose `Inpsyde`.
 
-If you have created a `phpcs.xml` file, select _"Custom"_ as standard, then using the _"..."_ button
-next to the dropdown for standard selection, you can pick the `phpcs.xml` file.
-In case of no `phpcs.xml` present, it is possible to select _"Inpsyde"_ standard from the dropdown.
-If _"Inpsyde"_ is not present in the dropdown, click the "refresh" icon next to the dropdown.
+If you do not see `Inpsyde` here, you may need to specify `phpcs.xml` file by selecting _"Custom"_ as standard and using the _"..."_ button next to the dropdown.
 
-Now PhpStorm integration is complete, and errors in the codestyle will be shown in the IDE editor
-so can be recognized without running any command at all.
+Now PhpStorm integration is complete, and errors in the code style will be shown in the IDE editor
+allowing to detect them without running any commands at all.
