@@ -285,8 +285,8 @@ open PhpStorm settings, and navigate to
 
 Choose _"Local"_ in the _"Configuration"_ dropdown.
 Click the _"..."_ button next to the dropdown, it will show a dialog
-where you need to specify the path for the Code Sniffer executable (it should be in the `vendor` directory).
-Enter `vendor/bin/phpcs` (`vendor/bin/phpcs.bat` on Windows). 
+where you need to specify the path for the Code Sniffer executable.
+Open the file selection dialog, navigate to `vendor/bin/` in your project and select `phpcs` (`phpcs.bat` on Windows). 
 Click the _"Validate"_ button next to the path input field, if everything is fine
 a success message will be shown at the bottom of the window.
 
