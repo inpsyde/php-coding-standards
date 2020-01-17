@@ -16,6 +16,13 @@ function bar()
     return 'bar';
 }
 
+// @phpcsWarningCodeOnNextLine WrongForSingleLineSignature
+function lorem() {
+
+
+    return 'ipsum';
+}
+
 // @phpcsWarningCodeOnNextLine WrongForMultiLineDeclaration
 function fooFoo(
     string $foo,
@@ -71,6 +78,13 @@ class BarBarBar
     {
 
         return 'bar';
+    }
+
+    // @phpcsWarningCodeOnNextLine WrongForSingleLineSignature
+    public function lorem() {
+
+
+        return 'ipsum';
     }
 
     // @phpcsWarningCodeOnNextLine WrongForMultiLineDeclaration
