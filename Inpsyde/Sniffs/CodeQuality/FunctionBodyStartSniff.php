@@ -86,7 +86,7 @@ class FunctionBodyStartSniff implements Sniff
 
         $error =
             ($isMultiLineDeclare || $isSingleLineSignature) && $bodyLine !== ($openerLine + 2)
-            || $isSingleLineDeclare && $bodyLine !== ($openerLine + 1);
+            || $isSingleLineDeclare && $bodyLine > ($openerLine + 2);
 
         if (!$error) {
             return [null, null, null];
