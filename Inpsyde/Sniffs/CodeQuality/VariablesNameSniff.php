@@ -92,7 +92,8 @@ class VariablesNameSniff implements Sniff
         $ignored = $this->allIgnored();
         $name = $phpcsFile->getTokens()[$stackPtr]['content'];
 
-        if (in_array($name, $ignored, true)
+        if (
+            in_array($name, $ignored, true)
             || strpos($name, '$wp_') === 0
             || strpos($name, '$_wp_') === 0
         ) {
@@ -108,7 +109,8 @@ class VariablesNameSniff implements Sniff
 
         $isProperty = PhpcsHelpers::variableIsProperty($phpcsFile, $stackPtr);
 
-        if (($isProperty && $this->arePropertiesIgnored())
+        if (
+            ($isProperty && $this->arePropertiesIgnored())
             || (!$isProperty && $this->areVariablesIgnored())
         ) {
             return;

@@ -2,7 +2,9 @@
 <ruleset name="Inpsyde Coding Standard">
 
     <description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
+
     <autoload>./Inpsyde/PhpcsHelpers.php</autoload>
+    
     <file>./Inpsyde/Sniffs</file>
     <file>./tests/src</file>
     <file>./tests/cases</file>
@@ -66,7 +68,6 @@
     <rule ref="WordPress.DB.RestrictedClasses"/>
     <rule ref="WordPress.DB.RestrictedFunctions"/>
     <rule ref="WordPress.DateTime.CurrentTimeTimestamp"/>
-    <rule ref="WordPress.DateTime.RestrictedFunctions"/>
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals"/>
     <rule ref="WordPress.NamingConventions.ValidHookName">
         <properties>
@@ -84,9 +85,7 @@
     <rule ref="WordPress.PHP.RestrictedPHPFunctions"/>
     <rule ref="WordPress.PHP.DiscouragedPHPFunctions">
         <properties>
-            <property name="exclude" value="serialize"/>
-            <property name="exclude" value="urlencode"/>
-            <property name="exclude" value="obfuscation"/>
+            <property name="exclude" type="array" value="serialize,urlencode,obfuscation"/>
         </properties>
     </rule>
     <rule ref="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration">
@@ -121,9 +120,7 @@
     <rule ref="WordPress.WP.DiscouragedFunctions"/>
     <rule ref="WordPress.WP.EnqueuedResourceParameters"/>
     <rule ref="WordPress.WP.EnqueuedResources"/>
-    <rule ref="WordPress.WP.GlobalVariablesOverride"/>
     <rule ref="WordPress.WP.I18n"/>
-    <rule ref="WordPress.WhiteSpace.CastStructureSpacing"/>
 
     <!--
     Curated list of WordPress VIP rules.
@@ -136,7 +133,6 @@
     <rule ref="WordPressVIPMinimum.Functions.DynamicCalls"/>
     <rule ref="WordPressVIPMinimum.Hooks.AlwaysReturnInFilter"/>
     <rule ref="WordPressVIPMinimum.Hooks.PreGetPosts"/>
-    <rule ref="WordPressVIPMinimum.Performance.OrderByRand"/>
     <rule ref="WordPressVIPMinimum.Performance.RegexpCompare"/>
     <rule ref="WordPressVIPMinimum.Performance.TaxonomyMetaInOptions"/>
     <rule ref="WordPressVIPMinimum.Security.EscapingVoidReturnFunctions"/>

@@ -93,7 +93,8 @@ class FixtureContentParser
         $results = $cb(...$results);
         // phpcs:enable
 
-        if ($accumulator->process->content
+        if (
+            $accumulator->process->content
             && !is_array($results)
             || count($results) !== 5
             || !is_string($results[0] ?? null)
@@ -167,7 +168,8 @@ class FixtureContentParser
      */
     private function readLine(int $lineNum, string $line, \stdClass $accumulator)
     {
-        if (!$this->readProcessLine($lineNum, $line, $accumulator)
+        if (
+            !$this->readProcessLine($lineNum, $line, $accumulator)
             && !$this->readSniffLine($line, $accumulator)
             && !$this->readPropertiesLine($lineNum, $line, $accumulator)
         ) {
