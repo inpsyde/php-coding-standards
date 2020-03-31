@@ -1,4 +1,5 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -13,6 +14,8 @@
  * released under MIT license.
  */
 
+declare(strict_types=1);
+
 namespace Inpsyde\Sniffs\CodeQuality;
 
 use Inpsyde\PhpcsHelpers;
@@ -23,7 +26,7 @@ use PHP_CodeSniffer\Sniffs\Sniff;
  * @package php-coding-standards
  * @license http://opensource.org/licenses/MIT MIT
  */
-final class ElementNameMinimalLengthSniff implements Sniff
+class ElementNameMinimalLengthSniff implements Sniff
 {
 
     /**

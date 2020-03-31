@@ -1,4 +1,8 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
+declare(strict_types=1);
+
+# -*- coding: utf-8 -*-
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -79,7 +83,7 @@ class FixtureContentParser
             return [
                 $this->checkSniffName(array_shift($results)),
                 new SniffMessages($results[1], $results[2], $results[0]),
-                $accumulator->properties->values
+                $accumulator->properties->values,
             ];
         }
 
@@ -111,7 +115,7 @@ class FixtureContentParser
         return [
             $this->checkSniffName(array_shift($results)),
             new SniffMessages($results[1], $results[2], $results[0]),
-            $results[3]
+            $results[3],
         ];
     }
 
@@ -147,7 +151,9 @@ class FixtureContentParser
         $handle = fopen($file, 'rb');
         $lineNum = 1;
 
-        while (($line = fgets($handle)) !== false) {
+        $line = fgets($handle);
+        while ($line !== false) {
+            $line = fgets($handle);
             yield [$lineNum++, rtrim($line, "\r\n")];
         }
 

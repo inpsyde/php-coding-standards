@@ -1,4 +1,5 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -12,6 +13,8 @@
  * Copyright (c) Automattic Inc.
  * released under MIT license.
  */
+
+declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
@@ -46,7 +49,8 @@ class ArgumentTypeDeclarationSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        if (PhpcsHelpers::functionIsArrayAccess($file, $position)
+        if (
+            PhpcsHelpers::functionIsArrayAccess($file, $position)
             || PhpcsHelpers::isHookClosure($file, $position)
             || PhpcsHelpers::isHookFunction($file, $position)
             || (

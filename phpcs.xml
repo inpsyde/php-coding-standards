@@ -24,6 +24,7 @@
     -->
     <rule ref="PSR12">
         <exclude name="Generic.Files.LineLength.TooLong"/>
+        <exclude name="PSR12.Properties.ConstantVisibility"/>
     </rule>
 
     <!--
@@ -129,7 +130,9 @@
     See https://github.com/Automattic/VIP-Coding-Standards/
     -->
     <rule ref="WordPressVIPMinimum.Classes.DeclarationCompatibility"/>
-    <rule ref="WordPressVIPMinimum.Constants.IncludingNonPHPFile"/>
+    <rule ref="WordPressVIPMinimum.Constants.ConstantString"/>
+    <rule ref="WordPressVIPMinimum.Constants.RestrictedConstants"/>
+    <rule ref="WordPressVIPMinimum.Files.IncludingNonPHPFile"/>
     <rule ref="WordPressVIPMinimum.Functions.DynamicCalls"/>
     <rule ref="WordPressVIPMinimum.Hooks.AlwaysReturnInFilter"/>
     <rule ref="WordPressVIPMinimum.Hooks.PreGetPosts"/>
@@ -142,7 +145,6 @@
     <rule ref="WordPressVIPMinimum.Security.ProperEscapingFunction"/>
     <rule ref="WordPressVIPMinimum.Security.StaticStrreplace"/>
     <rule ref="WordPressVIPMinimum.Variables.RestrictedVariables.session"/>
-    <rule ref="WordPressVIPMinimum.Variables.VariableAnalysis"/>
     <rule ref="WordPressVIPMinimum.VersionControl.MergeConflict"/>
 
     <!--
@@ -181,6 +183,7 @@
     <!--
     Use own styles :)
     -->
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/ConstantVisibilitySniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/DisallowShortOpenTagSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ElementNameMinimalLengthSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ForbiddenPublicPropertySniff.php"/>
@@ -189,8 +192,9 @@
     <rule ref="./Inpsyde/Sniffs/CodeQuality/LineLengthSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/NoAccessorsSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/NoElseSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/NoAccessorsSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/NoTopLevelDefineSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/PropertyPerClassLimitSniff.php"/>
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/Psr4Sniff.php"/>
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/VariablesNameSniff.php"/>
 
 </ruleset>

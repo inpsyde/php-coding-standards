@@ -1,4 +1,5 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -7,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
@@ -43,7 +46,8 @@ class FunctionBodyStartSniff implements Sniff
         }
 
         $bodyStart = $phpcsFile->findNext([T_WHITESPACE], $scopeOpener + 1, null, true);
-        if (!$bodyStart
+        if (
+            !$bodyStart
             || !array_key_exists($bodyStart, $tokens)
             || $bodyStart <= $scopeOpener
             || $bodyStart >= $scopeCloser
@@ -105,7 +109,7 @@ class FunctionBodyStartSniff implements Sniff
             return [
                 $code,
                 "In functions {$where}, function body should start with a blank line.",
-                $openerLine + 2
+                $openerLine + 2,
             ];
         }
 
@@ -119,7 +123,7 @@ class FunctionBodyStartSniff implements Sniff
         return [
             'WrongForSingleLineDeclaration',
             $message,
-            $openerLine + 1
+            $openerLine + 1,
         ];
     }
 

@@ -1,4 +1,5 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -7,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
@@ -18,7 +21,7 @@ use PHP_CodeSniffer\Sniffs\Sniff;
  * @package php-coding-standards
  * @license http://opensource.org/licenses/MIT MIT
  */
-final class Psr4Sniff implements Sniff
+class Psr4Sniff implements Sniff
 {
     /**
      * @var array
@@ -97,6 +100,8 @@ final class Psr4Sniff implements Sniff
      * @param int $position
      * @param string $className
      * @param string $entityType
+     *
+     * phpcs:disable Generic.Metrics.NestingLevel
      */
     private function checkPsr4(
         File $file,
@@ -104,6 +109,7 @@ final class Psr4Sniff implements Sniff
         string $className,
         string $entityType
     ) {
+        // phpcs:enable Generic.Metrics.NestingLevel
 
         list(, $namespace) = PhpcsHelpers::findNamespace($file, $position);
         $namespace = is_string($namespace) ? "{$namespace}\\" : '';
@@ -119,31 +125,35 @@ final class Psr4Sniff implements Sniff
 
         $filePath = str_replace('\\', '/', $file->getFilename());
 
-        foreach ($this->psr4 as $baseNamespace => $folder) {
+        foreach ($this->psr4 as $baseNamespace => $foldersStr) {
             $baseNamespace = trim($baseNamespace, '\\');
             if (strpos($namespace, $baseNamespace) !== 0) {
                 continue;
             }
 
-            $folder = trim(str_replace('\\', '/', $folder), './');
-            $folderSplit = explode("/{$folder}/", $filePath);
-            if (count($folderSplit) < 2) {
-                continue;
-            }
+            $folders = explode('|', $foldersStr);
 
-            $relativePath = array_pop($folderSplit);
+            foreach ($folders as $folder) {
+                $folder = trim(str_replace('\\', '/', $folder), './');
+                $folderSplit = explode("/{$folder}/", $filePath);
+                if (count($folderSplit) < 2) {
+                    continue;
+                }
 
-            if (basename($relativePath) !== "{$className}.php") {
-                continue;
-            }
+                $relativePath = array_pop($folderSplit);
 
-            $relativeNamespace = str_replace('/', '\\', dirname($relativePath));
-            $expectedNamespace = $relativeNamespace === '.'
-                ? $baseNamespace
-                : "{$baseNamespace}\\{$relativeNamespace}";
+                if (basename($relativePath) !== "{$className}.php") {
+                    continue;
+                }
 
-            if ("{$expectedNamespace}\\{$className}" === "{$namespace}\\{$className}") {
-                return;
+                $relativeNamespace = str_replace('/', '\\', dirname($relativePath));
+                $expectedNamespace = $relativeNamespace === '.'
+                    ? $baseNamespace
+                    : "{$baseNamespace}\\{$relativeNamespace}";
+
+                if ("{$expectedNamespace}\\{$className}" === "{$namespace}\\{$className}") {
+                    return;
+                }
             }
         }
 

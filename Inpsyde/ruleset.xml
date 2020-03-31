@@ -22,6 +22,7 @@
     -->
     <rule ref="PSR12">
         <exclude name="Generic.Files.LineLength.TooLong"/>
+        <exclude name="PSR12.Properties.ConstantVisibility"/>
     </rule>
 
     <!--
@@ -142,7 +143,6 @@
     <rule ref="WordPressVIPMinimum.Security.ProperEscapingFunction"/>
     <rule ref="WordPressVIPMinimum.Security.StaticStrreplace"/>
     <rule ref="WordPressVIPMinimum.Variables.RestrictedVariables.session"/>
-    <rule ref="WordPressVIPMinimum.Variables.VariableAnalysis"/>
     <rule ref="WordPressVIPMinimum.VersionControl.MergeConflict"/>
 
     <!--
