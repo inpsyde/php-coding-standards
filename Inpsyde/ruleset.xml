@@ -127,7 +127,9 @@
     See https://github.com/Automattic/VIP-Coding-Standards/
     -->
     <rule ref="WordPressVIPMinimum.Classes.DeclarationCompatibility"/>
-    <rule ref="WordPressVIPMinimum.Constants.IncludingNonPHPFile"/>
+    <rule ref="WordPressVIPMinimum.Constants.ConstantString"/>
+    <rule ref="WordPressVIPMinimum.Constants.RestrictedConstants"/>
+    <rule ref="WordPressVIPMinimum.Files.IncludingNonPHPFile"/>
     <rule ref="WordPressVIPMinimum.Functions.DynamicCalls"/>
     <rule ref="WordPressVIPMinimum.Hooks.AlwaysReturnInFilter"/>
     <rule ref="WordPressVIPMinimum.Hooks.PreGetPosts"/>
