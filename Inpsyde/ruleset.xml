@@ -18,10 +18,10 @@
     <arg value="sp"/>
 
     <!--
-    PSR 2 Code style.
-    See http://www.php-fig.org/psr/psr-2/
+    PSR 12 Code style.
+    See http://www.php-fig.org/psr/psr-12/
     -->
-    <rule ref="PSR2">
+    <rule ref="PSR12">
         <exclude name="Generic.Files.LineLength.TooLong"/>
     </rule>
 
@@ -29,13 +29,7 @@
     Neutron standard are quality tools for PHP7 development from Automattic.
     See https://github.com/Automattic/phpcs-neutron-standard
     -->
-    <rule ref="NeutronStandard.Arrays.DisallowLongformArray">
-        <type>warning</type>
-    </rule>
     <rule ref="NeutronStandard.AssignAlign.DisallowAssignAlign">
-        <type>warning</type>
-    </rule>
-    <rule ref="NeutronStandard.Extract.DisallowExtract">
         <type>warning</type>
     </rule>
     <rule ref="NeutronStandard.Functions.DisallowCallUserFunc">
@@ -58,22 +52,33 @@
     </rule>
 
     <!--
-    Some WordPress specific rules.
+    Curated list of WordPress specific rules.
     See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
     -->
-    <rule ref="WordPress.VIP.SessionVariableUsage"/>
-    <rule ref="WordPress.VIP.SessionFunctionsUsage"/>
-    <rule ref="WordPress.VIP.SuperGlobalInputUsage"/>
-    <rule ref="WordPress.VIP.ValidatedSanitizedInput"/>
-    <rule ref="WordPress.XSS.EscapeOutput"/>
-    <rule ref="WordPress.CSRF.NonceVerification"/>
-    <rule ref="WordPress.WP.AlternativeFunctions.curl"/>
-    <rule ref="WordPress.WP.DiscouragedConstants"/>
-    <rule ref="WordPress.WP.I18n"/>
     <rule ref="WordPress.Arrays.CommaAfterArrayItem"/>
-    <rule ref="WordPress.PHP.StrictComparisons"/>
-    <rule ref="WordPress.PHP.StrictInArray"/>
-    <rule ref="WordPress.PHP.POSIXFunctions"/>
+    <rule ref="WordPress.CodeAnalysis.AssignmentInCondition"/>
+    <rule ref="WordPress.CodeAnalysis.EmptyStatement"/>
+    <rule ref="WordPress.CodeAnalysis.EscapedNotTranslated"/>
+    <rule ref="WordPress.DB.PreparedSQLPlaceholders"/>
+    <rule ref="WordPress.DB.PreparedSQL"/>
+    <rule ref="WordPress.DB.RestrictedClasses"/>
+    <rule ref="WordPress.DB.RestrictedFunctions"/>
+    <rule ref="WordPress.DateTime.CurrentTimeTimestamp"/>
+    <rule ref="WordPress.DateTime.RestrictedFunctions"/>
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals"/>
+    <rule ref="WordPress.NamingConventions.ValidHookName">
+        <properties>
+            <property name="additionalWordDelimiters" value="-/."/>
+        </properties>
+    </rule>
+    <rule ref="WordPress.NamingConventions.ValidPostTypeSlug"/>
+    <rule ref="WordPress.PHP.DevelopmentFunctions"/>
+    <rule ref="WordPress.PHP.DevelopmentFunctions.error_log">
+        <type>error</type>
+    </rule>
+    <rule ref="WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure">
+        <type>error</type>
+    </rule>
     <rule ref="WordPress.PHP.RestrictedPHPFunctions"/>
     <rule ref="WordPress.PHP.DiscouragedPHPFunctions">
         <properties>
@@ -85,17 +90,64 @@
     <rule ref="WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration">
         <type>error</type>
     </rule>
-    <rule ref="WordPress.PHP.DevelopmentFunctions"/>
-    <rule ref="WordPress.PHP.DevelopmentFunctions.error_log">
-        <type>error</type>
-    </rule>
-    <rule ref="WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure">
-        <type>error</type>
-    </rule>
+    <rule ref="WordPress.PHP.DontExtract"/>
+    <rule ref="WordPress.PHP.IniSet"/>
+    <rule ref="WordPress.PHP.NoSilencedErrors"/>
+    <rule ref="WordPress.PHP.POSIXFunctions"/>
+    <rule ref="WordPress.PHP.PregQuoteDelimiter"/>
+    <rule ref="WordPress.PHP.RestrictedPHPFunctions"/>
+    <rule ref="WordPress.PHP.StrictComparisons"/>
+    <rule ref="WordPress.PHP.StrictInArray"/>
+    <rule ref="WordPress.PHP.TypeCasts"/>
+    <rule ref="WordPress.Security.EscapeOutput"/>
+    <rule ref="WordPress.Security.NonceVerification"/>
+    <rule ref="WordPress.Security.PluginMenuSlug"/>
+    <rule ref="WordPress.Security.SafeRedirect"/>
+    <rule ref="WordPress.Security.ValidatedSanitizedInput"/>
+    <rule ref="WordPress.WP.AlternativeFunctions.curl"/>
+    <rule ref="WordPress.WP.AlternativeFunctions.file_get_contents"/>
+    <rule ref="WordPress.WP.AlternativeFunctions.file_system_read"/>
+    <rule ref="WordPress.WP.AlternativeFunctions.strip_tags"/>
+    <rule ref="WordPress.WP.AlternativeFunctions.rand_seeding"/>
+    <rule ref="WordPress.WP.AlternativeFunctions.rand"/>
+    <rule ref="WordPress.WP.CapitalPDangit"/>
+    <rule ref="WordPress.WP.DeprecatedClasses"/>
+    <rule ref="WordPress.WP.DeprecatedFunctions"/>
+    <rule ref="WordPress.WP.DeprecatedParameters"/>
+    <rule ref="WordPress.WP.DeprecatedParameterValues"/>
+    <rule ref="WordPress.WP.DiscouragedConstants"/>
+    <rule ref="WordPress.WP.DiscouragedFunctions"/>
+    <rule ref="WordPress.WP.EnqueuedResourceParameters"/>
+    <rule ref="WordPress.WP.EnqueuedResources"/>
+    <rule ref="WordPress.WP.GlobalVariablesOverride"/>
+    <rule ref="WordPress.WP.I18n"/>
+    <rule ref="WordPress.WhiteSpace.CastStructureSpacing"/>
+
+    <!--
+    Curated list of WordPress VIP rules.
+    See https://github.com/Automattic/VIP-Coding-Standards/
+    -->
+    <rule ref="WordPressVIPMinimum.Classes.DeclarationCompatibility"/>
+    <rule ref="WordPressVIPMinimum.Constants.IncludingNonPHPFile"/>
+    <rule ref="WordPressVIPMinimum.Functions.DynamicCalls"/>
+    <rule ref="WordPressVIPMinimum.Hooks.AlwaysReturnInFilter"/>
+    <rule ref="WordPressVIPMinimum.Hooks.PreGetPosts"/>
+    <rule ref="WordPressVIPMinimum.Performance.OrderByRand"/>
+    <rule ref="WordPressVIPMinimum.Performance.RegexpCompare"/>
+    <rule ref="WordPressVIPMinimum.Performance.TaxonomyMetaInOptions"/>
+    <rule ref="WordPressVIPMinimum.Security.EscapingVoidReturnFunctions"/>
+    <rule ref="WordPressVIPMinimum.Security.ExitAfterRedirect"/>
+    <rule ref="WordPressVIPMinimum.Security.PHPFilterFunctions"/>
+    <rule ref="WordPressVIPMinimum.Security.ProperEscapingFunction"/>
+    <rule ref="WordPressVIPMinimum.Security.StaticStrreplace"/>
+    <rule ref="WordPressVIPMinimum.Variables.RestrictedVariables.session"/>
+    <rule ref="WordPressVIPMinimum.Variables.VariableAnalysis"/>
+    <rule ref="WordPressVIPMinimum.VersionControl.MergeConflict"/>
 
     <!--
     Generic
     -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="absoluteComplexity" value="50"/>
