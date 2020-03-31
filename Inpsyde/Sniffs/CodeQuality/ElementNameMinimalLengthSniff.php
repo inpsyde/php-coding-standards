@@ -49,6 +49,11 @@ final class ElementNameMinimalLengthSniff implements Sniff
     ];
 
     /**
+     * @var string[]
+     */
+    public $additionalAllowedNames = [];
+
+    /**
      * @return int[]
      */
     public function register()
@@ -108,10 +113,20 @@ final class ElementNameMinimalLengthSniff implements Sniff
      */
     private function isShortNameAllowed(string $variableName): bool
     {
-        return in_array(
-            strtolower($variableName),
-            $this->allowedShortNames,
-            true
-        );
+        $target = strtolower($variableName);
+
+        foreach ($this->allowedShortNames as $allowed) {
+            if (strtolower($allowed) === $target) {
+                return true;
+            }
+        }
+
+        foreach ($this->additionalAllowedNames as $allowed) {
+            if (strtolower($allowed) === $target) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
