@@ -6,17 +6,6 @@
     <autoload>./PhpcsHelpers.php</autoload>
 
     <!--
-    PHP 7.0 and higher.
-    -->
-    <config name="testVersion" value="7.0-"/>
-
-    <!--
-	Arguments: colors, show progress and show sniff name.
-	-->
-    <arg name="colors"/>
-    <arg value="sp"/>
-
-    <!--
     PSR 12 Code style.
     See http://www.php-fig.org/psr/psr-12/
     -->
