@@ -330,7 +330,7 @@ class PhpcsHelpers
         }
 
         $lookForComma = $file->findPrevious(
-            [T_WHITESPACE],
+            [T_WHITESPACE, T_STATIC],
             $closurePosition - 1,
             null,
             true,
