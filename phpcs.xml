@@ -2,10 +2,7 @@
 <ruleset name="Inpsyde Coding Standard">
 
     <description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
-
     <autoload>./Inpsyde/PhpcsHelpers.php</autoload>
-    <autoload>./Inpsyde/PHPCSAliases.php</autoload>
-
     <file>./Inpsyde/Sniffs</file>
     <file>./tests/src</file>
     <file>./tests/cases</file>

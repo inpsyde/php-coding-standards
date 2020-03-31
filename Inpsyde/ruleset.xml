@@ -4,7 +4,6 @@
     <description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
 
     <autoload>./PhpcsHelpers.php</autoload>
-    <autoload>./PHPCSAliases.php</autoload>
 
     <!--
     PHP 7.0 and higher.
