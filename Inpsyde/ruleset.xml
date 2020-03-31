@@ -123,4 +123,6 @@
     <rule ref="Squiz.Scope.MemberVarScope"/>
     <rule ref="Squiz.Scope.StaticThisUsage"/>
 
+    <rule ref="PHPCompatibility"/>
+
 </ruleset>

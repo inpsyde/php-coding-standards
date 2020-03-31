@@ -8,11 +8,19 @@ function foo()
     return 'foo';
 }
 
-// @phpcsWarningCodeOnNextLine WrongForSingleLineDeclaration
+// tolerate this as PHPStorm code styler cannot distinguish between
+// single line and multiline function declarations. See issue #32
 function bar()
 {
 
     return 'bar';
+}
+
+// @phpcsWarningCodeOnNextLine WrongForSingleLineSignature
+function lorem() {
+
+
+    return 'ipsum';
 }
 
 // @phpcsWarningCodeOnNextLine WrongForMultiLineDeclaration
@@ -66,11 +74,17 @@ class BarBarBar
         return 'foo';
     }
 
-    // @phpcsWarningCodeOnNextLine WrongForSingleLineDeclaration
     private function bar()
     {
 
         return 'bar';
+    }
+
+    // @phpcsWarningCodeOnNextLine WrongForSingleLineSignature
+    public function lorem() {
+
+
+        return 'ipsum';
     }
 
     // @phpcsWarningCodeOnNextLine WrongForMultiLineDeclaration
