@@ -302,3 +302,19 @@ If you do not see `Inpsyde` here, you may need to specify `phpcs.xml` file by se
 
 Now PhpStorm integration is complete, and errors in the code style will be shown in the IDE editor
 allowing to detect them without running any commands at all.
+
+# Contribution
+
+## Running tests
+
+To run the tests for this package you need to install its dependencies first:
+
+    $ composer install
+
+After that you can run all PHPUnit tests like this:
+
+    $ vendor/bin/phpunit
+
+The tests are organized in fixture files. If you want to run a single test use the filter argument:
+
+    $ vendor/bin/phpunit --filter function-length-no-blank-lines
