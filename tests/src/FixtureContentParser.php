@@ -56,7 +56,7 @@ class FixtureContentParser
         ];
 
         // phpcs:disable VariableAnalysis
-        foreach ($this->readFile($fixturePath) as list($lineNum, $line)) {
+        foreach ($this->readFile($fixturePath) as $lineNum => $line) {
             $this->readLine($lineNum, $line, $accumulator);
         }
         // phpcs:enable
@@ -154,8 +154,8 @@ class FixtureContentParser
 
         $line = fgets($handle);
         while ($line !== false) {
+            yield $lineNum++ => rtrim($line, "\r\n");
             $line = fgets($handle);
-            yield [$lineNum++, rtrim($line, "\r\n")];
         }
 
         fclose($handle);
