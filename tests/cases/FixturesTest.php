@@ -27,15 +27,24 @@ use PHPUnit\Framework\TestCase;
  */
 class FixturesTest extends TestCase
 {
-    public function testAllFixtures()
+
+    public function fixtureProvider(): \Traversable
     {
-        $fixtures = glob(getenv('FIXTURES_PATH') . DIRECTORY_SEPARATOR . '*.php');
+        $fixtures = glob(getenv('FIXTURES_PATH').DIRECTORY_SEPARATOR.'*.php');
+        foreach ($fixtures as $fixtureFile) {
+            $testname = pathinfo($fixtureFile, PATHINFO_BASENAME);
+            yield $testname => ['fixtrueFile' => $fixtureFile];
+        }
+    }
+
+    /**
+     * @dataProvider fixtureProvider
+     */
+    public function testAllFixtures(string $fixtureFile)
+    {
         $parser = new FixtureContentParser();
         $failures = new \SplStack();
-
-        foreach ($fixtures as $fixtureFile) {
-            $this->validateFixture($fixtureFile, $parser, $failures);
-        }
+        $this->validateFixture($fixtureFile, $parser, $failures);
 
         $previous = null;
         /** @var \Throwable $failure */
