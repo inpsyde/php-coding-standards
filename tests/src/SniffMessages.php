@@ -1,4 +1,8 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
+declare(strict_types=1);
+
+# -*- coding: utf-8 -*-
 /*
  * This file is part of the php-coding-standards package.
  *

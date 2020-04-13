@@ -28,9 +28,10 @@
   "minimum-stability": "stable",
   "require": {
     "php": ">=7.0",
-    "squizlabs/php_codesniffer": "^3",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.5",
-    "wp-coding-standards/wpcs": "^0.14",
+    "squizlabs/php_codesniffer": "^3.3.1",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.5 || ^0.6",
+    "wp-coding-standards/wpcs": "^2",
+    "automattic/vipwpcs": "^2",
     "automattic/phpcs-neutron-standard": "^1",
     "phpcompatibility/php-compatibility": "^9.0"
   },
@@ -44,7 +45,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "0.13.x-dev"
+      "dev-master": "0.15.x-dev"
     }
   }
 }

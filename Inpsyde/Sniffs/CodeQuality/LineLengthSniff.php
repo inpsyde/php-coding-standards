@@ -1,4 +1,5 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -12,6 +13,8 @@
  * Copyright (c) 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
  * released under BSD license.
  */
+
+declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
@@ -87,7 +90,6 @@ class LineLengthSniff implements Sniff
             return $file->numTokens + 1;
         }
 
-        // phpcs:disable VariableAnalysis
         foreach ($longLinesData as $lineNum => list($length, $start, $end)) {
             if ($this->shouldIgnoreLine($file, $start, $end)) {
                 continue;
@@ -207,7 +209,8 @@ class LineLengthSniff implements Sniff
         $tokens = $file->getTokens();
 
         for ($i = $start; $i <= $end; $i++) {
-            if ($tokens[$i]['code'] !== T_CONSTANT_ENCAPSED_STRING
+            if (
+                $tokens[$i]['code'] !== T_CONSTANT_ENCAPSED_STRING
                 || (strlen($tokens[$i]['content']) + 3) < $this->lineLimit
             ) {
                 continue;
@@ -223,7 +226,8 @@ class LineLengthSniff implements Sniff
             );
 
             $previous = $previousPos ? $tokens[$previousPos] ?? null : null;
-            if (!$previous
+            if (
+                !$previous
                 || $previous['code'] !== T_STRING
                 || !in_array($previous['content'], self::I18N_FUNCTIONS, true)
             ) {

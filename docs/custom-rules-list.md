@@ -4,6 +4,8 @@
     - Inpsyde.CodeQuality
         - Inpsyde.CodeQuality.ArgumentTypeDeclaration
             - Inpsyde.CodeQuality.ArgumentTypeDeclaration.NoArgumentType
+        - Inpsyde.CodeQuality.ConstantVisibility
+            - Inpsyde.CodeQuality.ConstantVisibility.NotFound
         - Inpsyde.CodeQuality.ElementNameMinimalLength
             - Inpsyde.CodeQuality.ElementNameMinimalLength.TooShort
         - Inpsyde.CodeQuality.ForbiddenPublicProperty

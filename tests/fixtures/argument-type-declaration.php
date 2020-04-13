@@ -60,6 +60,13 @@ add_action(
     }
 );
 
+add_filter(
+    'foo',
+    static function ($foo) {
+        return true;
+    }
+);
+
 array_map(
     function ($foo) { // @phpcsWarningOnThisLine
 
@@ -173,7 +180,7 @@ add_action('foo', function (array $foo) {
 class ArgumentTypeDeclarationSniffTestFixture
 {
     // @phpcsWarningOnNextLine
-    function a($bar)
+    public function a($bar)
     {
         function (array $baz) use ($bar)
         {
@@ -181,7 +188,23 @@ class ArgumentTypeDeclarationSniffTestFixture
         }
     }
 
-    function b(array $bar)
+    // @phpcsWarningOnNextLine
+    private function ap($bar)
+    {
+        function (array $baz) use ($bar)
+        {
+
+        }
+    }
+
+    /**
+     * @wp-hook foo
+     */
+    private function theHook($param)
+    {
+    }
+
+    protected function b(array $bar)
     {
         function (array $baz) use ($bar)
         {
@@ -193,7 +216,7 @@ class ArgumentTypeDeclarationSniffTestFixture
         }
     }
 
-    function c(array $bar)
+    private function c(array $bar)
     {
 
         function (array $baz) use ($bar)

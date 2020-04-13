@@ -28,12 +28,22 @@ By default the whitelisted names are:
  - `'it'`
  - `'db'`
  
- but they can be configured via `allowedShortNames` config, e.g.:
+ but they can be overridden via `allowedShortNames` config, e.g.:
 
 ```xml
 <rule ref="Inpsyde.CodeQuality.ElementNameMinimalLengthSniff">
     <properties>
-        <property name="allowedShortNames" type="array" value="id,db,x,y" />
+        <property name="allowedShortNames" type="array" value="id,db,ok,x,y" />
+    </properties>
+</rule>
+```
+
+or they can be extended (keeping the default allowed) via `additionalAllowedNames` config, e.g.:
+
+```xml
+<rule ref="Inpsyde.CodeQuality.ElementNameMinimalLengthSniff">
+    <properties>
+        <property name="additionalAllowedNames" type="array" value="x,y" />
     </properties>
 </rule>
 ```

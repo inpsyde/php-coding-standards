@@ -1,4 +1,5 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -8,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Inpsyde\Sniffs\CodeQuality;
 
 use PHP_CodeSniffer\Standards\Generic\Sniffs\PHP as Generic;
@@ -16,7 +19,7 @@ use PHP_CodeSniffer\Standards\Generic\Sniffs\PHP as Generic;
  * @package php-coding-standards
  * @license http://opensource.org/licenses/MIT MIT
  */
-final class DisallowShortOpenTagSniff extends Generic\DisallowShortOpenTagSniff
+class DisallowShortOpenTagSniff extends Generic\DisallowShortOpenTagSniff
 {
     /**
      * @return int[]

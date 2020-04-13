@@ -1,4 +1,8 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
+declare(strict_types=1);
+
+# -*- coding: utf-8 -*-
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -52,7 +56,7 @@ class FixtureContentParser
         ];
 
         // phpcs:disable VariableAnalysis
-        foreach ($this->readFile($fixturePath) as list($lineNum, $line)) {
+        foreach ($this->readFile($fixturePath) as $lineNum => $line) {
             $this->readLine($lineNum, $line, $accumulator);
         }
         // phpcs:enable
@@ -79,7 +83,7 @@ class FixtureContentParser
             return [
                 $this->checkSniffName(array_shift($results)),
                 new SniffMessages($results[1], $results[2], $results[0]),
-                $accumulator->properties->values
+                $accumulator->properties->values,
             ];
         }
 
@@ -89,7 +93,8 @@ class FixtureContentParser
         $results = $cb(...$results);
         // phpcs:enable
 
-        if ($accumulator->process->content
+        if (
+            $accumulator->process->content
             && !is_array($results)
             || count($results) !== 5
             || !is_string($results[0] ?? null)
@@ -111,7 +116,7 @@ class FixtureContentParser
         return [
             $this->checkSniffName(array_shift($results)),
             new SniffMessages($results[1], $results[2], $results[0]),
-            $results[3]
+            $results[3],
         ];
     }
 
@@ -147,8 +152,10 @@ class FixtureContentParser
         $handle = fopen($file, 'rb');
         $lineNum = 1;
 
-        while (($line = fgets($handle)) !== false) {
-            yield [$lineNum++, rtrim($line, "\r\n")];
+        $line = fgets($handle);
+        while ($line !== false) {
+            yield $lineNum++ => rtrim($line, "\r\n");
+            $line = fgets($handle);
         }
 
         fclose($handle);
@@ -161,7 +168,8 @@ class FixtureContentParser
      */
     private function readLine(int $lineNum, string $line, \stdClass $accumulator)
     {
-        if (!$this->readProcessLine($lineNum, $line, $accumulator)
+        if (
+            !$this->readProcessLine($lineNum, $line, $accumulator)
             && !$this->readSniffLine($line, $accumulator)
             && !$this->readPropertiesLine($lineNum, $line, $accumulator)
         ) {

@@ -15,6 +15,7 @@
 
 namespace Inpsyde;
 
+use PHP_CodeSniffer\Config;
 use PHP_CodeSniffer\Exceptions\RuntimeException as CodeSnifferRuntimeException;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Util\Tokens;
@@ -330,7 +331,7 @@ class PhpcsHelpers
         }
 
         $lookForComma = $file->findPrevious(
-            [T_WHITESPACE],
+            [T_WHITESPACE, T_STATIC],
             $closurePosition - 1,
             null,
             true,
@@ -613,5 +614,20 @@ class PhpcsHelpers
         }
 
         return [$namespacePos, $namespace];
+    }
+
+    /**
+     * @return string
+     */
+    public static function minPhpTestVersion(): string
+    {
+        $testVersion = trim(Config::getConfigData('testVersion') ?: '');
+        if (!$testVersion) {
+            return '';
+        }
+
+        preg_match('`^(\d+\.\d+)(?:\s*-\s*(?:\d+\.\d+)?)?$`', $testVersion, $matches);
+
+        return $matches[1] ?? '';
     }
 }

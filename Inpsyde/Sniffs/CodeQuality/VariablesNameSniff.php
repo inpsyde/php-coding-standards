@@ -1,4 +1,15 @@
-<?php // phpcs:disable
+<?php
+
+/*
+ * This file is part of the php-coding-standards package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
@@ -69,7 +80,7 @@ class VariablesNameSniff implements Sniff
     public function register()
     {
         return [
-            T_VARIABLE
+            T_VARIABLE,
         ];
     }
 
@@ -81,7 +92,11 @@ class VariablesNameSniff implements Sniff
         $ignored = $this->allIgnored();
         $name = $phpcsFile->getTokens()[$stackPtr]['content'];
 
-        if (in_array($name, $ignored, true) || strpos($name, '$wp_') === 0) {
+        if (
+            in_array($name, $ignored, true)
+            || strpos($name, '$wp_') === 0
+            || strpos($name, '$_wp_') === 0
+        ) {
             return;
         }
 
@@ -94,7 +109,8 @@ class VariablesNameSniff implements Sniff
 
         $isProperty = PhpcsHelpers::variableIsProperty($phpcsFile, $stackPtr);
 
-        if (($isProperty && $this->arePropertiesIgnored())
+        if (
+            ($isProperty && $this->arePropertiesIgnored())
             || (!$isProperty && $this->areVariablesIgnored())
         ) {
             return;
@@ -132,7 +148,7 @@ class VariablesNameSniff implements Sniff
      */
     private function arePropertiesIgnored(): bool
     {
-       return (bool) filter_var($this->ignoreProperties, FILTER_VALIDATE_BOOLEAN);
+        return (bool)filter_var($this->ignoreProperties, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -140,7 +156,7 @@ class VariablesNameSniff implements Sniff
      */
     private function areVariablesIgnored(): bool
     {
-        return (bool) filter_var($this->ignoreLocalVars, FILTER_VALIDATE_BOOLEAN);
+        return (bool)filter_var($this->ignoreLocalVars, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -150,7 +166,7 @@ class VariablesNameSniff implements Sniff
     private function checkCamelCase(string $name): bool
     {
         return preg_match('~^\$[a-z]+(?:[a-zA-Z0-9]+)?$~', $name)
-            && ! preg_match('~[A-Z]{2,}~', $name);
+            && !preg_match('~[A-Z]{2,}~', $name);
     }
 
     /**
@@ -161,7 +177,6 @@ class VariablesNameSniff implements Sniff
     {
         return (bool)preg_match('~^\$[a-z]+(?:[a-z0-9_]+)?$~', $name);
     }
-
 
     /**
      * @return array

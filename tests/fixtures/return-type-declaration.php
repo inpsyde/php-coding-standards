@@ -184,6 +184,10 @@ add_filter('x', function (): string {
     return '';
 });
 
+add_filter('x', static function () {
+    return '';
+});
+
 // @phpcsErrorCodeOnNextLine IncorrectVoidReturnType
 add_filter('x', function (): void {
     return '0';
@@ -243,7 +247,7 @@ function noHookCallback() // @phpcsWarningCodeOnThisLine NoReturnType
 class WrapperHookWrapper
 {
 
-    function filterWrapper(string $x, int $y): bool
+    public function filterWrapper(string $x, int $y): bool
     {
 
         // @phpcsWarningCodeOnNextLine NoReturnType
@@ -275,7 +279,7 @@ class WrapperHookWrapper
     }
 
     // @phpcsWarningCodeOnNextLine NoReturnType
-    function problematicMethod()
+    protected function problematicMethod()
     {
         return 'x';
     }
@@ -284,13 +288,13 @@ class WrapperHookWrapper
      * @return string
      * @wp-hook Meh
      */
-    function hookMethod()
+    private function hookMethod()
     {
         return 'x';
     }
 
     // @phpcsErrorCodeOnNextLine IncorrectVoidReturn
-    function problematicMethodTwo(): bool
+    protected function problematicMethodTwo(): bool
     {
         if (true) {
             return true;

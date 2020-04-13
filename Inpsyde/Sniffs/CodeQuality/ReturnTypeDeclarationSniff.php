@@ -1,4 +1,5 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -12,6 +13,8 @@
  * Copyright (c) Automattic Inc.
  * released under MIT license.
  */
+
+declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
@@ -153,20 +156,23 @@ class ReturnTypeDeclarationSniff implements Sniff
             );
         }
 
-        if (PhpcsHelpers::isHookClosure($file, $position)
+        if (
+            PhpcsHelpers::isHookClosure($file, $position)
             || PhpcsHelpers::isHookFunction($file, $position)
         ) {
             return;
         }
 
-        if (!$this->areNullableReturnTypesSupported()
+        if (
+            !$this->areNullableReturnTypesSupported()
             && $this->hasReturnNullDocBloc($file, $position)
         ) {
             return;
         }
 
         $name = $file->getDeclarationName($position);
-        if (PhpcsHelpers::functionIsMethod($file, $position)
+        if (
+            PhpcsHelpers::functionIsMethod($file, $position)
             && (in_array($name, self::METHODS_WHITELIST, true) || strpos($name, '__') === 0)
         ) {
             return;
@@ -328,13 +334,7 @@ class ReturnTypeDeclarationSniff implements Sniff
      */
     private function areNullableReturnTypesSupported(): bool
     {
-        $testVersion = trim(Config::getConfigData('testVersion') ?: '');
-        if (!$testVersion) {
-            return false;
-        }
-
-        preg_match('`^(\d+\.\d+)(?:\s*-\s*(?:\d+\.\d+)?)?$`', $testVersion, $matches);
-        $min = $matches[1] ?? null;
+        $min = PhpcsHelpers::minPhpTestVersion();
 
         return $min && version_compare($min, '7.1', '>=');
     }

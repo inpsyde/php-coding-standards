@@ -1,4 +1,5 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -13,6 +14,8 @@
  * released under MIT license.
  */
 
+declare(strict_types=1);
+
 namespace Inpsyde\Sniffs\CodeQuality;
 
 use PHP_CodeSniffer\Files\File;
@@ -22,7 +25,7 @@ use PHP_CodeSniffer\Sniffs\Sniff;
  * @package php-coding-standards
  * @license http://opensource.org/licenses/MIT MIT
  */
-final class FunctionLengthSniff implements Sniff
+class FunctionLengthSniff implements Sniff
 {
     /**
      * @var int
@@ -96,7 +99,8 @@ final class FunctionLengthSniff implements Sniff
         $tokens = $file->getTokens();
         $token = $tokens[$position] ?? [];
 
-        if (!array_key_exists('scope_opener', $token)
+        if (
+            !array_key_exists('scope_opener', $token)
             || !array_key_exists('scope_closer', $token)
         ) {
             return 0;
@@ -186,7 +190,8 @@ final class FunctionLengthSniff implements Sniff
         array $docBlocks
     ): array {
 
-        if (!$this->ignoreDocBlocks
+        if (
+            !$this->ignoreDocBlocks
             || $tokens[$position]['code'] !== T_DOC_COMMENT_OPEN_TAG
         ) {
             return $docBlocks;

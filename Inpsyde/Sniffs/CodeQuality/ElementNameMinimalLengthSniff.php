@@ -1,4 +1,5 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
+<?php
+
 /*
  * This file is part of the php-coding-standards package.
  *
@@ -13,6 +14,8 @@
  * released under MIT license.
  */
 
+declare(strict_types=1);
+
 namespace Inpsyde\Sniffs\CodeQuality;
 
 use Inpsyde\PhpcsHelpers;
@@ -23,7 +26,7 @@ use PHP_CodeSniffer\Sniffs\Sniff;
  * @package php-coding-standards
  * @license http://opensource.org/licenses/MIT MIT
  */
-final class ElementNameMinimalLengthSniff implements Sniff
+class ElementNameMinimalLengthSniff implements Sniff
 {
 
     /**
@@ -47,6 +50,11 @@ final class ElementNameMinimalLengthSniff implements Sniff
         'is',
         'wp',
     ];
+
+    /**
+     * @var string[]
+     */
+    public $additionalAllowedNames = [];
 
     /**
      * @return int[]
@@ -108,10 +116,20 @@ final class ElementNameMinimalLengthSniff implements Sniff
      */
     private function isShortNameAllowed(string $variableName): bool
     {
-        return in_array(
-            strtolower($variableName),
-            $this->allowedShortNames,
-            true
-        );
+        $target = strtolower($variableName);
+
+        foreach ($this->allowedShortNames as $allowed) {
+            if (strtolower($allowed) === $target) {
+                return true;
+            }
+        }
+
+        foreach ($this->additionalAllowedNames as $allowed) {
+            if (strtolower($allowed) === $target) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
