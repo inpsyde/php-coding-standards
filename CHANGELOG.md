@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.0-beta.1
+### Added
+- PHPCompatibility checks
+- External VIP rules
+- Possibility to filter execution of tests
+### Changed
+- Move to PSR-12
+- Move to WPCS v2
+- Move to PHPCS v3.3
+- Upgrade `dealerdirect/phpcodesniffer-composer-installer` to `^0.5`
+- Extend type declaration exclusion for hooks static closures
+- Simplify customization of `ElementNameMinimalLength`
+- Allow blank line after method with single line declaration
+- Ignore in return type declaration check all methods that start with `__`
+- Remove `PHPCSAliases` class
+- Remove configuration values in provided `ruleset.xml`
+- Improved README and documentation
+
 ## 0.13.4
 - Fix function with nullable type return and returning null (and nothing else) considered invalid.
 - Replace abandoned wimg/php-compatibility with phpcompatibility/php-compatibility.
