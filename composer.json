@@ -28,7 +28,7 @@
   "minimum-stability": "stable",
   "require": {
     "php": ">=7.0",
-    "squizlabs/php_codesniffer": "^3.3.1",
+    "squizlabs/php_codesniffer": "~3.5.0",
     "dealerdirect/phpcodesniffer-composer-installer": "^0.5 || ^0.6",
     "wp-coding-standards/wpcs": "^2",
     "automattic/vipwpcs": "^2",
