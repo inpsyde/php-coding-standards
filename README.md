@@ -64,9 +64,9 @@ customization it is also possible to create a `phpcs.xml.dist` file that contain
 <?xml version="1.0"?>
 <ruleset name="MyProjectCodingStandard">
 
-	<description>My Project coding standard.</description>
+    <description>My Project coding standard.</description>
 
-	<file>./src</file>
+    <file>./src</file>
     <file>./tests/src</file>
 
     <arg value="sp"/>
