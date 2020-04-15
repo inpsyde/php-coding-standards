@@ -170,9 +170,9 @@ Some custom rules are also in use. They are:
 | `ReturnTypeDeclarationSniff`|Enforce return type declaration, with few exceptions (e.g. hook callbacks or `ArrayAccess` methods)||✓||
 | `VariablesNameSniff`|Check variable (and properties) names|✓|✓||
 
-For **notes and configuration** see `/docs/inpsyde-rules-configuration.md` file in this repo.
+For **notes and configuration** see `/docs/inpsyde-custom-sniffs.md` file in this repo.
 
-The tree of rules are listed in the `/docs/custom-rules-list.md` file in this repo.
+The tree of sniffs are listed in the `/docs/inpsyde-custom-sniffs-three.md` file in this repo.
 
 -------------
 

@@ -1,4 +1,4 @@
-# Custom Rules
+# Custom Rules Three
 
 - Inpsyde
     - Inpsyde.CodeQuality
