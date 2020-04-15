@@ -67,11 +67,32 @@ customization it is also possible to create a `phpcs.xml.dist` file that contain
 	<description>My Project coding standard.</description>
 
 	<file>./src</file>
-	<file>./my-plugin.php</file>
+    <file>./tests/src</file>
 
-	<config name="text_domain" value="my-project"/>
+    <arg value="sp"/>
+    <arg name="colors"/>
 
-	<rule ref="Inpsyde"/>
+    <config name="testVersion" value="7.2-"/>
+    <config name="text_domain" value="my-project"/>
+    
+    <rule ref="Inpsyde">
+        <exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize" />
+    </rule>
+    
+    <rule ref="Inpsyde.CodeQuality.Psr4">
+        <properties>
+            <property
+                name="psr4"
+                type="array"
+                value="Inpsyde\MyProject=>src,Inpsyde\MyProject\Tests=>tests/src|tests/unit"/>
+        </properties>
+    </rule>
+    
+    <rule ref="Inpsyde.CodeQuality.ElementNameMinimalLength">
+        <properties>
+            <property name="additionalAllowedNames" type="array" value="c,me,my" />
+        </properties>
+    </rule>
 
 </ruleset>
 ```
@@ -89,11 +110,9 @@ internationalization functions are called with the proper text domain.
 
 # Included rules
 
-## PSR-1 & PSR-2
+## PSR-12
 
-See http://www.php-fig.org/psr/psr-1/ and http://www.php-fig.org/psr/psr-2/.
-
-The tree of used rules are listed in the `/docs/rules-list/psr.md` file in this repo.
+See https://www.php-fig.org/psr/psr-12
 
 
 ## Neutron Standard
@@ -102,8 +121,6 @@ See https://github.com/Automattic/phpcs-neutron-standard
 
 Almost all Neutron Standard rules are included.
 
-The tree of used rules are listed in the `/docs/rules-list/neutron-standard.md` file in this repo.
-
 
 ## WordPress Coding Standard
 
@@ -111,8 +128,6 @@ To ensure code quality, and compatibility with VIP, several WordPress Coding Sta
 "cherry picked" from WP coding standards.
 
 See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.
-
-The tree of used rules are listed in the `/docs/rules-list/wordpress.md` file in this repo.
 
 ## PHPCompatibility
 
@@ -131,8 +146,6 @@ Some rules are also included from PHP cCode Sniffer itself. Those rules fall in 
 
 Those rules are included by other styles, mainly by PSR-1 and PSR-2.
 
-The tree of used rules are listed in the `/docs/rules-list/generic.md` file in this repo.
-
 
 ## Custom Rules
 
@@ -141,7 +154,7 @@ Some custom rules are also in use. They are:
 | Sniff name | Description | Has Config | Has Notes | Auto-Fixable |
 |:-----------|:------------|:----------:|:---------:|:------------:|
 | `ArgumentTypeDeclarationSniff`|Enforce argument type declaration, with few exception (e.g. hook callbacks or `ArrayAccess` methods)||||
-| `AssignmentInsideConditionSniff`|Ensure that any assignment inside conditions in wrapped in parenthesis||||
+| `ConstantVisibilitySniff`|Inherited from PSR-12 force use of visibility fro constants only if min PHP version is PHP 7.1+||||
 | `DisallowShortOpenTagSniff`|Disallow short open PHP tag (short echo tag allowed).||||
 | `ElementNameMinimalLengthSniff`|Use minimum 3 chars for names (with a few exclusions)|✓|||
 | `ForbiddenPublicPropertySniff`|No public class properties||||
@@ -157,9 +170,9 @@ Some custom rules are also in use. They are:
 | `ReturnTypeDeclarationSniff`|Enforce return type declaration, with few exceptions (e.g. hook callbacks or `ArrayAccess` methods)||✓||
 | `VariablesNameSniff`|Check variable (and properties) names|✓|✓||
 
-For **notes and configuration** see `/docs/rules-list/inpsyde-rules-configuration.md` file in this repo.
+For **notes and configuration** see `/docs/inpsyde-rules-configuration.md` file in this repo.
 
-The tree of rules are listed in the `/docs/rules-list/custom.md` file in this repo.
+The tree of rules are listed in the `/docs/custom-rules-list.md` file in this repo.
 
 -------------
 
@@ -183,26 +196,6 @@ In both cases it is possible to remove or disable:
 The for things above are in hierarchical relationship: a _standard_ is made of one
 or more _subset_, each subset contains one or more _sniff_ and each sniff contains
 one or more rule.
-
-The folder `/docs/rules-list/` of this repo contains 6 files, each of them contain
-the rules _tree_ for one (or few related) standard(s).
-
-For example, in the file `docs/rules-list/psr.md` is is possible to read something
-like:
-
-```
-- PSR1
-    - PSR1.Classes
-        - PSR1.Classes.ClassDeclaration
-            - PSR1.Classes.ClassDeclaration.MultipleClasses
-```
-
-Where:
-- "_PSR1_" is the standard
-- "_PSR1.Classes_" is the subset
-- "_PSR1.Classes.ClassDeclaration_" is the sniff
-- "_PSR1.Classes.ClassDeclaration.MultipleClasses_" is the rule
-
 
 ## Remove rules via configuration file
 
