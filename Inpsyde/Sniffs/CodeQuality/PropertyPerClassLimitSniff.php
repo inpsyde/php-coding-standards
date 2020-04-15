@@ -22,10 +22,6 @@ use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
-/**
- * @package php-coding-standards
- * @license http://opensource.org/licenses/MIT MIT
- */
 class PropertyPerClassLimitSniff implements Sniff
 {
     /**
@@ -44,6 +40,7 @@ class PropertyPerClassLimitSniff implements Sniff
     /**
      * @param File $file
      * @param int $position
+     * @return void
      */
     public function process(File $file, $position)
     {

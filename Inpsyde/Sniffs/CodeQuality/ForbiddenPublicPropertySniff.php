@@ -23,10 +23,6 @@ use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Util\Tokens;
 
-/**
- * @package php-coding-standards
- * @license http://opensource.org/licenses/MIT MIT
- */
 class ForbiddenPublicPropertySniff implements Sniff
 {
     /**
@@ -40,6 +36,7 @@ class ForbiddenPublicPropertySniff implements Sniff
     /**
      * @param File $file
      * @param int $position
+     * @return void
      */
     public function process(File $file, $position)
     {
@@ -47,7 +44,7 @@ class ForbiddenPublicPropertySniff implements Sniff
             return;
         }
 
-        // skip Sniff classes, they have public properties for configuration (unfortunately)
+        // Skip sniff classes, they have public properties for configuration (unfortunately)
         if ($this->isSniffClass($file, $position)) {
             return;
         }
@@ -62,11 +59,6 @@ class ForbiddenPublicPropertySniff implements Sniff
         }
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return bool
-     */
     private function isSniffClass(File $file, int $position): bool
     {
         $classNameTokenPosition = $file->findNext(
@@ -83,11 +75,6 @@ class ForbiddenPublicPropertySniff implements Sniff
         return false;
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return mixed[]
-     */
     private function propertyScopeModifier(File $file, int $position): array
     {
         $scopeModifierPosition = $file->findPrevious(Tokens::$scopeModifiers, ($position - 1));

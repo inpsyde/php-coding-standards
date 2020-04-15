@@ -21,12 +21,6 @@ namespace Inpsyde\Sniffs\CodeQuality;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 
-/**
- * Modified version of the `LineLengthSniff` from "Generic" standard that
- * ignores long lines when they contain string
- *
- * @package Inpsyde\Sniffs\CodeQuality
- */
 class LineLengthSniff implements Sniff
 {
     const I18N_FUNCTIONS = [
@@ -73,7 +67,7 @@ class LineLengthSniff implements Sniff
     public $lineLimit = 100;
 
     /**
-     * @inheritdoc
+     * @return int[]
      */
     public function register()
     {
@@ -81,7 +75,9 @@ class LineLengthSniff implements Sniff
     }
 
     /**
-     * @inheritdoc
+     * @param File $file
+     * @param int $position
+     * @return int
      */
     public function process(File $file, $position)
     {
@@ -111,12 +107,7 @@ class LineLengthSniff implements Sniff
         return $file->numTokens + 1;
     }
 
-    /**
-     * @param File $file
-     * @param int $start
-     * @return array
-     */
-    protected function collectLongLinesData(File $file, int $start): array
+    private function collectLongLinesData(File $file, int $start): array
     {
         $tokens = $file->getTokens();
         $lines = $counted = [];
@@ -150,16 +141,6 @@ class LineLengthSniff implements Sniff
         );
     }
 
-    /**
-     * Don't warn for lines that exceeds limit, but either are part of
-     * translations function first argument or contain single words that alone
-     * are longer that line limit (e.g. long URLs).
-     *
-     * @param File $file
-     * @param int $start
-     * @param int $end
-     * @return bool
-     */
     private function shouldIgnoreLine(File $file, int $start, int $end): bool
     {
         return
@@ -167,12 +148,6 @@ class LineLengthSniff implements Sniff
             || $this->isI18nFunction($file, $start, $end);
     }
 
-    /**
-     * @param File $file
-     * @param int $start
-     * @param int $end
-     * @return bool
-     */
     private function containLongWords(File $file, int $start, int $end): bool
     {
         $tokens = $file->getTokens();
@@ -198,12 +173,6 @@ class LineLengthSniff implements Sniff
         return false;
     }
 
-    /**
-     * @param File $file
-     * @param int $start
-     * @param int $end
-     * @return bool
-     */
     private function isI18nFunction(File $file, int $start, int $end): bool
     {
         $tokens = $file->getTokens();

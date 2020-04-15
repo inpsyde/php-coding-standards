@@ -28,7 +28,6 @@ use PHP_CodeSniffer\Sniffs\Sniff;
  */
 class ElementNameMinimalLengthSniff implements Sniff
 {
-
     /**
      * @var int
      */
@@ -79,6 +78,7 @@ class ElementNameMinimalLengthSniff implements Sniff
     /**
      * @param File $file
      * @param int $position
+     * @return void
      */
     public function process(File $file, $position)
     {
@@ -101,31 +101,11 @@ class ElementNameMinimalLengthSniff implements Sniff
         $file->addError($message, $position, 'TooShort');
     }
 
-    /**
-     * @param int $elementNameLength
-     * @param string $elementName
-     * @return bool
-     */
-    private function shouldBeSkipped(
-        int $elementNameLength,
-        string $elementName
-    ): bool {
-
-        if ($elementNameLength >= $this->minLength) {
-            return true;
-        }
-
-        if ($this->isShortNameAllowed($elementName)) {
-            return true;
-        }
-
-        return false;
+    private function shouldBeSkipped(int $elementNameLength, string $elementName): bool
+    {
+        return ($elementNameLength >= $this->minLength) || $this->isShortNameAllowed($elementName);
     }
 
-    /**
-     * @param string $variableName
-     * @return bool
-     */
     private function isShortNameAllowed(string $variableName): bool
     {
         $target = strtolower($variableName);

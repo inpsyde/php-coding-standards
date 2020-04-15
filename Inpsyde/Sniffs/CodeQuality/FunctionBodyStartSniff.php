@@ -67,13 +67,6 @@ class FunctionBodyStartSniff implements Sniff
         }
     }
 
-    /**
-     * @param int $bodyStart
-     * @param int $openerLine
-     * @param int $functionLine
-     * @param File $phpcsFile
-     * @return array
-     */
     private function checkBodyStart(
         int $bodyStart,
         int $openerLine,
@@ -132,6 +125,7 @@ class FunctionBodyStartSniff implements Sniff
      * @param int $expectedLine
      * @param int $scopeOpener
      * @param File $file
+     * @return void
      */
     private function fix(int $bodyStart, int $expectedLine, int $scopeOpener, File $file)
     {

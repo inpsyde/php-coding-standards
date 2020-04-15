@@ -37,7 +37,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
     ];
 
     /**
-     * @inheritdoc
+     * @return int[]
      */
     public function register()
     {
@@ -45,7 +45,9 @@ class ArgumentTypeDeclarationSniff implements Sniff
     }
 
     /**
-     * @inheritdoc
+     * @param File $file
+     * @param int $position
+     * @return int|void
      */
     public function process(File $file, $position)
     {

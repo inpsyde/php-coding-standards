@@ -15,10 +15,6 @@ namespace Inpsyde\Sniffs\CodeQuality;
 
 use PHP_CodeSniffer\Standards\Generic\Sniffs\PHP as Generic;
 
-/**
- * @package php-coding-standards
- * @license http://opensource.org/licenses/MIT MIT
- */
 class DisallowShortOpenTagSniff extends Generic\DisallowShortOpenTagSniff
 {
     /**
@@ -26,9 +22,6 @@ class DisallowShortOpenTagSniff extends Generic\DisallowShortOpenTagSniff
      */
     public function register()
     {
-        return [
-            T_OPEN_TAG,
-            T_INLINE_HTML,
-        ];
+        return [T_OPEN_TAG, T_INLINE_HTML];
     }
 }

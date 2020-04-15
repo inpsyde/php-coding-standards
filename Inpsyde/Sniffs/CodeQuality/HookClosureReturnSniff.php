@@ -20,7 +20,7 @@ use PHP_CodeSniffer\Files\File;
 class HookClosureReturnSniff implements Sniff
 {
     /**
-     * @inheritdoc
+     * @return int[]
      */
     public function register()
     {
@@ -28,7 +28,9 @@ class HookClosureReturnSniff implements Sniff
     }
 
     /**
-     * @inheritdoc
+     * @param File $file
+     * @param int $position
+     * @return void
      */
     public function process(File $file, $position)
     {

@@ -23,10 +23,6 @@ use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Util\Tokens;
 
-/**
- * @package php-coding-standards
- * @license http://opensource.org/licenses/MIT MIT
- */
 class NoAccessorsSniff implements Sniff
 {
     const ALLOWED_NAMES = [
@@ -36,8 +32,14 @@ class NoAccessorsSniff implements Sniff
         'setUp',
     ];
 
+    /**
+     * @var bool
+     */
     public $skipForFunctions = true;
 
+    /**
+     * @var bool
+     */
     public $skipForNonPublic = true;
 
     /**
@@ -51,7 +53,7 @@ class NoAccessorsSniff implements Sniff
     /**
      * @param File $file
      * @param int $position
-     * @throws \PHP_CodeSniffer\Exceptions\RuntimeException
+     * @return void
      */
     public function process(File $file, $position)
     {

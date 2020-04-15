@@ -17,10 +17,6 @@ use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
-/**
- * @package php-coding-standards
- * @license http://opensource.org/licenses/MIT MIT
- */
 class Psr4Sniff implements Sniff
 {
     /**
@@ -44,7 +40,7 @@ class Psr4Sniff implements Sniff
     /**
      * @param File $file
      * @param int $position
-     * @throws \PHP_CodeSniffer\Exceptions\RuntimeException
+     * @return void
      */
     public function process(File $file, $position)
     {
@@ -65,12 +61,6 @@ class Psr4Sniff implements Sniff
         $this->checkPsr4($file, $position, $className, $entityType);
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @param string $className
-     * @param string $entityType
-     */
     private function checkFilenameOnly(
         File $file,
         int $position,
@@ -96,19 +86,10 @@ class Psr4Sniff implements Sniff
     }
 
     /**
-     * @param File $file
-     * @param int $position
-     * @param string $className
-     * @param string $entityType
-     *
      * phpcs:disable Generic.Metrics.NestingLevel
      */
-    private function checkPsr4(
-        File $file,
-        int $position,
-        string $className,
-        string $entityType
-    ) {
+    private function checkPsr4(File $file, int $position, string $className, string $entityType)
+    {
         // phpcs:enable Generic.Metrics.NestingLevel
 
         list(, $namespace) = PhpcsHelpers::findNamespace($file, $position);
@@ -169,10 +150,6 @@ class Psr4Sniff implements Sniff
         );
     }
 
-    /**
-     * @param array $excluded
-     * @return array
-     */
     private function normalizeExcluded(array $excluded): array
     {
         return array_map(

@@ -17,10 +17,6 @@ use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
-/**
- * @package php-coding-standards
- * @license http://opensource.org/licenses/MIT MIT
- */
 class NoTopLevelDefineSniff implements Sniff
 {
     /**
@@ -34,6 +30,7 @@ class NoTopLevelDefineSniff implements Sniff
     /**
      * @param File $file
      * @param int $position
+     * @return void
      */
     public function process(File $file, $position)
     {

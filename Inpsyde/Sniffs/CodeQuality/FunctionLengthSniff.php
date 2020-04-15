@@ -21,10 +21,6 @@ namespace Inpsyde\Sniffs\CodeQuality;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
-/**
- * @package php-coding-standards
- * @license http://opensource.org/licenses/MIT MIT
- */
 class FunctionLengthSniff implements Sniff
 {
     /**
@@ -58,6 +54,7 @@ class FunctionLengthSniff implements Sniff
     /**
      * @param File $file
      * @param int $position
+     * @return void
      */
     public function process(File $file, $position)
     {
@@ -89,12 +86,7 @@ class FunctionLengthSniff implements Sniff
         $file->addError($error, $position, 'TooLong');
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return int
-     */
-    public function structureLinesCount(File $file, int $position): int
+    private function structureLinesCount(File $file, int $position): int
     {
         $tokens = $file->getTokens();
         $token = $tokens[$position] ?? [];
@@ -117,18 +109,8 @@ class FunctionLengthSniff implements Sniff
         return $length - $this->collectLinesToExclude($start, $end, $tokens);
     }
 
-    /**
-     * @param int $start
-     * @param int $end
-     * @param array $tokens
-     * @return int
-     */
-    private function collectLinesToExclude(
-        int $start,
-        int $end,
-        array $tokens
-    ): int {
-
+    private function collectLinesToExclude(int $start, int $end, array $tokens): int
+    {
         $linesData = $docblocks = [];
 
         $skipLines = [$tokens[$start + 1]['line'], $tokens[$end]['line']];
@@ -155,11 +137,6 @@ class FunctionLengthSniff implements Sniff
         return $toExcludeCount;
     }
 
-    /**
-     * @param array $token
-     * @param array $lines
-     * @return array
-     */
     private function ignoredLinesData(array $token, array $lines): array
     {
         $line = $token['line'];
@@ -178,18 +155,8 @@ class FunctionLengthSniff implements Sniff
         return $lines;
     }
 
-    /**
-     * @param array $tokens
-     * @param int $position
-     * @param array $docBlocks
-     * @return array
-     */
-    private function docBlocksData(
-        array $tokens,
-        int $position,
-        array $docBlocks
-    ): array {
-
+    private function docBlocksData(array $tokens, int $position, array $docBlocks): array
+    {
         if (
             !$this->ignoreDocBlocks
             || $tokens[$position]['code'] !== T_DOC_COMMENT_OPEN_TAG

@@ -75,17 +75,17 @@ class VariablesNameSniff implements Sniff
     public $ignoreProperties = false;
 
     /**
-     * @inheritdoc
+     * @return int[]
      */
     public function register()
     {
-        return [
-            T_VARIABLE,
-        ];
+        return [T_VARIABLE,];
     }
 
     /**
-     * @inheritdoc
+     * @param File $phpcsFile
+     * @param int $stackPtr
+     * @return void
      */
     public function process(File $phpcsFile, $stackPtr)
     {
@@ -126,9 +126,6 @@ class VariablesNameSniff implements Sniff
         );
     }
 
-    /**
-     * @return string
-     */
     private function checkType(): string
     {
         if (!is_string($this->checkType)) {
@@ -143,44 +140,27 @@ class VariablesNameSniff implements Sniff
         return 'camelCase';
     }
 
-    /**
-     * @return bool
-     */
     private function arePropertiesIgnored(): bool
     {
         return (bool)filter_var($this->ignoreProperties, FILTER_VALIDATE_BOOLEAN);
     }
 
-    /**
-     * @return bool
-     */
     private function areVariablesIgnored(): bool
     {
         return (bool)filter_var($this->ignoreLocalVars, FILTER_VALIDATE_BOOLEAN);
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
     private function checkCamelCase(string $name): bool
     {
         return preg_match('~^\$[a-z]+(?:[a-zA-Z0-9]+)?$~', $name)
             && !preg_match('~[A-Z]{2,}~', $name);
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
     private function checkSnakeCase(string $name): bool
     {
         return (bool)preg_match('~^\$[a-z]+(?:[a-z0-9_]+)?$~', $name);
     }
 
-    /**
-     * @return array
-     */
     private function allIgnored(): array
     {
         if (is_string($this->ignoredNames)) {

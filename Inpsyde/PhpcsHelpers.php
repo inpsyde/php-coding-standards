@@ -20,10 +20,6 @@ use PHP_CodeSniffer\Exceptions\RuntimeException as CodeSnifferRuntimeException;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Util\Tokens;
 
-/**
- * @package php-coding-standards
- * @license http://opensource.org/licenses/MIT MIT
- */
 class PhpcsHelpers
 {
     const CODE_TO_TYPE_MAP = [
@@ -33,11 +29,6 @@ class PhpcsHelpers
         T_TRAIT => 'Trait',
     ];
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return mixed[]
-     */
     public static function classPropertiesTokenIndexes(File $file, int $position): array
     {
         $tokens = $file->getTokens();
@@ -63,11 +54,6 @@ class PhpcsHelpers
         return $propertyList;
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return bool
-     */
     public static function variableIsProperty(File $file, int $position): bool
     {
         $tokens = $file->getTokens();
@@ -113,11 +99,6 @@ class PhpcsHelpers
         return in_array($propertyModifierCode, $modifiers, true);
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return bool
-     */
     public static function functionIsMethod(File $file, int $position)
     {
         $tokens = $file->getTokens();
@@ -147,11 +128,6 @@ class PhpcsHelpers
             && $opener < $position;
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return bool
-     */
     public static function functionIsArrayAccess(File $file, int $position)
     {
         $token = $file->getTokens()[$position] ?? null;
@@ -175,11 +151,6 @@ class PhpcsHelpers
         }
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return bool
-     */
     public static function isFunctionCall(File $file, int $position): bool
     {
         $tokens = $file->getTokens();
@@ -243,11 +214,6 @@ class PhpcsHelpers
             && $closeParenthesisPosition === $parenthesisCloserPosition;
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return string
-     */
     public static function tokenTypeName(File $file, int $position): string
     {
         $token = $file->getTokens()[$position];
@@ -267,11 +233,6 @@ class PhpcsHelpers
         return '';
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return string
-     */
     public static function tokenName(File $file, int $position): string
     {
         $name = $file->getTokens()[$position]['content'] ?? '';
@@ -286,19 +247,10 @@ class PhpcsHelpers
     }
 
     /**
-     * @param int $start
-     * @param int $end
-     * @param File $file
-     * @param array ...$types
-     * @return array[]
+     * @param int|string ...$types
      */
-    public static function filterTokensByType(
-        int $start,
-        int $end,
-        File $file,
-        ...$types
-    ): array {
-
+    public static function filterTokensByType(int $start, int $end, File $file, ...$types): array
+    {
         return array_filter(
             $file->getTokens(),
             function (array $token, int $position) use ($start, $end, $types): bool {
@@ -311,13 +263,6 @@ class PhpcsHelpers
         );
     }
 
-    /**
-     * @param File $file
-     * @param int $closurePosition
-     * @param bool $lookForFilters
-     * @param bool $lookForActions
-     * @return bool
-     */
     public static function isHookClosure(
         File $file,
         int $closurePosition,
@@ -372,11 +317,6 @@ class PhpcsHelpers
         return in_array($tokens[$functionCall]['content'] ?? '', $actions, true);
     }
 
-    /**
-     * @param File $file
-     * @param int $functionPosition
-     * @return bool
-     */
     public static function isHookFunction(File $file, int $functionPosition): bool
     {
         $tokens = $file->getTokens();
@@ -423,11 +363,6 @@ class PhpcsHelpers
         return false;
     }
 
-    /**
-     * @param File $file
-     * @param int $functionPosition
-     * @return array
-     */
     public static function functionBoundaries(File $file, int $functionPosition): array
     {
         $tokens = $file->getTokens();
@@ -440,11 +375,6 @@ class PhpcsHelpers
         return [$functionStart, $functionEnd];
     }
 
-    /**
-     * @param File $file
-     * @param int $functionPosition
-     * @return array
-     */
     public static function countReturns(File $file, int $functionPosition): array
     {
         list($functionStart, $functionEnd) = self::functionBoundaries($file, $functionPosition);
@@ -477,12 +407,6 @@ class PhpcsHelpers
         return [$nonVoidReturnCount, $voidReturnCount, $nullReturnCount];
     }
 
-    /**
-     * @param File $file
-     * @param int $returnPosition
-     * @param bool $includeNull
-     * @return bool
-     */
     public static function isVoidReturn(File $file, int $returnPosition, $includeNull = false): bool
     {
         $tokens = $file->getTokens();
@@ -500,11 +424,6 @@ class PhpcsHelpers
         return ($tokens[$nextToReturn]['code'] ?? '') === T_SEMICOLON;
     }
 
-    /**
-     * @param File $file
-     * @param int $returnPosition
-     * @return bool
-     */
     public static function isNullReturn(File $file, int $returnPosition): bool
     {
         return
@@ -512,12 +431,6 @@ class PhpcsHelpers
             && self::isVoidReturn($file, $returnPosition, true);
     }
 
-    /**
-     * @param string $tag
-     * @param File $file
-     * @param int $functionPosition
-     * @return string[]
-     */
     public static function functionDocBlockTag(
         string $tag,
         File $file,
@@ -572,11 +485,6 @@ class PhpcsHelpers
         return $tags;
     }
 
-    /**
-     * @param File $file
-     * @param int $position
-     * @return array
-     */
     public static function findNamespace(File $file, int $position): array
     {
         $tokens = $file->getTokens();
@@ -616,9 +524,6 @@ class PhpcsHelpers
         return [$namespacePos, $namespace];
     }
 
-    /**
-     * @return string
-     */
     public static function minPhpTestVersion(): string
     {
         $testVersion = trim(Config::getConfigData('testVersion') ?: '');

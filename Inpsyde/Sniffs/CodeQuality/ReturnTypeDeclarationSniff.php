@@ -21,7 +21,6 @@ namespace Inpsyde\Sniffs\CodeQuality;
 use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
-use PHP_CodeSniffer\Config;
 
 class ReturnTypeDeclarationSniff implements Sniff
 {
@@ -45,7 +44,7 @@ class ReturnTypeDeclarationSniff implements Sniff
     ];
 
     /**
-     * @inheritdoc
+     * @return int[]
      */
     public function register()
     {
@@ -53,7 +52,9 @@ class ReturnTypeDeclarationSniff implements Sniff
     }
 
     /**
-     * @inheritdoc
+     * @param File $file
+     * @param int $position
+     * @return void
      */
     public function process(File $file, $position)
     {
@@ -107,18 +108,6 @@ class ReturnTypeDeclarationSniff implements Sniff
         );
     }
 
-    /**
-     * @param bool $hasNonVoidReturnType
-     * @param bool $hasVoidReturnType
-     * @param bool $hasNullableReturn
-     * @param bool $hasNoReturnType
-     * @param int $nonVoidReturnCount
-     * @param int $voidReturnCount
-     * @param int $nullReturnCount
-     * @param File $file
-     * @param int $position
-     * @throws \PHP_CodeSniffer\Exceptions\RuntimeException
-     */
     private function maybeErrors(
         bool $hasNonVoidReturnType,
         bool $hasVoidReturnType,
@@ -183,13 +172,6 @@ class ReturnTypeDeclarationSniff implements Sniff
         }
     }
 
-    /**
-     * @param int $yieldCount
-     * @param bool $returnsGenerator
-     * @param int $nonVoidReturnCount
-     * @param File $file
-     * @param int $position
-     */
     private function maybeGeneratorErrors(
         int $yieldCount,
         bool $returnsGenerator,
@@ -242,11 +224,6 @@ class ReturnTypeDeclarationSniff implements Sniff
         );
     }
 
-    /**
-     * @param File $file
-     * @param int $functionPosition
-     * @return string
-     */
     private function returnTypeContent(File $file, int $functionPosition): string
     {
         $info = $file->getMethodProperties($functionPosition);
@@ -269,11 +246,6 @@ class ReturnTypeDeclarationSniff implements Sniff
         return ltrim($returnType['content'] ?? '', '\\');
     }
 
-    /**
-     * @param File $file
-     * @param int $functionPosition
-     * @return array
-     */
     private function returnTypeInfo(File $file, int $functionPosition): array
     {
         $tokens = $file->getTokens();
@@ -304,11 +276,6 @@ class ReturnTypeDeclarationSniff implements Sniff
         return [$hasNonVoidReturnType, $hasVoidReturnType, false, $hasNullable, $returnsGenerator];
     }
 
-    /**
-     * @param File $file
-     * @param int $functionPosition
-     * @return bool
-     */
     private function hasReturnNullDocBloc(File $file, int $functionPosition): bool
     {
         $return = PhpcsHelpers::functionDocBlockTag('@return', $file, $functionPosition);
@@ -327,11 +294,6 @@ class ReturnTypeDeclarationSniff implements Sniff
             && in_array('null', $returnTypes, true);
     }
 
-    /**
-     * Return true if _min_ supported version is PHP 7.1.
-     *
-     * @return bool
-     */
     private function areNullableReturnTypesSupported(): bool
     {
         $min = PhpcsHelpers::minPhpTestVersion();
@@ -339,11 +301,6 @@ class ReturnTypeDeclarationSniff implements Sniff
         return $min && version_compare($min, '7.1', '>=');
     }
 
-    /**
-     * @param int $functionStart
-     * @param int $functionEnd
-     * @return int
-     */
     private function countYield(int $functionStart, int $functionEnd, File $file): int
     {
         $count = 0;

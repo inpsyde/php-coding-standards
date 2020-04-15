@@ -17,10 +17,6 @@ use Inpsyde\PhpcsHelpers;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Standards\PSR12\Sniffs\Properties as PSR12;
 
-/**
- * @package php-coding-standards
- * @license http://opensource.org/licenses/MIT MIT
- */
 final class ConstantVisibilitySniff extends PSR12\ConstantVisibilitySniff
 {
     /**
