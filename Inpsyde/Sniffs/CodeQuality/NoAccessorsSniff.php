@@ -35,12 +35,12 @@ class NoAccessorsSniff implements Sniff
     /**
      * @var bool
      */
-    public $skipForFunctions = true;
+    public $skipForPrivate = true;
 
     /**
      * @var bool
      */
-    public $skipForNonPublic = true;
+    public $skipForProtected = false;
 
     /**
      * @return int[]
@@ -57,7 +57,7 @@ class NoAccessorsSniff implements Sniff
      */
     public function process(File $file, $position)
     {
-        if ($this->skipForFunctions && !PhpcsHelpers::functionIsMethod($file, $position)) {
+        if (!PhpcsHelpers::functionIsMethod($file, $position)) {
             return;
         }
 
@@ -66,7 +66,7 @@ class NoAccessorsSniff implements Sniff
             return;
         }
 
-        if ($this->skipForNonPublic && PhpcsHelpers::functionIsMethod($file, $position)) {
+        if ($this->skipForPrivate || $this->skipForProtected) {
             $modifierPointerPosition = $file->findPrevious(
                 [T_WHITESPACE, T_ABSTRACT],
                 $position - 1,
@@ -75,11 +75,17 @@ class NoAccessorsSniff implements Sniff
                 null,
                 true
             );
+
             $modifierPointer = $file->getTokens()[$modifierPointerPosition] ?? null;
             if (!in_array($modifierPointer['code'], Tokens::$scopeModifiers, true)) {
                 $modifierPointer = null;
             }
-            if ($modifierPointer && $modifierPointer['code'] !== T_PUBLIC) {
+
+            $modifier = $modifierPointer ? $modifierPointer['code'] ?? null : null;
+            if (
+                ($modifier === T_PRIVATE && $this->skipForPrivate)
+                || ($modifier === T_PROTECTED && $this->skipForProtected)
+            ) {
                 return;
             }
         }
@@ -104,7 +110,7 @@ class NoAccessorsSniff implements Sniff
         $file->addWarning(
             'Getters are discouraged. "Tell Don\'t Ask" principle should be applied if possible, '
             . 'and if getters are really needed consider naming methods after properties, '
-            . 'e.g. name() instead of getName().',
+            . 'e.g. id() instead of geId().',
             $position,
             'NoGetter'
         );
