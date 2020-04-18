@@ -4,13 +4,17 @@
 
 - Inpsyde.CodeQuality.ArgumentTypeDeclaration
 - Inpsyde.CodeQuality.ConstantVisibility
+- Inpsyde.CodeQuality.DisallowShortOpenTag
 - Inpsyde.CodeQuality.ElementNameMinimalLength
 - Inpsyde.CodeQuality.ForbiddenPublicProperty
 - Inpsyde.CodeQuality.FunctionBodyStart
 - Inpsyde.CodeQuality.FunctionLength
 - Inpsyde.CodeQuality.HookClosureReturn
-- Inpsyde.CodeQuality.NoElse
+- Inpsyde.CodeQuality.LineLength
+- Inpsyde.CodeQuality.NestingLevel
 - Inpsyde.CodeQuality.NoAccessors
+- Inpsyde.CodeQuality.NoElse
+- Inpsyde.CodeQuality.NoTopLevelDefine
 - Inpsyde.CodeQuality.PropertyPerClassLimit
 - Inpsyde.CodeQuality.Psr4
 - Inpsyde.CodeQuality.ReturnTypeDeclaration
@@ -47,7 +51,7 @@ This sniff has no available configuration.
 ## Inpsyde.CodeQuality.DisallowShortOpenTag
 
 Prevents the usage of short open tag.
-Inherited from "Generic" `DisallowShortOpenTagSniff`, unlike the original, this custom rule allows
+Inherited from `Generic.DisallowShortOpenTag` sniff, unlike the original, this custom rule allows
 the usage of echo short open tag (`<?=`).
 
 This sniff has no available configuration.
@@ -63,7 +67,7 @@ There's a whitelist of names that are allowed even if one or two characters long
 It is possible to configure the desired minimal length via `minLength` config, e.g.:
 
 ```xml
-<rule ref="Inpsyde.CodeQuality.ElementNameMinimalLengthSniff">
+<rule ref="Inpsyde.CodeQuality.ElementNameMinimalLength">
     <properties>
         <property name="minLength" value="5" />
     </properties>
@@ -73,7 +77,7 @@ It is possible to configure the desired minimal length via `minLength` config, e
 It is also possible to override the whitelist of allowed names via `allowedShortNames` config, e.g.:
 
 ```xml
-<rule ref="Inpsyde.CodeQuality.ElementNameMinimalLengthSniff">
+<rule ref="Inpsyde.CodeQuality.ElementNameMinimalLength">
     <properties>
         <property name="allowedShortNames" type="array" value="id,db,ok,x,y" />
     </properties>
@@ -83,7 +87,7 @@ It is also possible to override the whitelist of allowed names via `allowedShort
 alternatively, whitelist can be extended via `additionalAllowedNames` config, e.g.:
 
 ```xml
-<rule ref="Inpsyde.CodeQuality.ElementNameMinimalLengthSniff">
+<rule ref="Inpsyde.CodeQuality.ElementNameMinimalLength">
     <properties>
         <property name="additionalAllowedNames" type="array" value="x,y" />
     </properties>
@@ -92,7 +96,7 @@ alternatively, whitelist can be extended via `additionalAllowedNames` config, e.
 
 -----
 
-## Inpsyde.CodeQuality.ForbiddenPublicPropertySniff
+## Inpsyde.CodeQuality.ForbiddenPublicProperty
 
 Prevent usage of public properties in classes.
 
@@ -131,7 +135,7 @@ By default, in the counting are not considered:
 The maximum allowed is configurable via `maxLength` property, e.g.:
 
 ```xml
-<rule ref="Inpsyde.CodeQuality.FunctionLengthSniff">
+<rule ref="Inpsyde.CodeQuality.FunctionLength">
     <properties>
         <property name="maxLength" value="20" />
     </properties>
@@ -147,7 +151,7 @@ It is also possible to include in the counting what's normally excluded via the 
 for example:
 
 ```xml
-<rule ref="Inpsyde.CodeQuality.FunctionLengthSniff">
+<rule ref="Inpsyde.CodeQuality.FunctionLength">
     <properties>
         <property name="ignoreBlankLines" value="false" />
         <property name="ignoreDocBlocks" value="false" />
@@ -180,9 +184,94 @@ There are two exceptions:
 The maximum length is configurable via the `lineLimit` property, e.g.:
 
 ```xml
-<rule ref="Inpsyde.CodeQuality.LineLengthSniff">
+<rule ref="Inpsyde.CodeQuality.LineLength">
     <properties>
         <property name="lineLimit" value="120" />
+    </properties>
+</rule>
+```
+
+-----
+
+## Inpsyde.CodeQuality.NestingLevel
+
+Ensures that inside any function or method the max nesting level is inside a given limit.
+
+For example, for the code:
+
+```php
+function test(bool $level_one, array $level_two, bool $level_three)
+{
+    if ($level_one) {
+        foreach ($level_two as $value) {
+            if ($level_three) {
+                return $value;
+            }
+        }
+    }
+
+    return '';
+}
+```
+
+The nesting level is 3.
+
+By default, the sniff triggers a _warning_ if nesting is equal or bigger than 3, and  triggers
+an _error_ if nesting is equal or bigger than 5.
+
+The warning and error limit can be customized via, respectively, `warningLimit` and `errorLimit`
+properties:
+
+```xml
+<rule ref="Inpsyde.CodeQuality.NestingLevel">
+    <properties>
+        <property name="warningLimit" value="5" />
+        <property name="errorLimit" value="10" />
+    </properties>
+</rule>
+```
+
+There's an exception. Normally a `try`/`catch`/`finally` blocks accounts for a nesting level,
+but this sniff ignores the increase of level causes by a `try`/`catch`/`finally` that is found
+immediately inside the level of function.
+
+For example, the following code would be fine:
+
+```php
+function test(array $data, string $append): string
+{
+    // Indent level 1
+    try {
+        $encoded = json_encode($data, JSON_THROW_ON_ERROR);
+        // Indent level 2
+        if ($encoded) {
+            // Indent level 3
+            if ($append !== '') {
+                return $encoded . $append;
+            }
+
+            return $encoded;
+        }
+
+        return '';
+    } catch (\Throwable $e) {
+        return '';
+    }
+}
+```
+
+In fact, the two nested `if`s would account for an indent level of 2, plus the `try`/`catch`
+block that would be 3, but because the `try`/`catch` is directly inside the function it is ignored,
+so the max level considered by the sniff is 2, which is inside the limit.
+
+This exception in the regard of `try`/`catch`/`finally` blocks can be disabled via the
+`ignoreTopLevelTryBlock` property: 
+
+```xml
+<rule ref="Inpsyde.CodeQuality.NestingLevel">
+    <properties>
+        <property name="errorLimit" value="10" />
+        <property name="ignoreTopLevelTryBlock" value="false" />
     </properties>
 </rule>
 ```
@@ -248,6 +337,8 @@ However, must be noted that:
   to avoid the warning from the sniff, without embracing the philosophy behind.
   But any developer at Inpsyde that in such cases prefers to continue using `getId()` and 
   disabling/ignoring the sniff is, once again, welcome to do so.
+
+-----
 
 ## Inpsyde.CodeQuality.NoElse
 
@@ -381,9 +472,8 @@ will *not* trigger any warning (but it will in case there's support for PHP 7.1+
 
 We are fully aware that 100% strictly typed code in PHP is rarely possible, feel free to ignore/disable
 the rule when any alternative is worse.
- 
------
 
+-----
 
 ## Inpsyde.CodeQuality.VariablesName
 

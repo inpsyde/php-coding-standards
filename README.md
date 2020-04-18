@@ -110,9 +110,9 @@ internationalization functions are called with the proper text domain.
 
 # Included rules
 
-## PSR-12
+## PSR-1, PSR-2, PSR-12
 
-See https://www.php-fig.org/psr/psr-12
+See https://www.php-fig.org/psr/psr-1, https://www.php-fig.org/psr/psr-2, https://www.php-fig.org/psr/psr-12
 
 
 ## Neutron Standard
@@ -151,28 +151,27 @@ Those rules are included by other styles, mainly by PSR-1 and PSR-2.
 
 Some custom rules are also in use. They are:
 
-| Sniff name | Description | Has Config | Has Notes | Auto-Fixable |
-|:-----------|:------------|:----------:|:---------:|:------------:|
-| `ArgumentTypeDeclarationSniff`|Enforce argument type declaration, with few exception (e.g. hook callbacks or `ArrayAccess` methods)||||
-| `ConstantVisibilitySniff`|Inherited from PSR-12 force use of visibility fro constants only if min PHP version is PHP 7.1+||||
-| `DisallowShortOpenTagSniff`|Disallow short open PHP tag (short echo tag allowed).||||
-| `ElementNameMinimalLengthSniff`|Use minimum 3 chars for names (with a few exclusions)|✓|||
-| `ForbiddenPublicPropertySniff`|No public class properties||||
-| `FunctionBodyStartSniff`|Handle blank line at start of function body when necessary.||✓|✓|
-| `FunctionLengthSniff`|Max 50 lines per function/method, excluding blank lines and comments-only lines.|✓|||
-| `HookClosureReturnSniff`|Ensure that actions callbacks do not return anything, while filter callbacks return something.||||
-| `LineLengthSniff`|Max 100 chars per line, excluding leading indent space and long string in WP translation functions|✓|||
-| `NoAccessorsSniff`|Discourage usage of getters and setters.||||
-| `NoElseSniff`|Discourage usage of `else`.||||
-| `NoTopLevelDefineSniff`|Discourage usage of `define` where `const` is preferable.||||
-| `PropertyPerClassLimitSniff`|Discourage usage of more than 10 properties per class.|✓|||
-| `Psr4Sniff`|Check PSR-4 compliance|✓|||
-| `ReturnTypeDeclarationSniff`|Enforce return type declaration, with few exceptions (e.g. hook callbacks or `ArrayAccess` methods)||✓||
-| `VariablesNameSniff`|Check variable (and properties) names|✓|✓||
+| Sniff name | Description | Has Config | Auto-Fixable |
+|:-----------|:------------|:----------:|:------------:|
+| `ArgumentTypeDeclaration`|Enforce argument type declaration.|||
+| `ConstantVisibility`|Force use of visibility for constants.|||
+| `DisallowShortOpenTag`|Disallow short open PHP tag (short echo tag allowed).|||
+| `ElementNameMinimalLength`|Use minimum 3 chars for names (with a few exclusions)|✓||
+| `ForbiddenPublicProperty`|No public class properties|||
+| `FunctionBodyStart`|Handle blank line at start of function body.||✓|
+| `FunctionLength`|Max 50 lines per function/method, excluding blank lines and comments-only lines.|✓||
+| `HookClosureReturn`|Ensure that actions callbacks do not return anything, while filter callbacks return something.|||
+| `LineLength`|Max 100 chars per line|✓||
+| `NestingLevel`|Max indent level of 3 inside functions|✓||
+| `NoAccessors`|Discourage usage of getters and setters.|||
+| `NoElse`|Discourage usage of `else`.|||
+| `NoTopLevelDefine`|Discourage usage of `define` where `const` is preferable.|||
+| `PropertyPerClassLimit`|Discourage usage of more than 10 properties per class.|✓||
+| `Psr4`|Check PSR-4 compliance|✓||
+| `ReturnTypeDeclaration`|Enforce return type declaration|||
+| `VariablesName`|Check variable (and properties) names|✓||
 
-For **notes and configuration** see `/docs/inpsyde-custom-sniffs.md` file in this repo.
-
-The tree of sniffs are listed in the `/docs/inpsyde-custom-sniffs-three.md` file in this repo.
+For **notes and configuration** see [`/inpsyde-custom-sniffs.md`](/inpsyde-custom-sniffs.md) file in this repo.
 
 -------------
 
