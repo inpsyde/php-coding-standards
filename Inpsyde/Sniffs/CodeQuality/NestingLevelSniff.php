@@ -59,14 +59,13 @@ class NestingLevelSniff implements Sniff
                 continue;
             }
 
-            if ($inTry && $tokens[$i]['code'] === T_CATCH && $level === $tryTargetLevel) {
-                $endTry = $tokens[$i]['scope_closer'];
-                continue;
-            }
-
-            if (!$inTry && $tokens[$i]['code'] === T_FINALLY && $level === $tryTargetLevel) {
-                $inTry = true;
-                $endTry = $tokens[$i]['scope_closer'];
+            if (
+                $inTry
+                && ($endTry === null)
+                && ($tokens[$i]['code'] === T_CATCH || $tokens[$i]['code'] === T_FINALLY)
+                && $level === $tryTargetLevel
+            ) {
+                $endTry = $this->endOfTryBlock($i, $phpcsFile);
                 continue;
             }
 
@@ -98,5 +97,24 @@ class NestingLevelSniff implements Sniff
         $isError
             ? $phpcsFile->addError($message, $stackPtr, $code, [$nestingLevel, $limit])
             : $phpcsFile->addWarning($message, $stackPtr, $code, [$nestingLevel, $limit]);
+    }
+
+    /**
+     * @param int $catchPosition
+     * @param File $phpcsFile
+     * @return int
+     */
+    private function endOfTryBlock(int $catchPosition, File $phpcsFile): int
+    {
+        $tokens = $phpcsFile->getTokens();
+        $currentEnd = (int)$tokens[$catchPosition]['scope_closer'];
+        $nextCatch = $phpcsFile->findNext(T_CATCH, $currentEnd + 1, $currentEnd + 3);
+        if ($nextCatch) {
+            return $this->endOfTryBlock($nextCatch, $phpcsFile);
+        }
+
+        $finally = $phpcsFile->findNext(T_FINALLY, $currentEnd + 1, $currentEnd + 3);
+
+        return $finally ? (int)$tokens[$finally]['scope_closer'] + 1 : $currentEnd + 1;
     }
 }

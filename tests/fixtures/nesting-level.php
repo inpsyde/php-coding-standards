@@ -63,6 +63,101 @@ function tryCatch()
     return false;
 }
 
+function tryCatchCatch()
+{
+    try {
+        echo 'foo';
+    } catch (\RuntimeException $run) {
+
+    } catch (\LogicException $logic) {
+        if (1) {
+            if (2) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+// @phpcsErrorOnNextLine
+function tryCatchCatchFinallyError()
+{
+    try {
+        echo 'foo';
+    } catch (\RuntimeException $run) {
+
+    } catch (\LogicException $logic) {
+        if (1) {
+            if (2) {
+                return false;
+            }
+        }
+
+        return true;
+    } finally {
+        if (1) {
+            if (2) {
+                if (3) {
+                    if (4) {
+                        if (5) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+function tryFinallyOkOne()
+{
+    try {
+        echo "x";
+    } finally {
+        if (1) {
+            if (2) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+function tryFinallyOkTwo()
+{
+    try {
+        if (1) {
+            if (2) {
+                return false;
+            }
+        }
+    } finally {
+        return false;
+    }
+}
+
+// @phpcsWarningOnNextLine
+function tryFinallyMeh()
+{
+    try {
+        if (1) {
+            if (2) {
+                if (3) {
+                    return false;
+                }
+            }
+        }
+    } finally {
+        return false;
+    }
+}
+
 function tryCatchFinally()
 {
     try {
