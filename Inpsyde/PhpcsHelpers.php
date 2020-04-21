@@ -326,20 +326,21 @@ class PhpcsHelpers
     {
         $tokens = $file->getTokens();
 
-        $exclude = [T_WHITESPACE, T_FINAL, T_PUBLIC, T_PRIVATE, T_PROTECTED, T_ABSTRACT];
-        if (($tokens[$functionPosition]['code'] ?? '') === T_CLOSURE) {
-            $exclude[] = T_EQUAL;
-            $exclude[] = T_VARIABLE;
+        $exclude = [T_WHITESPACE, T_STATIC];
+        $isClosure = ($tokens[$functionPosition]['code'] ?? '') === T_CLOSURE;
+
+        if (!$isClosure && static::functionIsMethod($file, $functionPosition)) {
+            $exclude = array_merge(
+                $exclude,
+                [T_FINAL, T_PUBLIC, T_PRIVATE, T_PROTECTED, T_ABSTRACT]
+            );
         }
 
-        $findDocEnd = $file->findPrevious(
-            $exclude,
-            $functionPosition - 1,
-            null,
-            true,
-            null,
-            true
-        );
+        if ($isClosure) {
+            $exclude = array_merge($exclude, [T_EQUAL, T_VARIABLE]);
+        }
+
+        $findDocEnd = $file->findPrevious($exclude, $functionPosition - 1, null, true, null, true);
 
         if (!$findDocEnd || ($tokens[$findDocEnd]['code'] ?? '') !== T_DOC_COMMENT_CLOSE_TAG) {
             return [];
