@@ -18,6 +18,7 @@
 - Inpsyde.CodeQuality.PropertyPerClassLimit
 - Inpsyde.CodeQuality.Psr4
 - Inpsyde.CodeQuality.ReturnTypeDeclaration
+- Inpsyde.CodeQuality.StaticClosure
 - Inpsyde.CodeQuality.VariablesName
 
 Below there's a description, notes, and possible configuration for all the sniffs.
@@ -516,4 +517,37 @@ It is possible to also ignore some other names via the `ignoredNames` property:
         <property name="ignoredNames" type="array" value="ALLOWED,allowed_snake" />
     </properties>
 </rule>
+```
+
+-----
+
+## Inpsyde.CodeQuality.StaticClosure
+
+When a closure does not contain reference to `$this` it could become `static`.
+This sniff suggests via a warning when that's the case.
+It is auto-fixable.
+
+Must be noted that static closures can't be bound, even if they don't refer `$this`.
+In the case a closure that does not contain `$this` needs to be bound, this sniff would wrongly
+suggest to make it static.
+To tell the sniff that a closure can't be static because needs to be bound it is possible to use the
+custom `@bound` annotation, or annotate a `@var SomeClass $this`.
+
+For example, in the following code no warnings would be raised by the sniff:
+
+```php
+/** @bound */
+$a = function () {
+    return 'Foo';
+};
+
+/** @var Foo $this */
+$b = function () {
+    return 'Foo';
+};
+
+$foo = new Foo();
+
+$a->call($foo);
+\Closure::bind($b, $foo)();
 ```

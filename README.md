@@ -169,6 +169,7 @@ Some custom rules are also in use. They are:
 | `PropertyPerClassLimit`|Discourage usage of more than 10 properties per class.|✓||
 | `Psr4`|Check PSR-4 compliance|✓||
 | `ReturnTypeDeclaration`|Enforce return type declaration|||
+| `StaticClosure`|Points closures that can be `static`.||✓|
 | `VariablesName`|Check variable (and properties) names|✓||
 
 For **notes and configuration** see [`/inpsyde-custom-sniffs.md`](/inpsyde-custom-sniffs.md) file in this repo.
