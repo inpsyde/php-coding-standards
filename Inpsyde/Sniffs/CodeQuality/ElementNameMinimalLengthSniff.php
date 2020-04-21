@@ -51,6 +51,7 @@ class ElementNameMinimalLengthSniff implements Sniff
         'io',
         'is',
         'it',
+        'js',
         'my',
         'no',
         'of',
