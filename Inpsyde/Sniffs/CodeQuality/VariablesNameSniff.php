@@ -79,7 +79,7 @@ class VariablesNameSniff implements Sniff
      */
     public function register()
     {
-        return [T_VARIABLE,];
+        return [T_VARIABLE];
     }
 
     /**

@@ -317,13 +317,14 @@ class PhpcsHelpers
         return in_array($tokens[$functionCall]['content'] ?? '', $actions, true);
     }
 
-    public static function isHookFunction(File $file, int $functionPosition): bool
+    /**
+     * @param File $file
+     * @param int $functionPosition
+     * @return array
+     */
+    public static function functionDocTokens(File $file, int $functionPosition): array
     {
         $tokens = $file->getTokens();
-        if (($tokens[$functionPosition]['code'] ?? '') !== T_FUNCTION) {
-            return false;
-        }
-
         $findDocEnd = $file->findPrevious(
             [T_WHITESPACE, T_FINAL, T_PUBLIC, T_PRIVATE, T_PROTECTED, T_ABSTRACT],
             $functionPosition - 1,
@@ -334,7 +335,7 @@ class PhpcsHelpers
         );
 
         if (!$findDocEnd || ($tokens[$findDocEnd]['code'] ?? '') !== T_DOC_COMMENT_CLOSE_TAG) {
-            return false;
+            return [];
         }
 
         $findDocStart = $file->findPrevious(
@@ -349,10 +350,26 @@ class PhpcsHelpers
         if (!$findDocStart
             || ($tokens[$findDocStart]['comment_closer'] ?? '') !== $findDocEnd
         ) {
-            return false;
+            return [];
         }
 
-        $docTokens = self::filterTokensByType($findDocStart, $findDocEnd, $file, T_DOC_COMMENT_TAG);
+        return self::filterTokensByType(
+            $findDocStart,
+            $findDocEnd,
+            $file,
+            T_DOC_COMMENT_TAG,
+            T_DOC_COMMENT_STRING
+        );
+    }
+
+    /**
+     * @param File $file
+     * @param int $functionPosition
+     * @return bool
+     */
+    public static function isHookFunction(File $file, int $functionPosition): bool
+    {
+        $docTokens = self::functionDocTokens($file, $functionPosition);
 
         foreach ($docTokens as $token) {
             if ($token['content'] === '@wp-hook') {

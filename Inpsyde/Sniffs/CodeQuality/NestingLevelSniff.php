@@ -81,6 +81,17 @@ class NestingLevelSniff implements Sniff
         // We subtract the nesting level of the function itself .
         $nestingLevel -= ($baseLevel + 1);
 
+        $this->maybeTrigger($nestingLevel, $phpcsFile, $stackPtr);
+    }
+
+    /**
+     * @param int $nestingLevel
+     * @param File $file
+     * @param int $stackPtr
+     * @return void
+     */
+    private function maybeTrigger(int $nestingLevel, File $phpcsFile, int $stackPtr)
+    {
         $isError = $nestingLevel >= $this->errorLimit;
         $isWarning = !$isError && ($nestingLevel >= $this->warningLimit);
 

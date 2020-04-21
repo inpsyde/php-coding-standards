@@ -31,13 +31,10 @@ use PHPUnit\Framework\TestCase;
  */
 class FixturesTest extends TestCase
 {
-
     public function fixtureProvider(): \Traversable
     {
-        $fixtures = glob(getenv('FIXTURES_PATH').DIRECTORY_SEPARATOR.'*.php');
-        foreach ($fixtures as $fixtureFile) {
-            $testname = pathinfo($fixtureFile, PATHINFO_BASENAME);
-            yield $testname => ['fixtrueFile' => $fixtureFile];
+        foreach ((glob(getenv('FIXTURES_PATH') . '/*.php') ?: []) as $fixtureFile) {
+            yield pathinfo($fixtureFile, PATHINFO_FILENAME) => [pathinfo($fixtureFile, PATHINFO_BASENAME)];
         }
     }
 
@@ -48,10 +45,9 @@ class FixturesTest extends TestCase
     {
         $parser = new FixtureContentParser();
         $failures = new \SplStack();
-        $this->validateFixture($fixtureFile, $parser, $failures);
+        $this->validateFixture(getenv('FIXTURES_PATH') . "/{$fixtureFile}", $parser, $failures);
 
         $previous = null;
-        /** @var \Throwable $failure */
         foreach ($failures as $failure) {
             if (!$failure instanceof \Throwable) {
                 continue;
@@ -63,7 +59,6 @@ class FixturesTest extends TestCase
                 $previous
             );
         }
-
         if ($previous) {
             throw $previous;
         }
@@ -81,7 +76,6 @@ class FixturesTest extends TestCase
     ) {
 
         $fixtureBasename = basename($fixtureFile);
-        fwrite(STDOUT, "- Testing fixture '{$fixtureBasename}'...\n");
 
         try {
             /**
@@ -115,7 +109,7 @@ class FixturesTest extends TestCase
         string $sniffClass
     ) {
 
-        $where = sprintf("in fixture file '%s', line %%d, for sniff '%s'", $fixture, $sniffClass);
+        $where = sprintf("\nin fixture file '%s' line %%d\nfor sniff '%s'", $fixture, $sniffClass);
 
         foreach ($expected->messages() as $line => $code) {
             $actualCode = $actual->messageIn($line);
