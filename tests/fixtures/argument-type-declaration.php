@@ -1,6 +1,11 @@
 <?php
 // @phpcsSniff CodeQuality.ArgumentTypeDeclaration
 
+/** @wp-hook */
+$cb = function ($foo) {
+    return true;
+};
+
 array_walk($slugs, function (string &$slug) {
     $slug = sanitize_key($slug);
 });
@@ -56,9 +61,21 @@ function i(string $foo, ArrayObject ...$bar)
 add_action(
     'foo',
     function ($foo) {
-
+        return false;
     }
 );
+
+$cb = add_action(
+    'foo',
+    function ($foo) {
+        return true;
+    }
+);
+
+/** @wp-hook */
+function ($foo) {
+    return true;
+};
 
 add_filter(
     'foo',

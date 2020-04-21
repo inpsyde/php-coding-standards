@@ -325,8 +325,15 @@ class PhpcsHelpers
     public static function functionDocTokens(File $file, int $functionPosition): array
     {
         $tokens = $file->getTokens();
+
+        $exclude = [T_WHITESPACE, T_FINAL, T_PUBLIC, T_PRIVATE, T_PROTECTED, T_ABSTRACT];
+        if (($tokens[$functionPosition]['code'] ?? '') === T_CLOSURE) {
+            $exclude[] = T_EQUAL;
+            $exclude[] = T_VARIABLE;
+        }
+
         $findDocEnd = $file->findPrevious(
-            [T_WHITESPACE, T_FINAL, T_PUBLIC, T_PRIVATE, T_PROTECTED, T_ABSTRACT],
+            $exclude,
             $functionPosition - 1,
             null,
             true,
