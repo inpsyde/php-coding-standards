@@ -1,7 +1,7 @@
 <?php
 // @phpcsSniff CodeQuality.ReturnTypeDeclaration
 
-public function hooks(): ?array
+function hooks(): ?array
 {
     return null;
 }
@@ -416,6 +416,24 @@ class FooAccess implements ArrayAccess
         }
 
         return new \ArrayObject();
+    }
+
+    function returnIterable(): iterable
+    {
+        yield 1;
+        yield 2;
+    }
+
+    function returnIterator(): Iterator
+    {
+        yield 1;
+        yield 2;
+    }
+
+    function returnTraversable(): Traversable
+    {
+        yield 1;
+        yield 2;
     }
 }
 

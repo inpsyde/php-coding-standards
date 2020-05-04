@@ -202,9 +202,14 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
+        $returnType = $this->returnTypeContent($file, $position);
+        if (in_array($returnType, ['Traversable', 'Iterator', 'iterable'], true)) {
+            return;
+        }
+
         if (!$nonVoidReturnCount) {
             $file->addWarning(
-                'Found a function that yield values but missing Generator return type.',
+                'Found a function that yield values but missing compatible return type.',
                 $position,
                 'NoGeneratorReturnType'
             );
@@ -212,13 +217,8 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
-        $returnType = $this->returnTypeContent($file, $position);
-        if ($returnType === 'Traversable' || $returnType === 'Iterator') {
-            return;
-        }
-
         $file->addError(
-            'Found a function that yield values but declare a return type different than Generator.',
+            'Found a function that yield values using a return type incompatible with Generator.',
             $position,
             'IncorrectReturnTypeForGenerator'
         );
