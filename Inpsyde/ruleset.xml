@@ -126,7 +126,6 @@
     <rule ref="WordPressVIPMinimum.Security.ProperEscapingFunction"/>
     <rule ref="WordPressVIPMinimum.Security.StaticStrreplace"/>
     <rule ref="WordPressVIPMinimum.Variables.RestrictedVariables.session"/>
-    <rule ref="WordPressVIPMinimum.VersionControl.MergeConflict"/>
 
     <!--
     Generic
@@ -140,6 +139,7 @@
     <rule ref="Generic.NamingConventions.ConstructorName"/>
     <rule ref="Generic.PHP.CharacterBeforePHPOpeningTag"/>
     <rule ref="Generic.PHP.LowerCaseConstant"/>
+    <rule ref="Generic.VersionControl.GitMergeConflict"/>
     <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
     <rule ref="Squiz.PHP.CommentedOutCode">
         <properties>
