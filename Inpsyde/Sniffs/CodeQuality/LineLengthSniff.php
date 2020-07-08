@@ -176,8 +176,6 @@ class LineLengthSniff implements Sniff
      */
     private function isLongI10nFunction(File $file, array $tokens, $start, $end): bool
     {
-        $tokens = $file->getTokens();
-
         $stringPos = $file->findNext(
             [T_CONSTANT_ENCAPSED_STRING, T_DOUBLE_QUOTED_STRING],
             $start,
