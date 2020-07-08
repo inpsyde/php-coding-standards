@@ -20,6 +20,7 @@ namespace Inpsyde\Sniffs\CodeQuality;
 
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Util\Tokens;
 
 class LineLengthSniff implements Sniff
 {
@@ -38,25 +39,6 @@ class LineLengthSniff implements Sniff
         'esc_attr__',
         'esc_attr_e',
         'esc_attr_x',
-    ];
-
-    const IGNORE_TYPES = [
-        T_WHITESPACE,
-        T_OPEN_PARENTHESIS,
-        T_COMMENT,
-        T_DOC_COMMENT,
-        T_DOC_COMMENT_CLOSE_TAG,
-        T_DOC_COMMENT_OPEN_TAG,
-        T_DOC_COMMENT_STAR,
-        T_DOC_COMMENT_WHITESPACE,
-        T_DOC_COMMENT_STRING,
-        T_DOC_COMMENT_TAG,
-    ];
-
-    const STRING_TYPES = [
-        T_CONSTANT_ENCAPSED_STRING,
-        T_COMMENT,
-        T_DOC_COMMENT_STRING,
     ];
 
     /**
@@ -87,10 +69,6 @@ class LineLengthSniff implements Sniff
         }
 
         foreach ($longLinesData as $lineNum => list($length, $start, $end)) {
-            if ($this->shouldIgnoreLine($file, $start, $end)) {
-                continue;
-            }
-
             $file->addWarning(
                 sprintf(
                     'Line %d exceeds %s characters; contains %s characters.',
@@ -107,6 +85,11 @@ class LineLengthSniff implements Sniff
         return $file->numTokens + 1;
     }
 
+    /**
+     * @param File $file
+     * @param int $start
+     * @return array
+     */
     private function collectLongLinesData(File $file, int $start): array
     {
         $tokens = $file->getTokens();
@@ -133,90 +116,135 @@ class LineLengthSniff implements Sniff
             $counted[$lastLine][2] = $i - 1;
         }
 
-        return array_filter(
-            $counted,
-            function (array $line): bool {
-                return $line[0] > $this->lineLimit && $line[1] > 0 && $line[2] > 0;
-            }
-        );
-    }
-
-    private function shouldIgnoreLine(File $file, int $start, int $end): bool
-    {
-        return
-            $this->containLongWords($file, $start, $end)
-            || $this->isI18nFunction($file, $start, $end);
-    }
-
-    private function containLongWords(File $file, int $start, int $end): bool
-    {
-        $tokens = $file->getTokens();
-
-        for ($i = $start; $i <= $end; $i++) {
-            if (!in_array($tokens[$i]['code'], self::STRING_TYPES, true)) {
+        $longLines = [];
+        foreach ($counted as list($length, $start, $end)) {
+            if (($length < $this->lineLimit) || ($start < 0) || ($end < 0)) {
                 continue;
             }
 
-            $words = array_filter(preg_split('~[\s+]~', $tokens[$i]['content']));
-            if (count($words) > 2) {
+            if (
+                $this->isLongWord($file, $tokens, $start, $end)
+                || $this->isLongUse($file, $tokens, $start, $end)
+                || $this->isLongI10nFunction($file, $tokens, $start, $end)
+            ) {
+                continue;
+            }
+
+            $longLines[] = [$length, $start, $end];
+        }
+
+        return $longLines;
+    }
+
+    /**
+     * @param File $file
+     * @param array $tokens
+     * @param $start
+     * @param $end
+     * @return bool
+     */
+    private function isLongWord(File $file, array $tokens, $start, $end): bool
+    {
+        $targetTypes = Tokens::$textStringTokens;
+        $targetTypes[] = T_DOC_COMMENT_STRING;
+
+        $foundString = null;
+
+        if ($start === $end)  {
+            return true;
+        }
+
+        while ($start && ($start < $end)) {
+            $stringPos = $file->findNext($targetTypes, $start, $end);
+            if ($stringPos === false || $foundString) {
                 return false;
             }
 
-            return (bool)array_filter(
-                array_map('strlen', $words),
-                function (int $len): bool {
-                    return ($len + 3) > $this->lineLimit;
-                }
-            );
+            $foundString = $tokens[$stringPos]['content'];
+            $start = $stringPos + 1;
         }
 
-        return false;
+        return $foundString && (strlen($foundString) + 10) > $this->lineLimit;
     }
 
-    private function isI18nFunction(File $file, int $start, int $end): bool
+    /**
+     * @param File $file
+     * @param array $tokens
+     * @param $start
+     * @param $end
+     * @return bool
+     */
+    private function isLongI10nFunction(File $file, array $tokens, $start, $end): bool
     {
         $tokens = $file->getTokens();
 
-        for ($i = $start; $i <= $end; $i++) {
-            if (
-                $tokens[$i]['code'] !== T_CONSTANT_ENCAPSED_STRING
-                || (strlen($tokens[$i]['content']) + 3) < $this->lineLimit
-            ) {
-                continue;
-            }
+        $stringPos = $file->findNext(
+            [T_CONSTANT_ENCAPSED_STRING, T_DOUBLE_QUOTED_STRING],
+            $start,
+            $end
+        );
 
-            $previousPos = $file->findPrevious(
-                self::IGNORE_TYPES,
-                $i - 1,
-                null,
-                true,
-                null,
-                true
-            );
-
-            $previous = $previousPos ? $tokens[$previousPos] ?? null : null;
-            if (
-                !$previous
-                || $previous['code'] !== T_STRING
-                || !in_array($previous['content'], self::I18N_FUNCTIONS, true)
-            ) {
-                continue;
-            }
-
-            $next = $file->findNext(
-                [T_WHITESPACE],
-                $previousPos + 1,
-                null,
-                true,
-                null,
-                true
-            );
-
-            if ($tokens[$next]['code'] === T_OPEN_PARENTHESIS) {
-                return true;
-            }
+        if ($stringPos === false) {
+            return false;
         }
 
-        return false;
+        $open = $file->findPrevious(T_OPEN_PARENTHESIS, $stringPos, null, false, null, true);
+        if ($open === false) {
+            return false;
+        }
+
+        $functionPos = $file->findPrevious(T_STRING, $open, null, false, null, true);
+        if ($functionPos === false) {
+            return false;
+        }
+
+        $function = strtolower($tokens[$functionPos]['content']);
+        if (!in_array($function, self::I18N_FUNCTIONS, true)) {
+            return false;
+        }
+
+        $close = $file->findEndOfStatement($open);
+        if ($close === false) {
+            return false;
+        }
+
+        $targetLine = $tokens[$stringPos]['line'];
+        $textLen = 0;
+        for ($i = $open + 1; $i < $close - 1; $i++) {
+            if ($tokens[$i]['line'] !== $targetLine) {
+                continue;
+            }
+            $textLen += max(1, strlen(trim($tokens[$i]['content'])));
+        }
+
+
+        return ($textLen + 2) > $this->lineLimit;
+    }
+
+    /**
+     * @param File $file
+     * @param array $tokens
+     * @param $start
+     * @param $end
+     * @return bool
+     */
+    private function isLongUse(File $file, array $tokens, $start, $end): bool
+    {
+        $usePos = $file->findNext(T_USE, $start, $end);
+        if ($usePos === false) {
+            return false;
+        }
+
+        $endUse = $file->findEndOfStatement($usePos);
+        if ($endUse === false) {
+            return false;
+        }
+
+        $useLen = 0;
+        for ($i = $usePos; $i <= $endUse; $i++) {
+            $useLen += strlen($tokens[$i]['content']);
+        }
+
+        return $useLen > $this->lineLimit;
     }
 }

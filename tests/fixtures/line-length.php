@@ -1,6 +1,8 @@
 <?php
 // @phpcsSniff CodeQuality.LineLength
 
+use Some\Very\Very\Very\Very\Very\Long\Long\Long\Long\Long\Long\Long\Long\Nested\Nested\Nested\Nested\Nested\Nested\Name\Space;
+
 // @phpcsWarningOnNextLine
 $b = '7f4a87f2df8a8e8b8febd6631589e062 7f4a87f2df8a8e8b8febd6631589e062 7f4a87f2df8a8e8b8febd6631589e062 7f4a87f2df8a8e8b8febd6631589e062 
 a long line like previous does trigger errors!.
