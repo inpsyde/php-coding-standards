@@ -1,6 +1,18 @@
 <?php
 // @phpcsSniff CodeQuality.LineLength
 
+?>
+    <!-- Warning two lines below: multiple attributes can go each in one line -->
+    <!-- @phpcsWarningOnNextLine -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="foo bar baz foo-bar-baz foo_bar_baz foo_bar_baz__foo_bar_baz foo_bar_baz__foo_bar_baz--one">
+        <rect x="0" fill="none" width="20" height="20"/>
+        <g>
+            <!-- NO warning below: don't require splitting a single attribute in multiple lines -->
+            <path d="x8h2.93v-7.3h2 45l.37-2.84h-2 82V6.04c0-.82.23-1.38 8h2.93v-7.3h2.45l.37-2.84h-2.82V6.04c0-.82.23-1.38 8h2.93v-7.3h2.45l.37-2.84h-2.82V6.04c0-.82.23-1.38"/>
+        </g>
+    </svg>
+<?php
+
 use Some\Very\Very\Very\Very\Very\Long\Long\Long\Long\Long\Long\Long\Long\Nested\Nested\Nested\Nested\Nested\Nested\Name\Space;
 
 // @phpcsWarningOnNextLine
@@ -77,6 +89,7 @@ class FooBarBazMeh
 }
 
 /**
+ * No warnings for a long URL: it can't be split.
  * @link https://foo.example.com/some-path/to/#a-page-that-co0ntains-some-important-information-that-you-should-really-look-at
  *
  * @return string

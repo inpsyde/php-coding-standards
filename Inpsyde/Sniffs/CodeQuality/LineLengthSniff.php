@@ -7,11 +7,6 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * This file contains code from "PHP_CodeSniffer" repository
- * found at https://github.com/squizlabs/PHP_CodeSniffer
- * Copyright (c) 2006-2015 Squiz Pty Ltd (ABN 77 084 670 600)
- * released under BSD license.
  */
 
 declare(strict_types=1);
@@ -68,15 +63,15 @@ class LineLengthSniff implements Sniff
             return $file->numTokens + 1;
         }
 
-        foreach ($longLinesData as $lineNum => list($length, $start, $end)) {
+        foreach ($longLinesData as $lineNum => $lineData) {
             $file->addWarning(
                 sprintf(
                     'Line %d exceeds %s characters; contains %s characters.',
                     $lineNum,
                     $this->lineLimit,
-                    $length
+                    $lineData->length
                 ),
-                $end,
+                $lineData->start,
                 'TooLong'
             );
         }
@@ -93,66 +88,71 @@ class LineLengthSniff implements Sniff
     private function collectLongLinesData(File $file, int $start): array
     {
         $tokens = $file->getTokens();
-        $lines = $counted = [];
+        $linesData = [];
         $lastLine = null;
         for ($i = $start; $i < $file->numTokens; $i++) {
-            if ($tokens[$i]['line'] === $lastLine) {
-                $lines[$lastLine] .= $tokens[$i]['content'];
+            // Still processing previous line: increment length and continue.
+            if ($lastLine && ($tokens[$i]['line'] === $lastLine)) {
+                $linesData[$lastLine]->length += strlen($tokens[$i]['content']);
+                $linesData[$lastLine]->nonEmptyLength += strlen(trim($tokens[$i]['content']));
                 continue;
             }
 
-            if ($lastLine && array_key_exists($lastLine, $counted)) {
-                $counted[$lastLine][0] = strlen(ltrim($lines[$lastLine]));
-                $counted[$lastLine][2] = $i - 1;
+            // A new line started: let's set "end" for the previous line (if this isn't 1st line)
+            if ($lastLine && isset($linesData[$lastLine])) {
+                $linesData[$lastLine]->end = $i - 1;
             }
 
             $lastLine = $tokens[$i]['line'];
-            $lines[$lastLine] = $tokens[$i]['content'];
-            $counted[$lastLine] = [0, $i, -1];
+            $linesData[$lastLine] = (object)[
+                'length' => strlen($tokens[$i]['content']),
+                'nonEmptyLength' => strlen(trim($tokens[$i]['content'])),
+                'start' => $i,
+                'end' => null,
+            ];
         }
 
-        if ($lastLine && array_key_exists($lastLine, $counted) && $counted[$lastLine][2] === -1) {
-            $counted[$lastLine][0] = strlen(ltrim($lines[$lastLine]));
-            $counted[$lastLine][2] = $i - 1;
+        // We still have to set the "end" for last file line.
+        if ($lastLine && (($linesData[$lastLine]->end ?? 0) === null)) {
+            $linesData[$lastLine]->end = $i - 1;
         }
 
         $longLines = [];
-        foreach ($counted as list($length, $start, $end)) {
-            if (($length < $this->lineLimit) || ($start < 0) || ($end < 0)) {
-                continue;
-            }
-
+        foreach ($linesData as $lineNumber => $lineData) {
             if (
-                $this->isLongWord($file, $tokens, $start, $end)
-                || $this->isLongUse($file, $tokens, $start, $end)
-                || $this->isLongI10nFunction($file, $tokens, $start, $end)
+                (($lineData->length - $this->lineLimit) <= 1) // 1 char of tolerance
+                || ($lineData->nonEmptyLength === 0) // ignore empty lines
+                || $this->isLongUse($file, $tokens, $lineData->start, $lineData->end)
+                || $this->isLongI10nFunction($file, $tokens, $lineData->start, $lineData->end)
+                || $this->isLongWord($file, $tokens, $lineData->start, $lineData->end)
             ) {
                 continue;
             }
 
-            $longLines[] = [$length, $start, $end];
+            $longLines[$lineNumber] = $lineData;
         }
 
         return $longLines;
     }
 
     /**
+     * We don't want to split a single word in multiple lines.
+     * So if there's a long word (e.g. an URL) that alone is above max line length, we don't show
+     * warnings for it.
+     *
      * @param File $file
      * @param array $tokens
-     * @param $start
-     * @param $end
+     * @param int $start
+     * @param int $end
      * @return bool
      */
-    private function isLongWord(File $file, array $tokens, $start, $end): bool
+    private function isLongWord(File $file, array $tokens, int $start, int $end): bool
     {
         $targetTypes = Tokens::$textStringTokens;
         $targetTypes[] = T_DOC_COMMENT_STRING;
 
-        $foundString = null;
-
-        if ($start === $end)  {
-            return true;
-        }
+        $foundString = false;
+        ($start === $end) and $end++;
 
         while ($start && ($start < $end)) {
             $stringPos = $file->findNext($targetTypes, $start, $end);
@@ -160,14 +160,97 @@ class LineLengthSniff implements Sniff
                 return false;
             }
 
-            $foundString = $tokens[$stringPos]['content'];
+            $isLong = ($tokens[$stringPos]['code'] === T_INLINE_HTML)
+                ? $this->isLongHtmlAttribute($stringPos, $file, $tokens, $start, $end)
+                : $this->isLongSingleWord($stringPos, $file, $tokens, $start, $end);
+
+            if (!$isLong) {
+                return false;
+            }
+
+            $foundString = true;
             $start = $stringPos + 1;
         }
 
-        return $foundString && (strlen($foundString) + 10) > $this->lineLimit;
+        return true;
     }
 
     /**
+     * @param int $position
+     * @param File $file
+     * @param array $tokens
+     * @param int $lineStart
+     * @param int $lineEnd
+     * @return bool
+     */
+    private function isLongHtmlAttribute(
+        int $position,
+        File $file,
+        array $tokens,
+        int $lineStart,
+        int $lineEnd
+    ): bool {
+
+        $firstNonWhite = $file->findNext(T_WHITESPACE, $lineStart, $lineEnd, true);
+        $startColumn = ($firstNonWhite['column'] ?? 1) - 1;
+
+        // Instead of counting single _word_ length we will count single _attribute_ length
+        preg_match_all('~\s*=\s*["\'][^"\']*["\']~', $tokens[$position]['content'], $matches);
+        $attributesNumber = count($matches[0]);
+
+        // When multiple HTML attributes are there, each attribute can go in a separate line
+        if ($attributesNumber > 1) {
+            return false;
+        }
+
+        // When a single HTML attribute is too long, we are not going to trigger warnings,
+        // because we don't want to split one attribute in multiple lines
+        if ($attributesNumber === 1) {
+            $attribute = reset($matches[0]);
+
+            return (strlen($attribute) + $startColumn) > $this->lineLimit;
+        }
+
+        // no HTML attributes found, let's use standard approach
+
+        return $this->isLongSingleWord($position, $file, $tokens, $lineStart, $lineEnd);
+    }
+
+    /**
+     * @param int $position
+     * @param File $file
+     * @param array $tokens
+     * @param int $lineStart
+     * @param int $lineEnd
+     * @return bool
+     */
+    private function isLongSingleWord(
+        int $position,
+        File $file,
+        array $tokens,
+        int $lineStart,
+        int $lineEnd
+    ): bool {
+
+        $words = preg_split('~\s+~', $tokens[$position]['content'], 2, PREG_SPLIT_NO_EMPTY);
+
+        // If multiple words exceed line limit, we can split each word in its own line
+        if (count($words) > 1) {
+            return false;
+        }
+
+        $firstNonWhite = $file->findNext(T_WHITESPACE, $lineStart, $lineEnd, true);
+        $tolerance = ($firstNonWhite['column'] ?? 1) + 3;
+
+        return (strlen(reset($words)) + $tolerance) > $this->lineLimit;
+    }
+
+    /**
+     * We can't split text in WordPress translation functions in multiple lines, or WPCS will
+     * complain because of PHP code used instead of just strings.
+     * So when line limit exceed is caused by a long string passed as argument to a WP translation
+     * function we don't show warnings for it.
+     *
      * @param File $file
      * @param array $tokens
      * @param $start
@@ -220,6 +303,10 @@ class LineLengthSniff implements Sniff
     }
 
     /**
+     * With deep namespace structure and long namespace/class names it might happen that a line
+     * of `use` statements becomes longer than limit.
+     * We do not trigger a warning in that case because it is not possible to split the line.
+     *
      * @param File $file
      * @param array $tokens
      * @param $start
