@@ -298,7 +298,6 @@ class LineLengthSniff implements Sniff
             $textLen += max(1, strlen(trim($tokens[$i]['content'])));
         }
 
-
         return ($textLen + 2) > $this->lineLimit;
     }
 

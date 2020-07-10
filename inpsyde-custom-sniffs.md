@@ -177,10 +177,14 @@ This sniff has no available configuration.
 ## Inpsyde.CodeQuality.LineLength
 
 Ensures that any line of code or comment is less than a maximum number of characters, by default 100.
-There are two exceptions:
-- Lines that contain WordPress translation functions, because splitting those in multiple lines would
-  be against WordPress coding style
-- Lines hat contain long words, for example URLs that being a single word can't be split in more lines.
+There are three exceptions:
+- Lines that contain WordPress long strings used in WP translation functions.
+  Because splitting the text to translate would be against WPCS.
+- Lines that contain long single words, for example URLs.
+  Because it does not make sense to split a single word in multiple lines.
+- Lines in inline HTML with a single attribute that is over the line length. 
+  While a tag with multiple attributes can be easily written with an attribute per line, when a single
+  attribute is already over the limit split it across multiple lines does not really make sense.
 
 The maximum length is configurable via the `lineLimit` property, e.g.:
 

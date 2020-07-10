@@ -141,7 +141,6 @@
     <rule ref="WordPressVIPMinimum.Security.ProperEscapingFunction"/>
     <rule ref="WordPressVIPMinimum.Security.StaticStrreplace"/>
     <rule ref="WordPressVIPMinimum.Variables.RestrictedVariables.session"/>
-    <rule ref="WordPressVIPMinimum.VersionControl.MergeConflict"/>
 
     <!--
     Generic
@@ -162,6 +161,7 @@
     <rule ref="Generic.PHP.CharacterBeforePHPOpeningTag"/>
     <rule ref="Generic.PHP.LowerCaseConstant"/>
     <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
+    <rule ref="Generic.VersionControl.GitMergeConflict"/>
     <rule ref="Squiz.PHP.CommentedOutCode">
         <properties>
             <property name="maxPercentage" value="45"/>

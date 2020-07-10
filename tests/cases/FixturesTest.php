@@ -34,7 +34,8 @@ class FixturesTest extends TestCase
     public function fixtureProvider(): \Traversable
     {
         foreach ((glob(getenv('FIXTURES_PATH') . '/*.php') ?: []) as $fixtureFile) {
-            yield pathinfo($fixtureFile, PATHINFO_FILENAME) => [pathinfo($fixtureFile, PATHINFO_BASENAME)];
+            $name = pathinfo($fixtureFile, PATHINFO_FILENAME);
+            yield $name => [pathinfo($fixtureFile, PATHINFO_BASENAME)];
         }
     }
 
