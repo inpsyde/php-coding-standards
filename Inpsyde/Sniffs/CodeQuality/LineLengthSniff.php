@@ -166,7 +166,7 @@ class LineLengthSniff implements Sniff
                 : $this->isLongSingleWord($stringPos, $file, $tokens, $start, $end);
 
             if (!$isLong || $isHtml) {
-                return $isHtml;
+                return $isLong && $isHtml;
             }
 
             $foundString = true;
