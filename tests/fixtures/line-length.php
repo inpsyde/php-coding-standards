@@ -10,6 +10,10 @@
             <!-- NO warning below: don't require splitting a single attribute in multiple lines -->
             <path d="x8h2.93v-7.3h2 45l.37-2.84h-2 82V6.04c0-.82.23-1.38 8h2.93v-7.3h2.45l.37-2.84h-2.82V6.04c0-.82.23-1.38 8h2.93v-7.3h2.45l.37-2.84h-2.82V6.04c0-.82.23-1.38"/>
         </g>
+        <g>
+            <!-- NO warning below: don't require splitting a single attribute in multiple lines -->
+            <path d="x8h2.93v-7.3h2 45l.37-2.84h-2 82V6.04c0-.82.23-1.38 <?= somePhPCodeUsedInsideTheAttribute('foo bar = "baz"') ?>"/>
+        </g>
     </svg>
 <?php
 

@@ -160,12 +160,13 @@ class LineLengthSniff implements Sniff
                 return false;
             }
 
-            $isLong = ($tokens[$stringPos]['code'] === T_INLINE_HTML)
+            $isHtml = $tokens[$stringPos]['code'] === T_INLINE_HTML;
+            $isLong = $isHtml
                 ? $this->isLongHtmlAttribute($stringPos, $file, $tokens, $start, $end)
                 : $this->isLongSingleWord($stringPos, $file, $tokens, $start, $end);
 
-            if (!$isLong) {
-                return false;
+            if (!$isLong || $isHtml) {
+                return $isHtml;
             }
 
             $foundString = true;
@@ -191,11 +192,24 @@ class LineLengthSniff implements Sniff
         int $lineEnd
     ): bool {
 
-        $firstNonWhite = $file->findNext(T_WHITESPACE, $lineStart, $lineEnd, true);
-        $startColumn = ($firstNonWhite['column'] ?? 1) - 1;
+        $inPhp = false;
+        $content = '';
+        for ($i = $lineStart; $i <= $lineEnd; $i++) {
+            $code = $tokens[$i]['code'];
+            if (($code === T_OPEN_TAG || $code === T_OPEN_TAG_WITH_ECHO) && !$inPhp) {
+                $inPhp = true;
+            }
+            if ($tokens[$i]['code'] === T_INLINE_HTML || $inPhp) {
+                $tokenContent = $tokens[$i]['content'];
+                $content .= $inPhp ? str_repeat('x', strlen($tokenContent)) : $tokenContent;
+            }
+            if ($tokens[$i]['code'] === T_CLOSE_TAG && $inPhp) {
+                $inPhp = false;
+            }
+        }
 
         // Instead of counting single _word_ length we will count single _attribute_ length
-        preg_match_all('~\s*=\s*["\'][^"\']*["\']~', $tokens[$position]['content'], $matches);
+        preg_match_all('~[^\s]+\s*=\s*["\'][^"\']*["\']~', $content, $matches);
         $attributesNumber = count($matches[0]);
 
         // When multiple HTML attributes are there, each attribute can go in a separate line
@@ -206,9 +220,7 @@ class LineLengthSniff implements Sniff
         // When a single HTML attribute is too long, we are not going to trigger warnings,
         // because we don't want to split one attribute in multiple lines
         if ($attributesNumber === 1) {
-            $attribute = reset($matches[0]);
-
-            return (strlen($attribute) + $startColumn) > $this->lineLimit;
+            return true;
         }
 
         // no HTML attributes found, let's use standard approach
@@ -235,14 +247,15 @@ class LineLengthSniff implements Sniff
         $words = preg_split('~\s+~', $tokens[$position]['content'], 2, PREG_SPLIT_NO_EMPTY);
 
         // If multiple words exceed line limit, we can split each word in its own line
-        if (count($words) > 1) {
+        if ($words === false || count($words) !== 1) {
             return false;
         }
 
+        $word = (string)reset($words);
         $firstNonWhite = $file->findNext(T_WHITESPACE, $lineStart, $lineEnd, true);
-        $tolerance = ($firstNonWhite['column'] ?? 1) + 3;
+        $tolerance = is_array($firstNonWhite) ? (($firstNonWhite['column'] ?? 1) + 3) : 4;
 
-        return (strlen(reset($words)) + $tolerance) > $this->lineLimit;
+        return (strlen($word) + $tolerance) > $this->lineLimit;
     }
 
     /**
