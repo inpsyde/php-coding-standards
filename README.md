@@ -2,6 +2,10 @@
 
 > PHP 7+ coding standards for Inpsyde WordPress projects.
 
+![PHP Quality Assurance](https://github.com/inpsyde/php-coding-standards/workflows/PHP%20Quality%20Assurance/badge.svg)
+
+-------------
+
 # Installation
 
 The code styles are enforced via the popular [`php_codesniffer`](https://packagist.org/packages/squizlabs/php_codesniffer)
@@ -19,7 +23,7 @@ It means they can be installed by adding the entry to composer.json `require-dev
 
 or via command line with: 
 
-```
+```shell
 $ composer require inpsyde/php-coding-standards --dev
 ```
 
@@ -32,25 +36,25 @@ $ composer require inpsyde/php-coding-standards --dev
 When the package is installed via Composer, and dependencies are updated, everything is
 ready and the coding standards can be checked via:
 
-```
+```shell
 $ vendor/bin/phpcs --standard="Inpsyde" <path>
 ```
 
 Where `<path>` is at least one file or directory to check, e.g.:
 
-```
+```shell
 $ vendor/bin/phpcs --standard="Inpsyde" ./src/ ./my-plugin.php
 ```
 
 On  Windows it would be something like:
 
-```
+```shell
 $ ./vendor/bin/phpcs.bat --standard="Inpsyde" ./src/ ./my-plugin.php
 ```
 
 There are many options that can be used to customise the behavior of the command, to get documentation use:
 
-```
+```shell
 $ vendor/bin/phpcs --help
 ```
 
@@ -99,7 +103,7 @@ customization it is also possible to create a `phpcs.xml.dist` file that contain
 
 Such a configuration allows to run the code style check with only:
 
-```
+```shell
 $ vendor/bin/phpcs
 ```
 
@@ -141,10 +145,9 @@ Target version can be changed via custom `phpcs.xml`.
 
 ## Generic Rules
 
-Some rules are also included from PHP cCode Sniffer itself. Those rules fall in the
-"Generic", "Squiz" and "PEAR" namespace.
-
-Those rules are included by other styles, mainly by PSR-1 and PSR-2.
+Some rules are also included from PHPCS itself.
+Those rules fall in the "Generic", "Squiz" and "PEAR" namespace.
+Some of them are included by other styles, mainly by PSR-1 and PSR-2.
 
 
 ## Custom Rules
@@ -240,9 +243,9 @@ rule/sniff/standard subset/standard is not checked anymore.
 To re-enable it is necessary to use a similar syntax, but this time using 
 `phpcs:enable` instead of `phpcs:disable`.
 
-It worth nothing:
+It worth noting:
 
-- `phpcs:disable` and `phpcs:enable` can be used without anything else, in this
+- `phpcs:disable` and `phpcs:enable` can be used without specifying the rule name, in this
   case the check for *all* rules are disabled/enabled.
 - Disabling / enabling comments could be embedded in doc block comments at
   file/class/method level. For example:
@@ -277,21 +280,29 @@ open PhpStorm settings, and navigate to
 `Language & Frameworks` ->  `PHP` -> `Quality Tools` -> `PHP_CodeSniffer`
 
 Choose _"Local"_ in the _"Configuration"_ dropdown.
+
 Click the _"..."_ button next to the dropdown, it will show a dialog
 where you need to specify the path for the Code Sniffer executable.
-Open the file selection dialog, navigate to `vendor/bin/` in your project and select `phpcs` (`phpcs.bat` on Windows). 
+
+Open the file selection dialog, navigate to `vendor/bin/` in your project and select `phpcs`
+(`phpcs.bat` on Windows). 
+
 Click the _"Validate"_ button next to the path input field, if everything is fine
 a success message will be shown at the bottom of the window.
 
-Navigate to
+Navigate PhpStorm settings to:
 
 `Editor` ->  `Inspections`
 
-Type `codesniffer` in the search field before the list of inspections, select `PHP` -> `Quality Tools` -> `PHP_CodeSniffer validation` and enable it using the checkbox in the list, press _"Apply"_.
+Type `codesniffer` in the search field before the list of inspections, 
+select `PHP` -> `Quality Tools` -> `PHP_CodeSniffer validation` and enable it using the checkbox in 
+the list, press _"Apply"_.
 
-Select  _"PHP_CodeSniffer validation"_, press the refresh icon next to the _"Coding standard"_ dropdown on the right and choose `Inpsyde`.
+Select  _"PHP_CodeSniffer validation"_, press the refresh icon next to the _"Coding standard"_ 
+dropdown on the right and choose `Inpsyde`.
 
-If you do not see `Inpsyde` here, you may need to specify `phpcs.xml` file by selecting _"Custom"_ as standard and using the _"..."_ button next to the dropdown.
+If you do not see `Inpsyde` here, you may need to specify `phpcs.xml` file by selecting _"Custom"_ 
+as standard and using the _"..."_ button next to the dropdown.
 
 Now PhpStorm integration is complete, and errors in the code style will be shown in the IDE editor
 allowing to detect them without running any commands at all.
