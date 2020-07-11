@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the php-coding-standards package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
@@ -20,32 +11,44 @@ use PHP_CodeSniffer\Util\Tokens;
 class FunctionBodyStartSniff implements Sniff
 {
     /**
-     * @return int[]
+     * @return array<int>
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function register()
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         return [T_FUNCTION];
     }
 
     /**
-     * @param File $phpcsFile
-     * @param int $stackPtr
+     * @param File $file
+     * @param int $position
      * @return void
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $phpcsFile, $stackPtr)
+    public function process(File $file, $position)
     {
-        $tokens = $phpcsFile->getTokens();
-        $token = $tokens[$stackPtr] ?? [];
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
-        /** @var int $scopeOpener */
-        $scopeOpener = $token['scope_opener'] ?? -1;
-        $scopeCloser = $token['scope_closer'] ?? -1;
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+        $token = $tokens[$position] ?? [];
+
+        $scopeOpener = (int)($token['scope_opener'] ?? -1);
+        $scopeCloser = (int)($token['scope_closer'] ?? -1);
 
         if ($scopeOpener < 0 || $scopeCloser < 0 || $scopeCloser <= $scopeOpener) {
             return;
         }
 
-        $bodyStart = $phpcsFile->findNext([T_WHITESPACE], $scopeOpener + 1, null, true);
+        $bodyStart = $file->findNext([T_WHITESPACE], $scopeOpener + 1, null, true);
         if (
             !$bodyStart
             || !array_key_exists($bodyStart, $tokens)
@@ -57,29 +60,42 @@ class FunctionBodyStartSniff implements Sniff
 
         list($code, $message, $expectedLine) = $this->checkBodyStart(
             $bodyStart,
-            $tokens[$scopeOpener]['line'] ?? -1,
-            $token['line'] ?? -1,
-            $phpcsFile
+            (int)($tokens[$scopeOpener]['line'] ?? -1),
+            (int)($token['line'] ?? -1),
+            $file
         );
 
-        if ($code && $message && $phpcsFile->addFixableWarning($message, $stackPtr, $code)) {
-            $this->fix($bodyStart, $expectedLine, $scopeOpener, $phpcsFile);
+        if (
+            $code
+            && $message
+            && $expectedLine
+            && $file->addFixableWarning($message, $position, $code)
+        ) {
+            $this->fix($bodyStart, $expectedLine, $scopeOpener, $file);
         }
     }
 
+    /**
+     * @param int $bodyStart
+     * @param int $openerLine
+     * @param int $functionLine
+     * @param File $file
+     * @return array{null, null, null}|array{string, string, int}
+     */
     private function checkBodyStart(
         int $bodyStart,
         int $openerLine,
         int $functionLine,
-        File $phpcsFile
+        File $file
     ): array {
 
-        $tokens = $phpcsFile->getTokens();
-        $bodyLine = $tokens[$bodyStart]['line'] ?? -1;
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+        $bodyLine = (int)($tokens[$bodyStart]['line'] ?? -1);
 
         $isMultiLineDeclare = ($openerLine - $functionLine) > 1;
         $isSingleLineDeclare = $openerLine === ($functionLine + 1);
-        $isSingleLineSignature = $openerLine && $openerLine === $functionLine;
+        $isSingleLineSignature = $openerLine && ($openerLine === $functionLine);
 
         $error =
             ($isMultiLineDeclare || $isSingleLineSignature) && $bodyLine !== ($openerLine + 2)
@@ -129,8 +145,9 @@ class FunctionBodyStartSniff implements Sniff
      */
     private function fix(int $bodyStart, int $expectedLine, int $scopeOpener, File $file)
     {
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
-        $currentLine = $tokens[$bodyStart]['line'] ?? -1;
+        $currentLine = (int)($tokens[$bodyStart]['line'] ?? -1);
 
         if ($currentLine === $expectedLine) {
             return;

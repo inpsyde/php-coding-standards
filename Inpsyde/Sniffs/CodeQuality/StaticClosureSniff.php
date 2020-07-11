@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the php-coding-standards package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
@@ -20,35 +11,50 @@ use PHP_CodeSniffer\Files\File;
 class StaticClosureSniff implements Sniff
 {
     /**
-     * @return int[]
+     * @return array<string>
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function register()
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         return [T_CLOSURE];
     }
 
     /**
      * @param File $file
-     * @param int $stackPtr
+     * @param int $position
      * @return void
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $stackPtr)
+    public function process(File $file, $position)
     {
-        list($functionStart, $functionEnd) = PhpcsHelpers::functionBoundaries($file, $stackPtr);
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
+        list($functionStart, $functionEnd) = PhpcsHelpers::functionBoundaries($file, $position);
         if ($functionStart < 0 || $functionEnd <= 0) {
             return;
         }
 
-        $isStatic = $file->findPrevious(T_STATIC, $stackPtr, $stackPtr - 3, false, null, true);
+        $isStatic = $file->findPrevious(T_STATIC, $position, $position - 3, false, null, true);
         if ($isStatic) {
             return;
         }
 
         $thisFound = false;
         $i = $functionStart + 1;
+
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
         while (!$thisFound && ($i < $functionEnd)) {
-            $thisFound = $tokens[$i]['content'] === '$this';
+            $token = $tokens[$i];
+            $thisFound = ($token['code'] === T_VARIABLE) && ($token['content'] === '$this');
             $i++;
         }
 
@@ -56,39 +62,37 @@ class StaticClosureSniff implements Sniff
             return;
         }
 
-        $docTokens = array_values(PhpcsHelpers::functionDocTokens($file, $stackPtr));
+        $boundDoc = PhpcsHelpers::functionDocBlockTag('@bound', $file, $position);
+        if ($boundDoc) {
+            return;
+        }
 
-        foreach ($docTokens as $index => $docToken) {
-            $content = $docToken['content'] ?? '';
-            $code = $docToken['code'] ?? '';
-            $prevToken = $docTokens[$index - 1] ?? [];
-            $prevContent = $prevToken['content'] ?? '';
-            $prevCode = $prevToken['code'] ?? '';
-
-            if (
-                ($code === T_DOC_COMMENT_TAG && $content === '@bound')
-                || (
-                    ($prevCode === T_DOC_COMMENT_TAG && $prevContent === '@var')
-                    && $code === T_DOC_COMMENT_STRING
-                    && substr_count($content, '$this')
-                )
-            ) {
+        $varDoc = PhpcsHelpers::functionDocBlockTag('@var', $file, $position);
+        foreach ($varDoc as $content) {
+            if (preg_match('~(?:^|\s+)\$this(?:$|\s+)~', $content)) {
                 return;
             }
         }
 
-        $message = sprintf('Closure found at line %d could be static.', $tokens[$stackPtr]['line']);
-        if ($file->addFixableWarning($message, $stackPtr, 'PossiblyStaticClosure')) {
-            $this->fix($stackPtr, $file);
+        $line = (int)$tokens[$position]['line'];
+        $message = sprintf('Closure found at line %d could be static.', $line);
+
+        if ($file->addFixableWarning($message, $position, 'PossiblyStaticClosure')) {
+            $this->fix($position, $file);
         }
     }
 
-    private function fix(int $stackPtr, File $file)
+    /**
+     * @param int $position
+     * @param File $file
+     * @return void
+     */
+    private function fix(int $position, File $file)
     {
         $fixer = $file->fixer;
         $fixer->beginChangeset();
 
-        $fixer->replaceToken($stackPtr, 'static function');
+        $fixer->replaceToken($position, 'static function');
 
         $fixer->endChangeset();
     }

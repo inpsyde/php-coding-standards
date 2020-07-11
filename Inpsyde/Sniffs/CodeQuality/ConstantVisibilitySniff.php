@@ -20,17 +20,23 @@ use PHP_CodeSniffer\Standards\PSR12\Sniffs\Properties as PSR12;
 final class ConstantVisibilitySniff extends PSR12\ConstantVisibilitySniff
 {
     /**
-     * @param File $phpcsFile
-     * @param int $stackPtr
+     * @param File $file
+     * @param int $position
      * @return void
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $phpcsFile, $stackPtr)
+    public function process(File $file, $position)
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         $min = PhpcsHelpers::minPhpTestVersion();
         if ($min && version_compare($min, '7.1', '<')) {
             return;
         }
 
-        parent::process($phpcsFile, $stackPtr);
+        parent::process($file, $position);
     }
 }

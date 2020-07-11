@@ -6,6 +6,7 @@
     <autoload>./Inpsyde/PhpcsHelpers.php</autoload>
     
     <file>./Inpsyde/Sniffs</file>
+    <file>./Inpsyde/PhpcsHelpers.php</file>
     <file>./tests/src</file>
     <file>./tests/cases</file>
 
@@ -151,17 +152,11 @@
             <property name="absoluteComplexity" value="50"/>
         </properties>
     </rule>
-    <rule ref="Generic.Metrics.NestingLevel">
-        <properties>
-            <property name="nestingLevel" value="2"/>
-            <property name="absoluteNestingLevel" value="4"/>
-        </properties>
-    </rule>
     <rule ref="Generic.NamingConventions.ConstructorName"/>
     <rule ref="Generic.PHP.CharacterBeforePHPOpeningTag"/>
     <rule ref="Generic.PHP.LowerCaseConstant"/>
-    <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
     <rule ref="Generic.VersionControl.GitMergeConflict"/>
+    <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
     <rule ref="Squiz.PHP.CommentedOutCode">
         <properties>
             <property name="maxPercentage" value="45"/>
@@ -174,11 +169,15 @@
     <rule ref="Squiz.Scope.MemberVarScope"/>
     <rule ref="Squiz.Scope.StaticThisUsage"/>
 
+    <!--
+    PHPCompatibility
+    -->
     <rule ref="PHPCompatibility"/>
 
     <!--
     Use own styles :)
     -->
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/ArgumentTypeDeclarationSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ConstantVisibilitySniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/DisallowShortOpenTagSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ElementNameMinimalLengthSniff.php"/>
@@ -186,11 +185,14 @@
     <rule ref="./Inpsyde/Sniffs/CodeQuality/FunctionBodyStartSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/FunctionLengthSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/LineLengthSniff.php"/>
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/NestingLevelSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/NoAccessorsSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/NoElseSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/NoTopLevelDefineSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/PropertyPerClassLimitSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/Psr4Sniff.php"/>
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/ReturnTypeDeclarationSniff.php"/>
+    <rule ref="./Inpsyde/Sniffs/CodeQuality/StaticClosureSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/VariablesNameSniff.php"/>
 
 </ruleset>

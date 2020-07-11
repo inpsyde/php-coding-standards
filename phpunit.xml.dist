@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.0/phpunit.xsd"
+	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.0/phpunit.xsd"
 	backupGlobals="false"
 	backupStaticAttributes="false"
 	bootstrap="tests/bootstrap.php"
@@ -14,6 +14,9 @@
 	<testsuites>
 		<testsuite name="fixtures">
 			<file>tests/cases/FixturesTest.php</file>
+		</testsuite>
+		<testsuite name="helpers">
+			<file>tests/cases/PhpcsHelpersTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

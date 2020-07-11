@@ -1,19 +1,5 @@
 <?php
 
-/*
- * This file is part of the php-coding-standards package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * This file contains code from "phpcs-neutron-standard" repository
- * found at https://github.com/Automattic/phpcs-neutron-standard
- * Copyright (c) Automattic Inc.
- * released under MIT license.
- */
-
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
@@ -44,10 +30,14 @@ class ReturnTypeDeclarationSniff implements Sniff
     ];
 
     /**
-     * @return int[]
+     * @return array<int|string>
+     *
+     * phpcs:disable Inpsyde.CodeQuality
      */
     public function register()
     {
+        // phpcs:enable Inpsyde.CodeQuality
+
         return [T_FUNCTION, T_CLOSURE];
     }
 
@@ -55,9 +45,13 @@ class ReturnTypeDeclarationSniff implements Sniff
      * @param File $file
      * @param int $position
      * @return void
+     *
+     * phpcs:disable Inpsyde.CodeQuality
      */
     public function process(File $file, $position)
     {
+        //  phpcs:enable Inpsyde.CodeQuality
+
         if (PhpcsHelpers::functionIsArrayAccess($file, $position)) {
             return;
         }
@@ -76,10 +70,10 @@ class ReturnTypeDeclarationSniff implements Sniff
             $returnsGenerator
             ) = $this->returnTypeInfo($file, $position);
 
-        list($nonVoidReturnCount, $voidReturnCount, $nullReturnCount) = PhpcsHelpers::countReturns(
-            $file,
-            $position
-        );
+        $returnData = PhpcsHelpers::returnsCountInfo($file, $position);
+        $nonVoidReturnCount = $returnData['nonEmpty'];
+        $voidReturnCount = $returnData['void'];
+        $nullReturnCount = $returnData['null'];
 
         $yieldCount = $this->countYield($functionStart, $functionEnd, $file);
 
@@ -108,6 +102,18 @@ class ReturnTypeDeclarationSniff implements Sniff
         );
     }
 
+    /**
+     * @param bool $hasNonVoidReturnType
+     * @param bool $hasVoidReturnType
+     * @param bool $hasNoReturnType
+     * @param bool $hasNullableReturn
+     * @param int $nonVoidReturnCount
+     * @param int $nullReturnCount
+     * @param int $voidReturnCount
+     * @param File $file
+     * @param int $position
+     * @return void
+     */
     private function maybeErrors(
         bool $hasNonVoidReturnType,
         bool $hasVoidReturnType,
@@ -159,7 +165,7 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
-        $name = $file->getDeclarationName($position);
+        $name = (string)$file->getDeclarationName($position);
         if (
             PhpcsHelpers::functionIsMethod($file, $position)
             && (in_array($name, self::METHODS_WHITELIST, true) || strpos($name, '__') === 0)
@@ -172,6 +178,14 @@ class ReturnTypeDeclarationSniff implements Sniff
         }
     }
 
+    /**
+     * @param int $yieldCount
+     * @param bool $returnsGenerator
+     * @param int $nonVoidReturnCount
+     * @param File $file
+     * @param int $position
+     * @return void
+     */
     private function maybeGeneratorErrors(
         int $yieldCount,
         bool $returnsGenerator,
@@ -224,6 +238,11 @@ class ReturnTypeDeclarationSniff implements Sniff
         );
     }
 
+    /**
+     * @param File $file
+     * @param int $functionPosition
+     * @return string
+     */
     private function returnTypeContent(File $file, int $functionPosition): string
     {
         $info = $file->getMethodProperties($functionPosition);
@@ -231,11 +250,12 @@ class ReturnTypeDeclarationSniff implements Sniff
             return ltrim($info['return_type'], '\\');
         }
 
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
         $returnTypeToken = $file->findNext(
             [T_RETURN_TYPE],
             $functionPosition + 3, // 3: open parenthesis, close parenthesis, colon
-            ($tokens[$functionPosition]['scope_opener'] ?? 0) - 1
+            (int)($tokens[$functionPosition]['scope_opener'] ?? 0) - 1
         );
 
         $returnType = $tokens[$returnTypeToken] ?? null;
@@ -243,11 +263,17 @@ class ReturnTypeDeclarationSniff implements Sniff
             return '';
         }
 
-        return ltrim($returnType['content'] ?? '', '\\');
+        return ltrim((string)($returnType['content'] ?? ''), '\\');
     }
 
+    /**
+     * @param File $file
+     * @param int $functionPosition
+     * @return array{bool, bool, bool, bool, bool}
+     */
     private function returnTypeInfo(File $file, int $functionPosition): array
     {
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
         $returnTypeContent = $this->returnTypeContent($file, $functionPosition);
@@ -256,8 +282,8 @@ class ReturnTypeDeclarationSniff implements Sniff
             return [false, false, true, false, false];
         }
 
-        $start = $tokens[$functionPosition]['parenthesis_closer'] + 1;
-        $end = $tokens[$functionPosition]['scope_opener'];
+        $start = (int)((int)($tokens[$functionPosition]['parenthesis_closer']) + 1);
+        $end = (int)($tokens[$functionPosition]['scope_opener']);
         $hasNullable = false;
         for ($i = $start; $i < $end; $i++) {
             if ($tokens[$i]['code'] === T_NULLABLE) {
@@ -276,6 +302,11 @@ class ReturnTypeDeclarationSniff implements Sniff
         return [$hasNonVoidReturnType, $hasVoidReturnType, false, $hasNullable, $returnsGenerator];
     }
 
+    /**
+     * @param File $file
+     * @param int $functionPosition
+     * @return bool
+     */
     private function hasReturnNullDocBloc(File $file, int $functionPosition): bool
     {
         $return = PhpcsHelpers::functionDocBlockTag('@return', $file, $functionPosition);
@@ -283,8 +314,8 @@ class ReturnTypeDeclarationSniff implements Sniff
             return false;
         }
 
-        $returnContentParts = preg_split('~\s+~', reset($return));
-        $returnTypes = $returnContentParts ? explode('|', reset($returnContentParts)) : [];
+        $returnContentParts = preg_split('~\s+~', (string)reset($return), PREG_SPLIT_NO_EMPTY);
+        $returnTypes = $returnContentParts ? explode('|', (string)reset($returnContentParts)) : [];
         $returnTypes and $returnTypes = array_map('strtolower', $returnTypes);
 
         return
@@ -294,6 +325,9 @@ class ReturnTypeDeclarationSniff implements Sniff
             && in_array('null', $returnTypes, true);
     }
 
+    /**
+     * @return bool
+     */
     private function areNullableReturnTypesSupported(): bool
     {
         $min = PhpcsHelpers::minPhpTestVersion();
@@ -301,13 +335,21 @@ class ReturnTypeDeclarationSniff implements Sniff
         return $min && version_compare($min, '7.1', '>=');
     }
 
+    /**
+     * @param int $functionStart
+     * @param int $functionEnd
+     * @param File $file
+     * @return int
+     */
     private function countYield(int $functionStart, int $functionEnd, File $file): int
     {
         $count = 0;
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
-        for ($i = $functionStart + 1; $i < $functionEnd; $i++) {
+        for ($i = ($functionStart + 1); $i < $functionEnd; $i++) {
             if ($tokens[$i]['code'] === T_CLOSURE) {
-                $i = $tokens[$i]['scope_closer'];
+                /** @psalm-suppress LoopInvalidation */
+                $i = (int)($tokens[$i]['scope_closer']);
                 continue;
             }
             if ($tokens[$i]['code'] === T_YIELD || $tokens[$i]['code'] === T_YIELD_FROM) {

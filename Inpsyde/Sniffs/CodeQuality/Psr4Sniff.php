@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the php-coding-standards package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
@@ -20,20 +11,26 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 class Psr4Sniff implements Sniff
 {
     /**
-     * @var array
+     * @var mixed
      */
     public $psr4;
 
     /**
-     * @var array
+     * @var mixed
      */
     public $exclude = [];
 
     /**
-     * @return int[]
+     * @return array<int>
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function register()
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         return [T_CLASS, T_INTERFACE, T_TRAIT];
     }
 
@@ -41,15 +38,26 @@ class Psr4Sniff implements Sniff
      * @param File $file
      * @param int $position
      * @return void
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function process(File $file, $position)
     {
-        $className = $file->getDeclarationName($position);
-        $code = $file->getTokens()[$position]['code'];
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
+        $className = (string)$file->getDeclarationName($position);
+
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+        $code = $tokens[$position]['code'];
         $entityType = 'class';
         if ($code !== T_CLASS) {
             $entityType = $code === T_TRAIT ? 'trait' : 'interface';
         }
+
+        $this->normalizeExcluded();
 
         if (!$this->psr4 || !is_array($this->psr4)) {
             $this->checkFilenameOnly($file, $position, $className, $entityType);
@@ -57,10 +65,16 @@ class Psr4Sniff implements Sniff
             return;
         }
 
-        $this->exclude = is_array($this->exclude) ? $this->normalizeExcluded($this->exclude) : [];
         $this->checkPsr4($file, $position, $className, $entityType);
     }
 
+    /**
+     * @param File $file
+     * @param int $position
+     * @param string $className
+     * @param string $entityType
+     * @return void
+     */
     private function checkFilenameOnly(
         File $file,
         int $position,
@@ -86,12 +100,10 @@ class Psr4Sniff implements Sniff
     }
 
     /**
-     * phpcs:disable Generic.Metrics.NestingLevel
+     * @return void
      */
     private function checkPsr4(File $file, int $position, string $className, string $entityType)
     {
-        // phpcs:enable Generic.Metrics.NestingLevel
-
         list(, $namespace) = PhpcsHelpers::findNamespace($file, $position);
         $namespace = is_string($namespace) ? "{$namespace}\\" : '';
         $namespace = rtrim($namespace, '\\');
@@ -99,7 +111,7 @@ class Psr4Sniff implements Sniff
         $fullyQualifiedName = $namespace . "\\{$className}";
 
         foreach ($this->exclude as $excluded) {
-            if (strpos($fullyQualifiedName, $excluded) === 0) {
+            if (strpos($fullyQualifiedName, (string)$excluded) === 0) {
                 return;
             }
         }
@@ -107,6 +119,10 @@ class Psr4Sniff implements Sniff
         $filePath = str_replace('\\', '/', $file->getFilename());
 
         foreach ($this->psr4 as $baseNamespace => $foldersStr) {
+            if (!is_string($baseNamespace) || !is_string($foldersStr)) {
+                continue;
+            }
+
             $baseNamespace = trim($baseNamespace, '\\');
             if (strpos($namespace, $baseNamespace) !== 0) {
                 continue;
@@ -114,27 +130,16 @@ class Psr4Sniff implements Sniff
 
             $folders = explode('|', $foldersStr);
 
-            foreach ($folders as $folder) {
-                $folder = trim(str_replace('\\', '/', $folder), './');
-                $folderSplit = explode("/{$folder}/", $filePath);
-                if (count($folderSplit) < 2) {
-                    continue;
-                }
+            $valid = $this->checkPsr4Folders(
+                $filePath,
+                $baseNamespace,
+                $namespace,
+                $className,
+                ...$folders
+            );
 
-                $relativePath = array_pop($folderSplit);
-
-                if (basename($relativePath) !== "{$className}.php") {
-                    continue;
-                }
-
-                $relativeNamespace = str_replace('/', '\\', dirname($relativePath));
-                $expectedNamespace = $relativeNamespace === '.'
-                    ? $baseNamespace
-                    : "{$baseNamespace}\\{$relativeNamespace}";
-
-                if ("{$expectedNamespace}\\{$className}" === "{$namespace}\\{$className}") {
-                    return;
-                }
+            if ($valid) {
+                return;
             }
         }
 
@@ -150,13 +155,56 @@ class Psr4Sniff implements Sniff
         );
     }
 
-    private function normalizeExcluded(array $excluded): array
+    private function checkPsr4Folders(
+        string $filePath,
+        string $baseNamespace,
+        string $namespace,
+        string $className,
+        string ...$folders
+    ): bool {
+
+        foreach ($folders as $folder) {
+            $folder = trim(str_replace('\\', '/', $folder), './');
+            $folderSplit = explode("/{$folder}/", $filePath);
+            if (!$folderSplit || count($folderSplit) < 2) {
+                continue;
+            }
+
+            $relativePath = array_pop($folderSplit);
+
+            if (basename($relativePath) !== "{$className}.php") {
+                continue;
+            }
+
+            $relativeNamespace = str_replace('/', '\\', dirname($relativePath));
+            $expectedNamespace = $relativeNamespace === '.'
+                ? $baseNamespace
+                : "{$baseNamespace}\\{$relativeNamespace}";
+
+            if ("{$expectedNamespace}\\{$className}" === "{$namespace}\\{$className}") {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return void
+     * @psalm-assert array<string> $this->exclude
+     */
+    private function normalizeExcluded()
     {
-        return array_map(
-            function (string $className): string {
-                return ltrim($className, '\\');
-            },
-            $excluded
-        );
+        $excluded = $this->exclude;
+        if (!$excluded || !is_array($excluded)) {
+            $this->exclude = [];
+
+            return;
+        }
+
+        $this->exclude = [];
+        foreach ($excluded as $className) {
+            is_string($className) and $this->exclude[] = ltrim($className, '\\');
+        }
     }
 }

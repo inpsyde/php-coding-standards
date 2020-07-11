@@ -1,19 +1,5 @@
 <?php
 
-/*
- * This file is part of the php-coding-standards package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * This file contains code from "phpcs-calisthenics-rules" repository
- * found at https://github.com/object-calisthenics
- * Copyright (c) 2014 Doctrine Project
- * released under MIT license.
- */
-
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
@@ -43,10 +29,16 @@ class NoAccessorsSniff implements Sniff
     public $skipForProtected = false;
 
     /**
-     * @return int[]
+     * @return array<int>
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function register()
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         return [T_FUNCTION];
     }
 
@@ -54,9 +46,17 @@ class NoAccessorsSniff implements Sniff
      * @param File $file
      * @param int $position
      * @return void
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.FunctionLength
      */
     public function process(File $file, $position)
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.FunctionLength
+
         if (!PhpcsHelpers::functionIsMethod($file, $position)) {
             return;
         }
@@ -76,8 +76,13 @@ class NoAccessorsSniff implements Sniff
                 true
             );
 
-            $modifierPointer = $file->getTokens()[$modifierPointerPosition] ?? null;
-            if (!in_array($modifierPointer['code'], Tokens::$scopeModifiers, true)) {
+            /** @var array<int, array<string, mixed>> $tokens */
+            $tokens = $file->getTokens();
+            $modifierPointer = $tokens[$modifierPointerPosition] ?? null;
+            if (
+                $modifierPointer
+                && !in_array($modifierPointer['code'], Tokens::$scopeModifiers, true)
+            ) {
                 $modifierPointer = null;
             }
 

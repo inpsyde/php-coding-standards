@@ -1,5 +1,43 @@
 # Changelog
 
+## Not released
+- Fix regression in line-length sniff
+- Improvements and cleanup of various sniff and `PhpcsHelpers`
+- Added tests for `PhpcsHelpers`
+- Improvements and increased consistency in CS and doc blocks
+- Improved line length calculation for inline HTML
+- Added Psalm
+- Added CI checks via GitHub workflows
+
+## 1.0.0-beta.7
+- Allow `iterable` as return type for generators
+- Replace merge conflict sniff removed from upstream VIP cs
+- Do not trigger warnings for long `use` statements
+
+## 1.0.0-beta.6
+- Add "js" to allowed 2-chars words for "ElementMinimalLength" sniff
+- Improvements to closure doc-bloc recognition
+
+## 1.0.0-beta.5
+- Introduce "StaticClosure" sniff
+- CS adjustments
+
+## 1.0.0-beta.4
+- Replace "NestingLevel" from Generics with custom sniff (to relax checks for try / catch)
+- Improved documentation
+
+## 1.0.0-beta.3
+### Changed
+- Extended list of allowed 2-chars words for "ElementMinimalLength" sniff
+- README adjustments
+- Increase configuration flexibility for "NoAccessors" sniff
+- Improved documentation
+- CS adjustments
+
+## 1.0.0-beta.2
+### Changed
+- Move PHPCS requirement to 3.5.0+
+
 ## 1.0.0-beta.1
 ### Added
 - PHPCompatibility checks

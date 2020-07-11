@@ -7,11 +7,6 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * This file contains code from "phpcs-neutron-standard" repository
- * found at https://github.com/Automattic/phpcs-neutron-standard
- * Copyright (c) Automattic Inc.
- * released under MIT license.
  */
 
 declare(strict_types=1);
@@ -37,20 +32,28 @@ class ArgumentTypeDeclarationSniff implements Sniff
     ];
 
     /**
-     * @return int[]
+     * @return array<int|string>
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function register()
     {
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         return [T_FUNCTION, T_CLOSURE];
     }
 
     /**
      * @param File $file
      * @param int $position
-     * @return int|void
+     * @return void
+     *
+     * phpcs:disable Inpsyde.CodeQuality
      */
     public function process(File $file, $position)
     {
+        // phpcs:enable Inpsyde.CodeQuality
+
         if (
             PhpcsHelpers::functionIsArrayAccess($file, $position)
             || PhpcsHelpers::isHookClosure($file, $position)
@@ -63,10 +66,10 @@ class ArgumentTypeDeclarationSniff implements Sniff
             return;
         }
 
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
-
-        $paramsStart = $tokens[$position]['parenthesis_opener'] ?? 0;
-        $paramsEnd = $tokens[$position]['parenthesis_closer'] ?? 0;
+        $paramsStart = (int)($tokens[$position]['parenthesis_opener'] ?? 0);
+        $paramsEnd = (int)($tokens[$position]['parenthesis_closer'] ?? 0);
 
         if (!$paramsStart || !$paramsEnd || $paramsStart >= ($paramsEnd - 1)) {
             return;
@@ -83,6 +86,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
             );
 
             $type = $tokens[$typePosition] ?? null;
+            /** @psalm-suppress MixedArgument */
             if ($type && !in_array($type['code'], self::TYPE_CODES, true)) {
                 $file->addWarning('Argument type is missing', $position, 'NoArgumentType');
             }

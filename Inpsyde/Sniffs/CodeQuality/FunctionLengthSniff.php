@@ -1,19 +1,5 @@
 <?php
 
-/*
- * This file is part of the php-coding-standards package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * This file contains code from "phpcs-calisthenics-rules" repository
- * found at https://github.com/object-calisthenics
- * Copyright (c) 2014 Doctrine Project
- * released under MIT license.
- */
-
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
@@ -24,30 +10,36 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 class FunctionLengthSniff implements Sniff
 {
     /**
-     * @var int
+     * @var mixed
      */
     public $maxLength = 50;
 
     /**
-     * @var true
+     * @var mixed
      */
     public $ignoreDocBlocks = true;
 
     /**
-     * @var true
+     * @var mixed
      */
     public $ignoreComments = true;
 
     /**
-     * @var true
+     * @var mixed
      */
     public $ignoreBlankLines = true;
 
     /**
-     * @return int[]
+     * @return array<int>
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function register()
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         return [T_FUNCTION];
     }
 
@@ -55,9 +47,18 @@ class FunctionLengthSniff implements Sniff
      * @param File $file
      * @param int $position
      * @return void
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function process(File $file, $position)
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
+        is_numeric($this->maxLength) or $this->maxLength = 50;
+        $this->maxLength = (int)$this->maxLength;
+
         $length = $this->structureLinesCount($file, $position);
         if ($length <= $this->maxLength) {
             return;
@@ -80,14 +81,20 @@ class FunctionLengthSniff implements Sniff
             'Your function is too long. Currently using %d lines%s, max is %d.',
             $length,
             $suffix,
-            $this->maxLength
+            (int)$this->maxLength
         );
 
         $file->addError($error, $position, 'TooLong');
     }
 
+    /**
+     * @param File $file
+     * @param int $position
+     * @return int
+     */
     private function structureLinesCount(File $file, int $position): int
     {
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
         $token = $tokens[$position] ?? [];
 
@@ -98,9 +105,9 @@ class FunctionLengthSniff implements Sniff
             return 0;
         }
 
-        $start = $token['scope_opener'];
-        $end = $token['scope_closer'];
-        $length = $tokens[$end]['line'] - $tokens[$start]['line'];
+        $start = (int)$token['scope_opener'];
+        $end = (int)$token['scope_closer'];
+        $length = (int)$tokens[$end]['line'] - (int)$tokens[$start]['line'];
 
         if ($length < $this->maxLength) {
             return $length;
@@ -109,9 +116,16 @@ class FunctionLengthSniff implements Sniff
         return $length - $this->collectLinesToExclude($start, $end, $tokens);
     }
 
+    /**
+     * @param int $start
+     * @param int $end
+     * @param array<int, array<string, mixed>> $tokens
+     * @return int
+     */
     private function collectLinesToExclude(int $start, int $end, array $tokens): int
     {
-        $linesData = $docblocks = [];
+        $docblocks = [];
+        $linesData = [];
 
         $skipLines = [$tokens[$start + 1]['line'], $tokens[$end]['line']];
         for ($i = $start + 1; $i < $end - 1; $i++) {
@@ -126,7 +140,7 @@ class FunctionLengthSniff implements Sniff
         $empty = array_filter(array_column($linesData, 'empty'));
         $onlyComment = array_filter(array_column($linesData, 'only-comment'));
 
-        $toExcludeCount = array_sum($docblocks);
+        $toExcludeCount = (int)array_sum($docblocks);
         if ($this->ignoreBlankLines) {
             $toExcludeCount += count($empty);
         }
@@ -137,9 +151,14 @@ class FunctionLengthSniff implements Sniff
         return $toExcludeCount;
     }
 
+    /**
+     * @param array $token
+     * @param array<int, array{empty:bool, only-comment:bool}> $lines
+     * @return array<int, array{empty:bool, only-comment:bool}>
+     */
     private function ignoredLinesData(array $token, array $lines): array
     {
-        $line = $token['line'];
+        $line = (int)$token['line'];
         if (!array_key_exists($line, $lines)) {
             $lines[$line] = ['empty' => true, 'only-comment' => true];
         }
@@ -155,6 +174,12 @@ class FunctionLengthSniff implements Sniff
         return $lines;
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $tokens
+     * @param int $position
+     * @param array $docBlocks
+     * @return array
+     */
     private function docBlocksData(array $tokens, int $position, array $docBlocks): array
     {
         if (
@@ -166,12 +191,15 @@ class FunctionLengthSniff implements Sniff
 
         $closer = $tokens[$position]['comment_closer'] ?? null;
         $docBlocks[] = is_numeric($closer)
-            ? 1 + ($tokens[$closer]['line'] - $tokens[$position]['line'])
+            ? 1 + ((int)$tokens[(int)$closer]['line'] - (int)$tokens[$position]['line'])
             : 1;
 
         return $docBlocks;
     }
 
+    /**
+     * @return void
+     */
     private function normalizeIgnoreFlags()
     {
         $flags = [

@@ -1,19 +1,5 @@
 <?php
 
-/*
- * This file is part of the php-coding-standards package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * This file contains code from "phpcs-calisthenics-rules" repository
- * found at https://github.com/object-calisthenics
- * Copyright (c) 2014 Doctrine Project
- * released under MIT license.
- */
-
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
@@ -26,10 +12,16 @@ use PHP_CodeSniffer\Util\Tokens;
 class ForbiddenPublicPropertySniff implements Sniff
 {
     /**
-     * @return int[]
+     * @return array<int>
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function register()
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         return [T_VARIABLE];
     }
 
@@ -37,9 +29,15 @@ class ForbiddenPublicPropertySniff implements Sniff
      * @param File $file
      * @param int $position
      * @return void
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function process(File $file, $position)
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         if (!PhpcsHelpers::variableIsProperty($file, $position)) {
             return;
         }
@@ -59,6 +57,11 @@ class ForbiddenPublicPropertySniff implements Sniff
         }
     }
 
+    /**
+     * @param File $file
+     * @param int $position
+     * @return bool
+     */
     private function isSniffClass(File $file, int $position): bool
     {
         $classNameTokenPosition = $file->findNext(
@@ -66,19 +69,36 @@ class ForbiddenPublicPropertySniff implements Sniff
             (int)$file->findPrevious(T_CLASS, $position)
         );
 
-        $classNameToken = $file->getTokens()[$classNameTokenPosition];
+        if ($classNameTokenPosition === false) {
+            return false;
+        }
 
-        if (substr($classNameToken['content'], -5, 5) === 'Sniff') {
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+        $classNameToken = $tokens[$classNameTokenPosition];
+
+        if (substr((string)$classNameToken['content'], -5, 5) === 'Sniff') {
             return true;
         }
 
         return false;
     }
 
+    /**
+     * @param File $file
+     * @param int $position
+     * @return array
+     */
     private function propertyScopeModifier(File $file, int $position): array
     {
         $scopeModifierPosition = $file->findPrevious(Tokens::$scopeModifiers, ($position - 1));
+        if ($scopeModifierPosition === false) {
+            return ['code' => T_PUBLIC];
+        }
 
-        return $file->getTokens()[$scopeModifierPosition];
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+
+        return $tokens[$scopeModifierPosition];
     }
 }

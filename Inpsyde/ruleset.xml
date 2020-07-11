@@ -153,6 +153,9 @@
     <rule ref="Squiz.Scope.MemberVarScope"/>
     <rule ref="Squiz.Scope.StaticThisUsage"/>
 
+    <!--
+    PHPCompatibility
+    -->
     <rule ref="PHPCompatibility"/>
 
 </ruleset>

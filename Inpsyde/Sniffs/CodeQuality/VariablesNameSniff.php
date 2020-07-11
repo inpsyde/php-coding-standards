@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the php-coding-standards package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
@@ -55,42 +46,57 @@ class VariablesNameSniff implements Sniff
     ];
 
     /**
-     * @var bool
+     * @var mixed
      */
     public $checkType = 'camelCase';
 
     /**
-     * @var string[]
+     * @var mixed
      */
     public $ignoredNames = [];
 
     /**
-     * @var bool
+     * @var mixed
      */
     public $ignoreLocalVars = false;
 
     /**
-     * @var bool
+     * @var mixed
      */
     public $ignoreProperties = false;
 
     /**
-     * @return int[]
+     * @return array<int>
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
     public function register()
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         return [T_VARIABLE];
     }
 
     /**
-     * @param File $phpcsFile
-     * @param int $stackPtr
+     * @param File $file
+     * @param int $position
      * @return void
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $phpcsFile, $stackPtr)
+    public function process(File $file, $position)
     {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
+
         $ignored = $this->allIgnored();
-        $name = $phpcsFile->getTokens()[$stackPtr]['content'];
+
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+        $name = (string)$tokens[$position]['content'];
 
         if (
             in_array($name, $ignored, true)
@@ -107,7 +113,7 @@ class VariablesNameSniff implements Sniff
             return;
         }
 
-        $isProperty = PhpcsHelpers::variableIsProperty($phpcsFile, $stackPtr);
+        $isProperty = PhpcsHelpers::variableIsProperty($file, $position);
 
         if (
             ($isProperty && $this->arePropertiesIgnored())
@@ -116,16 +122,19 @@ class VariablesNameSniff implements Sniff
             return;
         }
 
-        $phpcsFile->addWarning(
+        $file->addWarning(
             sprintf(
                 '"%s" should be used for variable names.',
                 $isCamelCase ? '$camelCase' : '$snake_case'
             ),
-            $stackPtr,
+            $position,
             $isCamelCase ? 'SnakeCaseVar' : 'CamelCaseVar'
         );
     }
 
+    /**
+     * @return string
+     */
     private function checkType(): string
     {
         if (!is_string($this->checkType)) {
@@ -140,27 +149,46 @@ class VariablesNameSniff implements Sniff
         return 'camelCase';
     }
 
+    /**
+     * @return bool
+     */
     private function arePropertiesIgnored(): bool
     {
         return (bool)filter_var($this->ignoreProperties, FILTER_VALIDATE_BOOLEAN);
     }
 
+    /**
+     * @return bool
+     */
     private function areVariablesIgnored(): bool
     {
         return (bool)filter_var($this->ignoreLocalVars, FILTER_VALIDATE_BOOLEAN);
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     private function checkCamelCase(string $name): bool
     {
         return preg_match('~^\$[a-z]+(?:[a-zA-Z0-9]+)?$~', $name)
             && !preg_match('~[A-Z]{2,}~', $name);
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     private function checkSnakeCase(string $name): bool
     {
         return (bool)preg_match('~^\$[a-z]+(?:[a-z0-9_]+)?$~', $name);
     }
 
+    /**
+     * @return array
+     *
+     * psalm-assert array<string> $this->ignoredNames
+     */
     private function allIgnored(): array
     {
         if (is_string($this->ignoredNames)) {
@@ -171,8 +199,12 @@ class VariablesNameSniff implements Sniff
             $this->ignoredNames = [];
         }
 
+        /** @var array $ignored */
+        $ignored = $this->ignoredNames;
+
+        /** @var array<string> $normalized */
         $normalized = [];
-        foreach ($this->ignoredNames as $name) {
+        foreach ($ignored as $name) {
             if (is_string($name)) {
                 $normalized[] = '$' . ltrim(trim($name), '$');
             }

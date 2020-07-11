@@ -12,11 +12,8 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inpsyde\CodingStandard\Tests\Cases;
+namespace Inpsyde\CodingStandard\Tests;
 
-use Inpsyde\CodingStandard\Tests\FixtureContentParser;
-use Inpsyde\CodingStandard\Tests\SniffMessages;
-use Inpsyde\CodingStandard\Tests\SniffMessagesExtractor;
 use PHP_CodeSniffer\Files\LocalFile;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Ruleset;
@@ -130,22 +127,22 @@ class FixturesTest extends TestCase
 
     /**
      * @param string $type
-     * @param $code
+     * @param string $code
      * @param string $where
      * @param string|null $actualCode
      */
     private function validateCode(
         string $type,
-        $code,
+        string $code,
         string $where,
         string $actualCode = null
     ) {
 
-        $message = is_string($code)
+        $message = $code
             ? sprintf('Expected %s code \'%s\' was not found', $type, $code)
             : sprintf('Expected %s was not found', $type);
 
-        $code === true
+        $code === ''
             ? static::assertNotNull($actualCode, "{$message} {$where}.")
             : static::assertSame($code, $actualCode, "{$message} {$where}.");
     }

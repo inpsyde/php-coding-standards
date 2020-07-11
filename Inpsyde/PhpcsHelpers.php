@@ -1,386 +1,120 @@
-<?php declare(strict_types=1); # -*- coding: utf-8 -*-
-/*
- * This file is part of the php-coding-standards package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * This file contains code from "phpcs-calisthenics-rules" repository
- * found at https://github.com/object-calisthenics
- * Copyright (c) 2014 Doctrine Project
- * released under MIT license.
- */
+<?php
+
+declare(strict_types=1);
 
 namespace Inpsyde;
 
 use PHP_CodeSniffer\Config;
-use PHP_CodeSniffer\Exceptions\RuntimeException as CodeSnifferRuntimeException;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Util\Tokens;
 
 class PhpcsHelpers
 {
-    const CODE_TO_TYPE_MAP = [
-        T_CONST => 'Constant',
-        T_CLASS => 'Class',
-        T_FUNCTION => 'Function',
-        T_TRAIT => 'Trait',
-    ];
-
-    public static function classPropertiesTokenIndexes(File $file, int $position): array
+    /**
+     * @param File $file
+     * @param int $position
+     * @return array<int>
+     */
+    public static function allPropertiesTokenPositions(File $file, int $position): array
     {
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
+        $code = $tokens[$position]['code'] ?? '';
 
-        if (!in_array($tokens[$position]['code'] ?? '', [T_CLASS, T_ANON_CLASS, T_TRAIT], true)) {
+        if (!in_array($code, Tokens::$ooScopeTokens, true)) {
             return [];
         }
 
-        $opener = $tokens[$position]['scope_opener'] ?? -1;
-        $closer = $tokens[$position]['scope_closer'] ?? -1;
+        $opener = (int)($tokens[$position]['scope_opener'] ?? -1);
+        $closer = (int)($tokens[$position]['scope_closer'] ?? -1);
 
         if ($opener <= 0 || $closer <= 0 || $closer <= $opener || $closer <= $position) {
             return [];
         }
 
         $propertyList = [];
-        for ($i = $opener + 1; $i < $closer; $i++) {
-            if (self::variableIsProperty($file, $i)) {
-                $propertyList[] = $i;
+        $pos = $opener + 1;
+        while ($pos < $closer) {
+            if ($tokens[$pos]['code'] === T_CLASS || $tokens[$pos]['code'] === T_ANON_CLASS) {
+                $pos = ((int)($tokens[$pos]['scope_closer'] ?? $pos)) + 1;
+                continue;
             }
+
+            if (self::variableIsProperty($file, $pos)) {
+                $propertyList[] = $pos;
+            }
+
+            $pos++;
         }
 
         return $propertyList;
     }
 
-    public static function variableIsProperty(File $file, int $position): bool
-    {
-        $tokens = $file->getTokens();
-        $varToken = $tokens[$position];
-        if ($varToken['code'] !== T_VARIABLE) {
-            return false;
-        }
-
-        $classes = [T_CLASS, T_ANON_CLASS, T_TRAIT];
-
-        $classPointer = $file->findPrevious($classes, $position - 1);
-        if (!$classPointer
-            || !array_key_exists($classPointer, $tokens)
-            || $tokens[$classPointer]['level'] ?? -1 !== (($varToken['level'] ?? -1) - 1)
-            || !in_array($tokens[$classPointer]['code'], $classes, true)
-        ) {
-            return false;
-        }
-
-        $opener = $tokens[$classPointer]['scope_opener'] ?? -1;
-        $closer = $tokens[$classPointer]['scope_closer'] ?? -1;
-
-        if ($opener <= 0
-            || $closer <= 0
-            || $closer <= $opener
-            || $closer <= $position
-            || $opener >= $position
-        ) {
-            return false;
-        }
-
-        $exclude = Tokens::$emptyTokens;
-        $exclude[] = T_STATIC;
-        $propertyModifierPointer = $file->findPrevious($exclude, $position - 1, null, true);
-        if (!$propertyModifierPointer || !array_key_exists($propertyModifierPointer, $tokens)) {
-            return false;
-        }
-
-        $propertyModifierCode = $tokens[$propertyModifierPointer]['code'] ?? '';
-        $modifiers = Tokens::$scopeModifiers;
-        $modifiers[] = T_VAR;
-
-        return in_array($propertyModifierCode, $modifiers, true);
-    }
-
-    public static function functionIsMethod(File $file, int $position)
-    {
-        $tokens = $file->getTokens();
-        $functionToken = $tokens[$position];
-        if (($functionToken['code'] ?? '') !== T_FUNCTION) {
-            return false;
-        }
-
-        $classes = [T_CLASS, T_ANON_CLASS, T_TRAIT, T_INTERFACE];
-        $classPointer = $file->findPrevious($classes, $position - 1);
-
-        if (!$classPointer
-            || !array_key_exists($classPointer, $tokens)
-            || $tokens[$classPointer]['level'] ?? -1 !== (($functionToken['level'] ?? -1) - 1)
-            || !in_array($tokens[$classPointer]['code'] ?? '', $classes, true)
-        ) {
-            return false;
-        }
-
-        $opener = $tokens[$classPointer]['scope_opener'] ?? -1;
-        $closer = $tokens[$classPointer]['scope_closer'] ?? -1;
-
-        return
-            $opener > 0
-            && $closer > 1
-            && $closer > ($position + 3)
-            && $opener < $position;
-    }
-
-    public static function functionIsArrayAccess(File $file, int $position)
-    {
-        $token = $file->getTokens()[$position] ?? null;
-        if (!$token || $token['code'] !== T_FUNCTION || !self::functionIsMethod($file, $position)) {
-            return false;
-        }
-
-        try {
-            return in_array(
-                $file->getDeclarationName($position),
-                [
-                    'offsetSet',
-                    'offsetGet',
-                    'offsetUnset',
-                    'offsetExists',
-                ],
-                true
-            );
-        } catch (CodeSnifferRuntimeException $exception) {
-            return false;
-        }
-    }
-
-    public static function isFunctionCall(File $file, int $position): bool
-    {
-        $tokens = $file->getTokens();
-        $code = $tokens[$position]['code'] ?? -1;
-        if (!in_array($code, [T_VARIABLE, T_STRING], true)) {
-            return false;
-        }
-
-        $nextNonWhitePosition = $file->findNext(
-            [T_WHITESPACE],
-            $position + 1,
-            null,
-            true,
-            null,
-            true
-        );
-
-        if (!$nextNonWhitePosition
-            || $tokens[$nextNonWhitePosition]['code'] !== T_OPEN_PARENTHESIS
-        ) {
-            return false;
-        }
-
-        $previousNonWhite = $file->findPrevious(
-            [T_WHITESPACE],
-            $position - 1,
-            null,
-            true,
-            null,
-            true
-        );
-
-        if ($previousNonWhite && ($tokens[$previousNonWhite]['code'] ?? -1) === T_NS_SEPARATOR) {
-            $previousNonWhite = $file->findPrevious(
-                [T_WHITESPACE, T_STRING, T_NS_SEPARATOR],
-                $previousNonWhite - 1,
-                null,
-                true,
-                null,
-                true
-            );
-        }
-
-        if ($previousNonWhite && $tokens[$previousNonWhite]['code'] === T_NEW) {
-            return false;
-        }
-
-        $closeParenthesisPosition = $file->findNext(
-            [T_CLOSE_PARENTHESIS],
-            $position + 2,
-            null,
-            false,
-            null,
-            true
-        );
-
-        $parenthesisCloserPosition = $tokens[$nextNonWhitePosition]['parenthesis_closer'] ?? -1;
-
-        return
-            $closeParenthesisPosition
-            && $closeParenthesisPosition === $parenthesisCloserPosition;
-    }
-
-    public static function tokenTypeName(File $file, int $position): string
-    {
-        $token = $file->getTokens()[$position];
-        $tokenCode = $token['code'];
-        if (isset(self::CODE_TO_TYPE_MAP[$tokenCode])) {
-            return self::CODE_TO_TYPE_MAP[$tokenCode];
-        }
-
-        if ($token['code'] === T_VARIABLE) {
-            if (self::variableIsProperty($file, $position)) {
-                return 'Property';
-            }
-
-            return 'Variable';
-        }
-
-        return '';
-    }
-
-    public static function tokenName(File $file, int $position): string
-    {
-        $name = $file->getTokens()[$position]['content'] ?? '';
-
-        if (strpos($name, '$') === 0) {
-            return trim($name, '$');
-        }
-
-        $namePosition = $file->findNext(T_STRING, $position, $position + 3);
-
-        return $file->getTokens()[$namePosition]['content'];
-    }
-
-    /**
-     * @param int|string ...$types
-     */
-    public static function filterTokensByType(int $start, int $end, File $file, ...$types): array
-    {
-        return array_filter(
-            $file->getTokens(),
-            function (array $token, int $position) use ($start, $end, $types): bool {
-                return
-                    $position >= $start
-                    && $position <= $end
-                    && in_array($token['code'] ?? '', $types, true);
-            },
-            ARRAY_FILTER_USE_BOTH
-        );
-    }
-
-    public static function isHookClosure(
-        File $file,
-        int $closurePosition,
-        bool $lookForFilters = true,
-        bool $lookForActions = true
-    ): bool {
-
-        $tokens = $file->getTokens();
-        if (($tokens[$closurePosition]['code'] ?? '') !== T_CLOSURE) {
-            return false;
-        }
-
-        $lookForComma = $file->findPrevious(
-            [T_WHITESPACE, T_STATIC],
-            $closurePosition - 1,
-            null,
-            true,
-            null,
-            true
-        );
-
-        if (!$lookForComma || ($tokens[$lookForComma]['code'] ?? '') !== T_COMMA) {
-            return false;
-        }
-
-        $functionCallOpen = $file->findPrevious(
-            [T_OPEN_PARENTHESIS],
-            $lookForComma - 2,
-            null,
-            false,
-            null,
-            true
-        );
-
-        if (!$functionCallOpen) {
-            return false;
-        }
-
-        $functionCall = $file->findPrevious(
-            [T_WHITESPACE],
-            $functionCallOpen - 1,
-            null,
-            true,
-            null,
-            true
-        );
-
-        $actions = [];
-        $lookForFilters and $actions[] = 'add_filter';
-        $lookForActions and $actions[] = 'add_action';
-
-        return in_array($tokens[$functionCall]['content'] ?? '', $actions, true);
-    }
-
     /**
      * @param File $file
-     * @param int $functionPosition
-     * @return array
-     */
-    public static function functionDocTokens(File $file, int $functionPosition): array
-    {
-        $tokens = $file->getTokens();
-
-        $exclude = [T_WHITESPACE, T_STATIC];
-        $isClosure = ($tokens[$functionPosition]['code'] ?? '') === T_CLOSURE;
-
-        if (!$isClosure && static::functionIsMethod($file, $functionPosition)) {
-            $exclude = array_merge(
-                $exclude,
-                [T_FINAL, T_PUBLIC, T_PRIVATE, T_PROTECTED, T_ABSTRACT]
-            );
-        }
-
-        if ($isClosure) {
-            $exclude = array_merge($exclude, [T_EQUAL, T_VARIABLE]);
-        }
-
-        $findDocEnd = $file->findPrevious($exclude, $functionPosition - 1, null, true, null, true);
-
-        if (!$findDocEnd || ($tokens[$findDocEnd]['code'] ?? '') !== T_DOC_COMMENT_CLOSE_TAG) {
-            return [];
-        }
-
-        $findDocStart = $file->findPrevious(
-            [T_DOC_COMMENT_OPEN_TAG],
-            $findDocEnd,
-            null,
-            false,
-            null,
-            true
-        );
-
-        if (!$findDocStart
-            || ($tokens[$findDocStart]['comment_closer'] ?? '') !== $findDocEnd
-        ) {
-            return [];
-        }
-
-        return self::filterTokensByType(
-            $findDocStart,
-            $findDocEnd,
-            $file,
-            T_DOC_COMMENT_TAG,
-            T_DOC_COMMENT_STRING
-        );
-    }
-
-    /**
-     * @param File $file
-     * @param int $functionPosition
+     * @param int $position
      * @return bool
      */
-    public static function isHookFunction(File $file, int $functionPosition): bool
+    public static function variableIsProperty(File $file, int $position): bool
     {
-        $docTokens = self::functionDocTokens($file, $functionPosition);
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
 
-        foreach ($docTokens as $token) {
-            if ($token['content'] === '@wp-hook') {
+        if (
+            (($tokens[$position]['code'] ?? '') !== T_VARIABLE)
+            || !static::hasOopCondition($file, $position)
+        ) {
+            return false;
+        }
+
+        $prev = $file->findPrevious(Tokens::$emptyTokens, $position - 1, null, true, null, true);
+
+        $modifiers = [T_PRIVATE, T_PUBLIC, T_PROTECTED, T_STATIC, T_VAR];
+
+        return $prev && in_array($tokens[$prev]['code'], $modifiers, true);
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return bool
+     */
+    public static function functionIsMethod(File $file, int $position): bool
+    {
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+
+        return (($tokens[$position]['code'] ?? '') === T_FUNCTION)
+            && static::hasOopCondition($file, $position);
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return bool
+     */
+    public static function hasOopCondition(File $file, int $position): bool
+    {
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+
+        if (
+            empty($tokens[$position]['conditions'])
+            || ((int)($tokens[$position]['level'] ?? 0) <= 0)
+            || !is_array($tokens[$position]['conditions'])
+        ) {
+            return false;
+        }
+
+        $targetLevel = (int)$tokens[$position]['level'] - 1;
+
+        foreach ($tokens[$position]['conditions'] as $condPosition => $condCode) {
+            $condLevel = (int)($tokens[$condPosition]['level'] ?? -1);
+
+            if (
+                in_array($condCode, Tokens::$ooScopeTokens, true)
+                && ($condLevel === $targetLevel)
+            ) {
                 return true;
             }
         }
@@ -388,67 +122,452 @@ class PhpcsHelpers
         return false;
     }
 
-    public static function functionBoundaries(File $file, int $functionPosition): array
+    /**
+     * @param File $file
+     * @param int $position
+     * @return bool
+     */
+    public static function functionIsArrayAccess(File $file, int $position): bool
     {
+        $methods = ['offsetSet', 'offsetGet', 'offsetUnset', 'offsetExists'];
+
+        return self::functionIsMethod($file, $position)
+            && in_array($file->getDeclarationName($position), $methods, true);
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return bool
+     */
+    public static function looksLikeFunctionCall(File $file, int $position): bool
+    {
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
-        $functionStart = $tokens[$functionPosition]['scope_opener'] ?? 0;
-        $functionEnd = $tokens[$functionPosition]['scope_closer'] ?? 0;
-        if (!$functionStart || !$functionEnd || $functionStart >= ($functionEnd - 1)) {
+
+        $code = $tokens[$position]['code'] ?? -1;
+        if (!in_array($code, [T_VARIABLE, T_STRING], true)) {
+            return false;
+        }
+
+        $empty = Tokens::$emptyTokens;
+
+        $callOpen = $file->findNext($empty, $position + 1, null, true, null, true);
+        if (!$callOpen || $tokens[$callOpen]['code'] !== T_OPEN_PARENTHESIS) {
+            return false;
+        }
+
+        $prevExclude = $empty;
+        $prevMeaningful = $file->findPrevious($prevExclude, $position - 1, null, true, null, true);
+
+        if ($prevMeaningful && ($tokens[$prevMeaningful]['code'] ?? -1) === T_NS_SEPARATOR) {
+            $prevExclude = array_merge($prevExclude, [T_STRING, T_NS_SEPARATOR]);
+            $prevStart = $prevMeaningful - 1;
+            $prevMeaningful = $file->findPrevious($prevExclude, $prevStart, null, true, null, true);
+        }
+
+        $prevMeaningfulCode = $prevMeaningful ? $tokens[$prevMeaningful]['code'] : null;
+        if ($prevMeaningfulCode && in_array($prevMeaningfulCode, [T_NEW, T_FUNCTION], true)) {
+            return false;
+        }
+
+        $callClose = $file->findNext([T_CLOSE_PARENTHESIS], $callOpen + 1, null, false, null, true);
+        $expectedCallClose = $tokens[$callOpen]['parenthesis_closer'] ?? -1;
+
+        return $callClose && $callClose === $expectedCallClose;
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return string
+     */
+    public static function tokenTypeName(File $file, int $position): string
+    {
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+
+        switch ((int)($tokens[$position]['code'] ?? -1)) {
+            case T_CLASS:
+            case T_ANON_CLASS:
+                return 'Class';
+            case T_TRAIT:
+                return 'Trait';
+            case T_INTERFACE:
+                return 'Interface';
+            case T_CONST:
+                return 'Constant';
+            case T_FUNCTION:
+                return 'Function';
+            case T_VARIABLE:
+                return self::variableIsProperty($file, $position) ? 'Property' : 'Variable';
+        }
+
+        return '';
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return string
+     */
+    public static function tokenName(File $file, int $position): string
+    {
+        static $nameable;
+        $nameable or $nameable = [T_CLASS, T_TRAIT, T_INTERFACE, T_CONST, T_FUNCTION, T_VARIABLE];
+
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+        $code = $tokens[$position]['code'] ?? null;
+
+        if (!in_array($code, (array)$nameable, true)) {
+            return '';
+        } elseif ($code === T_VARIABLE) {
+            return ltrim((string)($tokens[$position]['content'] ?? ''), '$');
+        }
+
+        $namePosition = $file->findNext(T_STRING, $position, null, false, null, true);
+
+        return $namePosition === false ? '' : (string)$tokens[$namePosition]['content'];
+    }
+
+    /**
+     * @param int $start
+     * @param int $end
+     * @param File $file
+     * @param int|string ...$types
+     * @return array<int, array<string, mixed>>
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     */
+    public static function filterTokensByType(int $start, int $end, File $file, ...$types): array
+    {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+
+        $filtered = [];
+        foreach ($tokens as $position => $token) {
+            if (
+                ($position >= $start)
+                && ($position <= $end)
+                && in_array($token['code'] ?? '', $types, true)
+            ) {
+                $filtered[$position] = $token;
+            }
+        }
+
+        return $filtered;
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @param bool $lookForFilters
+     * @param bool $lookForActions
+     * @return bool
+     */
+    public static function isHookClosure(
+        File $file,
+        int $position,
+        bool $lookForFilters = true,
+        bool $lookForActions = true
+    ): bool {
+
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+
+        if (($tokens[$position]['code'] ?? '') !== T_CLOSURE) {
+            return false;
+        }
+
+        $empty = Tokens::$emptyTokens;
+
+        $exclude = $empty;
+        $exclude[] = T_STATIC;
+        $commaPos = $file->findPrevious($exclude, $position - 1, null, true, null, true);
+        if (!$commaPos || ($tokens[$commaPos]['code'] ?? '') !== T_COMMA) {
+            return false;
+        }
+
+        $openType = [T_OPEN_PARENTHESIS];
+        $openCallPos = $file->findPrevious($openType, $commaPos - 2, null, false, null, true);
+        if (!$openCallPos) {
+            return false;
+        }
+
+        $functionCallPos = $file->findPrevious($empty, $openCallPos - 1, null, true, null, true);
+        if (!$functionCallPos || $tokens[$functionCallPos]['code'] !== T_STRING) {
+            return false;
+        }
+
+        $actions = [];
+        $lookForFilters and $actions[] = 'add_filter';
+        $lookForActions and $actions[] = 'add_action';
+
+        return in_array($tokens[$functionCallPos]['content'] ?? '', $actions, true);
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @param bool $normalizeContent
+     * @return array<string, array<string>>
+     *
+     * phpcs:disable Inpsyde.CodeQuality.FunctionLength
+     * phpcs:disable Generic.Metrics.CyclomaticComplexity
+     */
+    public static function functionDocBlockTags(
+        File $file,
+        int $position,
+        bool $normalizeContent = true
+    ): array {
+        // phpcs:enable Inpsyde.CodeQuality.FunctionLength
+        // phpcs:enable Generic.Metrics.CyclomaticComplexity
+
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+
+        if (
+            !array_key_exists($position, $tokens)
+            || !in_array($tokens[$position]['code'], [T_FUNCTION, T_CLOSURE], true)
+        ) {
+            return [];
+        }
+
+        $closeType = T_DOC_COMMENT_CLOSE_TAG;
+        $closeTag = $file->findPrevious($closeType, $position - 1, null, false, null, true);
+
+        if (!$closeTag || empty($tokens[$closeTag]['comment_opener'])) {
+            return [];
+        }
+
+        $exclude = Tokens::$emptyTokens;
+        if ($tokens[$position]['code'] === T_CLOSURE) {
+            $exclude[] = T_VARIABLE;
+            $exclude[] = T_STATIC;
+            $exclude[] = T_EQUAL;
+        } elseif (static::functionIsMethod($file, $position)) {
+            $exclude = array_merge($exclude, Tokens::$methodPrefixes);
+        }
+
+        $functionPos = $file->findNext($exclude, $closeTag + 1, null, true, null, true);
+        if (!$functionPos || ($functionPos !== $position)) {
+            return [];
+        }
+
+        /** @var array<int, array{string, string}> $tags */
+        $tags = [];
+        $start = (int)$tokens[$closeTag]['comment_opener'] + 1;
+        $key = -1;
+        $inTag = false;
+
+        for ($i = $start; $i < $closeTag; $i++) {
+            $code = $tokens[$i]['code'];
+            if ($code === T_DOC_COMMENT_STAR) {
+                continue;
+            }
+
+            $content = (string)$tokens[$i]['content'];
+            if (($tokens[$i]['code'] === T_DOC_COMMENT_TAG)) {
+                $inTag = true;
+                $key++;
+                $tags[$key] = [$content, ''];
+                continue;
+            }
+
+            if ($inTag) {
+                $tags[$key][1] .= $content;
+            }
+        }
+
+        $normalizedTags = [];
+        static $rand;
+        $rand or $rand = bin2hex(random_bytes(3));
+        foreach ($tags as list($tagName, $tagContent)) {
+            empty($normalizedTags[$tagName]) and $normalizedTags[$tagName] = [];
+            if (!$normalizeContent) {
+                $normalizedTags[$tagName][] = $tagContent;
+                continue;
+            }
+
+            $lines = array_filter(array_map('trim', explode("\n", $tagContent)));
+            $normalized = preg_replace('~\s+~', ' ', implode("%LB%{$rand}%LB%", $lines)) ?? '';
+            $normalizedTags[$tagName][] = trim(str_replace("%LB%{$rand}%LB%", "\n", $normalized));
+        }
+
+        return $normalizedTags;
+    }
+
+    /**
+     * @param string $tag
+     * @param File $file
+     * @param int $position
+     * @return array<string>
+     */
+    public static function functionDocBlockTag(string $tag, File $file, int $position): array
+    {
+        $tagName = '@' . ltrim($tag, '@');
+        $tags = static::functionDocBlockTags($file, $position);
+        if (empty($tags[$tagName])) {
+            return [];
+        }
+
+        return $tags[$tagName];
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return bool
+     */
+    public static function isHookFunction(File $file, int $position): bool
+    {
+        return (bool)self::functionDocBlockTag('@wp-hook', $file, $position);
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return string
+     */
+    public static function functionBody(File $file, int $position): string
+    {
+        list($start, $end) = static::functionBoundaries($file, $position);
+        if ($start < 0 || $end < 0) {
+            return '';
+        }
+
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+        $body = '';
+        for ($i = $start + 1; $i < $end; $i++) {
+            $body .= (string)$tokens[$i]['content'];
+        }
+
+        return $body;
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return array{int, int}
+     */
+    public static function functionBoundaries(File $file, int $position): array
+    {
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+
+        if (!in_array(($tokens[$position]['code'] ?? null), [T_FUNCTION, T_CLOSURE], true)) {
+            return [-1, -1];
+        }
+
+        $functionStart = (int)($tokens[$position]['scope_opener'] ?? 0);
+        $functionEnd = (int)($tokens[$position]['scope_closer'] ?? 0);
+        if ($functionStart <= 0 || $functionEnd <= 0 || $functionStart >= ($functionEnd - 1)) {
             return [-1, -1];
         }
 
         return [$functionStart, $functionEnd];
     }
 
-    public static function countReturns(File $file, int $functionPosition): array
+    /**
+     * @param File $file
+     * @param int $position
+     * @return array{int, int}
+     */
+    public static function classBoundaries(File $file, int $position): array
     {
-        list($functionStart, $functionEnd) = self::functionBoundaries($file, $functionPosition);
-        if ($functionStart < 0 || $functionEnd <= 0) {
-            return [0, 0];
-        }
-
-        $nonVoidReturnCount = $voidReturnCount = $nullReturnCount = 0;
-        $scopeClosers = new \SplStack();
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
-        for ($i = $functionStart + 1; $i < $functionEnd; $i++) {
-            if ($scopeClosers->count() && $scopeClosers->top() === $i) {
-                $scopeClosers->pop();
-                continue;
-            }
-            if (in_array($tokens[$i]['code'], [T_FUNCTION, T_CLOSURE], true)) {
-                $scopeClosers->push($tokens[$i]['scope_closer']);
-                continue;
-            }
 
-            if ($tokens[$i]['code'] === T_RETURN && !$scopeClosers->count()) {
-                $void = PhpcsHelpers::isVoidReturn($file, $i);
-                $null = PhpcsHelpers::isNullReturn($file, $i);
-                $void and $voidReturnCount++;
-                $null and $nullReturnCount++;
-                (!$void && !$null) and $nonVoidReturnCount++;
-            }
+        if (!in_array(($tokens[$position]['code'] ?? null), Tokens::$ooScopeTokens, true)) {
+            return [-1, -1];
         }
 
-        return [$nonVoidReturnCount, $voidReturnCount, $nullReturnCount];
+        $start = (int)($tokens[$position]['scope_opener'] ?? 0);
+        $end = (int)($tokens[$position]['scope_closer'] ?? 0);
+        if ($start <= 0 || $end <= 0 || $start >= ($end - 1)) {
+            return [-1, -1];
+        }
+
+        return [$start, $end];
     }
 
-    public static function isVoidReturn(File $file, int $returnPosition, $includeNull = false): bool
+    /**
+     * @param File $file
+     * @param int $position
+     * @return array{nonEmpty:int, void:int, null:int, total:int}
+     */
+    public static function returnsCountInfo(File $file, int $position): array
     {
+        $returnCount = ['nonEmpty' => 0, 'void' => 0, 'null' => 0, 'total' => 0];
+
+        list($start, $end) = self::functionBoundaries($file, $position);
+        if ($start < 0 || $end <= 0) {
+            return $returnCount;
+        }
+
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $file->getTokens();
+
+        $pos = $start + 1;
+        while ($pos < $end) {
+            list(, $innerFunctionEnd) = self::functionBoundaries($file, $pos);
+            list(, $innerClassEnd) = self::classBoundaries($file, $pos);
+            if ($innerFunctionEnd > 0 || $innerClassEnd > 0) {
+                $pos = ($innerFunctionEnd > 0) ? $innerFunctionEnd + 1 : $innerClassEnd + 1;
+                continue;
+            }
+
+            if ($tokens[$pos]['code'] === T_RETURN) {
+                $returnCount['total']++;
+                $void = PhpcsHelpers::isVoidReturn($file, $pos);
+                $null = PhpcsHelpers::isNullReturn($file, $pos);
+                $void and $returnCount['void']++;
+                $null and $returnCount['null']++;
+                (!$void && !$null) and $returnCount['nonEmpty']++;
+            }
+
+            $pos++;
+        }
+
+        return $returnCount;
+    }
+
+    /**
+     * @param File $file
+     * @param int $returnPosition
+     * @param bool $includeNull
+     * @return bool
+     */
+    public static function isVoidReturn(
+        File $file,
+        int $returnPosition,
+        bool $includeNull = false
+    ): bool {
+
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
         if (($tokens[$returnPosition]['code'] ?? '') !== T_RETURN) {
             return false;
         }
 
-        $returnPosition++;
         $exclude = Tokens::$emptyTokens;
         $includeNull and $exclude[] = T_NULL;
 
-        $nextToReturn = $file->findNext($exclude, $returnPosition, null, true, null, true);
+        $nextToReturn = $file->findNext($exclude, $returnPosition + 1, null, true, null, true);
 
         return ($tokens[$nextToReturn]['code'] ?? '') === T_SEMICOLON;
     }
 
+    /**
+     * @param File $file
+     * @param int $returnPosition
+     * @return bool
+     */
     public static function isNullReturn(File $file, int $returnPosition): bool
     {
         return
@@ -456,62 +575,14 @@ class PhpcsHelpers
             && self::isVoidReturn($file, $returnPosition, true);
     }
 
-    public static function functionDocBlockTag(
-        string $tag,
-        File $file,
-        int $functionPosition
-    ): array {
-
-        $tokens = $file->getTokens();
-        if (!array_key_exists($functionPosition, $tokens)
-            || !in_array($tokens[$functionPosition]['code'], [T_FUNCTION, T_CLOSURE], true)
-        ) {
-            return [];
-        }
-
-        $exclude = array_values(Tokens::$methodPrefixes);
-        $exclude[] = T_WHITESPACE;
-
-        $lastBeforeFunc = $file->findPrevious($exclude, $functionPosition - 1, null, true);
-
-        if (!$lastBeforeFunc
-            || !array_key_exists($lastBeforeFunc, $tokens)
-            || $tokens[$lastBeforeFunc]['code'] !== T_DOC_COMMENT_CLOSE_TAG
-            || empty($tokens[$lastBeforeFunc]['comment_opener'])
-            || $tokens[$lastBeforeFunc]['comment_opener'] >= $lastBeforeFunc
-        ) {
-            return [];
-        }
-
-        $tags = [];
-        $inTag = false;
-        $start = $tokens[$lastBeforeFunc]['comment_opener'] + 1;
-        $end = $lastBeforeFunc - 1;
-
-        for ($i = $start; $i < $end; $i++) {
-
-            if ($inTag && $tokens[$i]['code'] === T_DOC_COMMENT_STRING) {
-                $tags[] .= $tokens[$i]['content'];
-                continue;
-            }
-
-            if ($inTag && $tokens[$i]['code'] !== T_DOC_COMMENT_WHITESPACE) {
-                $inTag = false;
-                continue;
-            }
-
-            if ($tokens[$i]['code'] === T_DOC_COMMENT_TAG
-                && (ltrim($tokens[$i]['content'], '@') === ltrim($tag, '@'))
-            ) {
-                $inTag = true;
-            }
-        }
-
-        return $tags;
-    }
-
+    /**
+     * @param File $file
+     * @param int $position
+     * @return array{null, null}|array{int, string}
+     */
     public static function findNamespace(File $file, int $position): array
     {
+        /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
         $namespacePos = $file->findPrevious([T_NAMESPACE], $position - 1);
         if (!$namespacePos || !array_key_exists($namespacePos, $tokens)) {
@@ -527,11 +598,12 @@ class PhpcsHelpers
             true
         );
 
-        if (!$end || !array_key_exists($end, $tokens)) {
+        if (!$end) {
             return [null, null];
         }
 
-        if ($tokens[$end]['code'] === T_OPEN_CURLY_BRACKET
+        if (
+            $tokens[$end]['code'] === T_OPEN_CURLY_BRACKET
             && !empty($tokens[$end]['scope_closer'])
             && $tokens[$end]['scope_closer'] < $position
         ) {
@@ -542,16 +614,19 @@ class PhpcsHelpers
         for ($i = $namespacePos + 1; $i < $end; $i++) {
             $code = $tokens[$i]['code'] ?? null;
             if (in_array($code, [T_STRING, T_NS_SEPARATOR], true)) {
-                $namespace .= $tokens[$i]['content'] ?? '';
+                $namespace .= (string)($tokens[$i]['content'] ?? '');
             }
         }
 
         return [$namespacePos, $namespace];
     }
 
+    /**
+     * @return string
+     */
     public static function minPhpTestVersion(): string
     {
-        $testVersion = trim(Config::getConfigData('testVersion') ?: '');
+        $testVersion = trim((string)(Config::getConfigData('testVersion') ?: ''));
         if (!$testVersion) {
             return '';
         }

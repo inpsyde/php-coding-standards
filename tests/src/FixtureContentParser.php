@@ -147,7 +147,7 @@ class FixtureContentParser
      * @param string $file
      * @return \Generator
      */
-    private function readFile(string $file)
+    private function readFile(string $file): \Generator
     {
         $handle = fopen($file, 'rb');
         $lineNum = 1;
@@ -299,7 +299,7 @@ class FixtureContentParser
             $increment = $matches['line'] === 'Next' ? 1 : -1;
         }
 
-        $code = true;
+        $code = '';
         if (!empty($matches['has_code']) && !empty($matches['code'])) {
             $matchedCode = trim($matches['code']);
             $matchedCode and $code = $matchedCode;

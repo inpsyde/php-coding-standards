@@ -24,6 +24,7 @@ final class SniffMessages
      * @var array
      */
     private $warnings;
+
     /**
      * @var array
      */
