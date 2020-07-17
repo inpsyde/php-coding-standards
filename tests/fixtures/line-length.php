@@ -102,3 +102,19 @@ function longComment() {
     return;
 }
 
+?>
+    <div>
+        <div>
+            <div>
+                <div>
+                    <div>
+                        <!-- Don't expect any warning for this tag -->
+                        <img class="foo-bar__baz foo-bar__baz--meh"
+                             src="https://www.example.com/some/oath/to/an/image-file-with-a-quite-long-file-name-200x400.png"
+                             alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+

@@ -166,25 +166,28 @@ class LineLengthSniff implements Sniff
         $targetTypes[] = T_DOC_COMMENT_STRING;
 
         $foundString = false;
-        ($start === $end) and $end++;
 
-        while ($start && ($start < $end)) {
-            $stringPos = $file->findNext($targetTypes, $start, $end);
-            if ($stringPos === false || $foundString) {
+        while ($start && ($start <= $end)) {
+            if (!in_array($tokens[$start]['code'], $targetTypes, true)) {
+                $start++;
+                continue;
+            }
+
+            if ($foundString) {
                 return false;
             }
 
-            $isHtml = $tokens[$stringPos]['code'] === T_INLINE_HTML;
+            $foundString = true;
+            $isHtml = $tokens[$start]['code'] === T_INLINE_HTML;
             $isLong = $isHtml
-                ? $this->isLongHtmlAttribute($stringPos, $file, $tokens, $start, $end)
-                : $this->isLongSingleWord($stringPos, $file, $tokens, $start, $end);
+                ? $this->isLongHtmlAttribute($start, $end, $file, $tokens)
+                : $this->isLongSingleWord($start, $end, $file, $tokens);
 
             if (!$isLong || $isHtml) {
                 return $isLong && $isHtml;
             }
 
-            $foundString = true;
-            $start = $stringPos + 1;
+            $start++;
         }
 
         return true;
@@ -192,23 +195,21 @@ class LineLengthSniff implements Sniff
 
     /**
      * @param int $position
+     * @param int $lineEnd
      * @param File $file
      * @param array<int, array<string, mixed>> $tokens
-     * @param int $lineStart
-     * @param int $lineEnd
      * @return bool
      */
     private function isLongHtmlAttribute(
         int $position,
+        int $lineEnd,
         File $file,
-        array $tokens,
-        int $lineStart,
-        int $lineEnd
+        array $tokens
     ): bool {
 
         $inPhp = false;
         $content = '';
-        for ($i = $lineStart; $i <= $lineEnd; $i++) {
+        for ($i = $position; $i <= $lineEnd; $i++) {
             $code = $tokens[$i]['code'];
             if (($code === T_OPEN_TAG || $code === T_OPEN_TAG_WITH_ECHO) && !$inPhp) {
                 $inPhp = true;
@@ -240,23 +241,21 @@ class LineLengthSniff implements Sniff
 
         // no HTML attributes found, let's use standard approach
 
-        return $this->isLongSingleWord($position, $file, $tokens, $lineStart, $lineEnd);
+        return $this->isLongSingleWord($position, $lineEnd, $file, $tokens);
     }
 
     /**
      * @param int $position
+     * @param int $lineEnd
      * @param File $file
      * @param array<int, array<string, mixed>> $tokens
-     * @param int $lineStart
-     * @param int $lineEnd
      * @return bool
      */
     private function isLongSingleWord(
         int $position,
+        int $lineEnd,
         File $file,
-        array $tokens,
-        int $lineStart,
-        int $lineEnd
+        array $tokens
     ): bool {
 
         $words = preg_split('~\s+~', (string)$tokens[$position]['content'], 2, PREG_SPLIT_NO_EMPTY);
@@ -267,7 +266,7 @@ class LineLengthSniff implements Sniff
         }
 
         $word = (string)reset($words);
-        $firstNonWhitePos = $file->findNext(T_WHITESPACE, $lineStart, $lineEnd, true);
+        $firstNonWhitePos = $file->findNext(T_WHITESPACE, $position, $lineEnd, true);
         $firstNonWhite = ($firstNonWhitePos === false) ? null : $tokens[$firstNonWhitePos];
         $tolerance = is_array($firstNonWhite) ? ((int)($firstNonWhite['column'] ?? 1) + 3) : 4;
 
