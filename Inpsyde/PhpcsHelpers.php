@@ -343,8 +343,8 @@ class PhpcsHelpers
             return [];
         }
 
-        $functionLine = $tokens[$position]['line'] ?? -1;
-        $closeLine = $tokens[$closeTag]['line'] ?? -1;
+        $functionLine = (int)($tokens[$position]['line'] ?? -1);
+        $closeLine = (int)($tokens[$closeTag]['line'] ?? -1);
         if ($closeLine !== ($functionLine - 1)) {
             return [];
         }
