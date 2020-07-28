@@ -245,6 +245,16 @@ class ArgumentTypeDeclarationSniffTestFixture
             }
         }
     }
+
+    public function buildCallback(): callable {
+
+        /**
+         * @wp-hook
+         */
+        return function (...$args) {
+
+        };
+    }
 }
 
 interface ArgumentTypeDeclarationSniffTestFixtureInterface

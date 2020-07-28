@@ -343,17 +343,9 @@ class PhpcsHelpers
             return [];
         }
 
-        $exclude = Tokens::$emptyTokens;
-        if ($tokens[$position]['code'] === T_CLOSURE) {
-            $exclude[] = T_VARIABLE;
-            $exclude[] = T_STATIC;
-            $exclude[] = T_EQUAL;
-        } elseif (static::functionIsMethod($file, $position)) {
-            $exclude = array_merge($exclude, Tokens::$methodPrefixes);
-        }
-
-        $functionPos = $file->findNext($exclude, $closeTag + 1, null, true, null, true);
-        if (!$functionPos || ($functionPos !== $position)) {
+        $functionLine = $tokens[$position]['line'] ?? -1;
+        $closeLine = $tokens[$closeTag]['line'] ?? -1;
+        if ($closeLine !== ($functionLine - 1)) {
             return [];
         }
 
