@@ -128,7 +128,9 @@
     <rule ref="WordPressVIPMinimum.Security.PHPFilterFunctions"/>
     <rule ref="WordPressVIPMinimum.Security.ProperEscapingFunction"/>
     <rule ref="WordPressVIPMinimum.Security.StaticStrreplace"/>
-    <rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis"/>
+    <rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis">
+        <exclude name="VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable" />
+    </rule>
 
     <!--
     Generic
