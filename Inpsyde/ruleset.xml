@@ -115,9 +115,12 @@
     <rule ref="WordPressVIPMinimum.Constants.ConstantString"/>
     <rule ref="WordPressVIPMinimum.Constants.RestrictedConstants"/>
     <rule ref="WordPressVIPMinimum.Files.IncludingNonPHPFile"/>
+    <rule ref="WordPressVIPMinimum.Functions.CheckReturnValue"/>
     <rule ref="WordPressVIPMinimum.Functions.DynamicCalls"/>
+    <rule ref="WordPressVIPMinimum.Functions.StripTags"/>
     <rule ref="WordPressVIPMinimum.Hooks.AlwaysReturnInFilter"/>
     <rule ref="WordPressVIPMinimum.Hooks.PreGetPosts"/>
+    <rule ref="WordPressVIPMinimum.Performance.CacheValueOverride"/>
     <rule ref="WordPressVIPMinimum.Performance.RegexpCompare"/>
     <rule ref="WordPressVIPMinimum.Performance.TaxonomyMetaInOptions"/>
     <rule ref="WordPressVIPMinimum.Security.EscapingVoidReturnFunctions"/>
@@ -125,7 +128,7 @@
     <rule ref="WordPressVIPMinimum.Security.PHPFilterFunctions"/>
     <rule ref="WordPressVIPMinimum.Security.ProperEscapingFunction"/>
     <rule ref="WordPressVIPMinimum.Security.StaticStrreplace"/>
-    <rule ref="WordPressVIPMinimum.Variables.RestrictedVariables.session"/>
+    <rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis"/>
 
     <!--
     Generic
