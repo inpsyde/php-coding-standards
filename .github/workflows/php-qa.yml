@@ -22,27 +22,38 @@ jobs:
         continue-on-error: ${{ matrix.experimental }}
 
         steps:
-            -   uses: actions/checkout@v2
+            - uses: actions/checkout@v2
 
-            -   name: Setup PHP version
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: ${{ matrix.php }}
+            - name: Setup PHP version
+              uses: shivammathur/setup-php@v2
+              with:
+                php-version: ${{ matrix.php }}
 
-            -   name: Check syntax error in sources
-                run: find ./src/ ./tests/src/ ./tests/cases/ -type f -name '*.php' -print0 | xargs -0 -L 1 -P 4 -- php -l
+            - name: Check syntax error in sources
+              run: find ./src/ ./tests/src/ ./tests/cases/ -type f -name '*.php' -print0 | xargs -0 -L 1 -P 4 -- php -l
 
-            -   name: Install dependencies
-                uses: "ramsey/composer-install@v1"
-                with:
-                    composer-options: "${{ matrix.composer-options }}"
-                    dependency-versions: "${{ matrix.dependencies }}"
+            - name: Install dependencies
+              uses: "ramsey/composer-install@v1"
+              with:
+                composer-options: "${{ matrix.composer-options }}"
+                dependency-versions: "${{ matrix.dependencies }}"
 
-            -   name: Run unit tests
-                run: ./vendor/bin/phpunit
+            - name: Run unit tests (>= 7.3)
+              if: ${{ matrix.php >= 7.3 }}
+              run: ./vendor/bin/phpunit --migrate-configuration
 
-            -   name: Check code styles
-                run: ./vendor/bin/phpcs
+            - name: Run unit tests (< 7.3)
+              if: ${{ matrix.php-versions < 7.3 }}
+              run: ./vendor/bin/phpunit
 
-            -   name: Check Psalm
-                run: ./vendor/bin/psalm
+            - name: Check code styles
+              if: {{  matrix.php === '7.4' }}
+              run: ./vendor/bin/phpcs
+
+            - name: Check cross-version PHP compatibility
+              if: ${{ matrix.php-versions == '7.4' }}
+              run: composer phpcompat
+
+            - name: Check Psalm
+              if: {{  matrix.php == '7.4' }}
+              run: ./vendor/bin/psalm

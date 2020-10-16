@@ -52,5 +52,10 @@
         "branch-alias": {
             "dev-master": "1.0.0-dev"
         }
+    },
+    "scripts" : {
+        "phpcompat": [
+            "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs -p . --standard=PHPCompatibility --ignore=*/vendor/* --extensions=php --basepath=./ --runtime-set testVersion 7.0-"
+        ]
     }
 }
