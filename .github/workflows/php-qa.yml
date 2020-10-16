@@ -47,7 +47,7 @@ jobs:
               run: ./vendor/bin/phpunit
 
             - name: Check code styles
-              if: ${{ matrix.php === '7.4' }}
+              if: ${{ matrix.php == '7.4' }}
               run: ./vendor/bin/phpcs
 
             - name: Check cross-version PHP compatibility
