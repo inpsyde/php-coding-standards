@@ -416,7 +416,6 @@ class Test {
          * @wp-hook
          */
         $foo = static function () {
-        
         };
     }
 }

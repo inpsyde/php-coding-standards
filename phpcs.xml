@@ -180,7 +180,7 @@
     <rule ref="PHPCompatibility"/>
 
     <!--
-    Use own styles :)
+    Use own rules :)
     -->
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ArgumentTypeDeclarationSniff.php"/>
     <rule ref="./Inpsyde/Sniffs/CodeQuality/ConstantVisibilitySniff.php"/>

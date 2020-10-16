@@ -9,3 +9,4 @@ composer.lock
 .buildpath
 .project
 .settings/
+.phpunit.result.cache

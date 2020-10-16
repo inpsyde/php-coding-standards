@@ -1,52 +1,60 @@
 {
-  "name": "inpsyde/php-coding-standards",
-  "description": "PHP 7+ coding standards for Inpsyde WordPress projects.",
-  "type": "phpcodesniffer-standard",
-  "keywords": [
-    "phpcs",
-    "standards",
-    "code standards",
-    "code style",
-    "coding standards",
-    "coding style",
-    "PSR2",
-    "object calisthenics",
-    "PHP standards",
-    "WordPress",
-    "WordPress standards",
-    "Inpsyde"
-  ],
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Inpsyde GmbH",
-      "email": "hello@inpsyde.com",
-      "homepage": "https://inpsyde.com",
-      "role": "Company"
+    "name": "inpsyde/php-coding-standards",
+    "description": "PHP 7+ coding standards for Inpsyde WordPress projects.",
+    "type": "phpcodesniffer-standard",
+    "keywords": [
+        "phpcs",
+        "standards",
+        "code standards",
+        "code style",
+        "coding standards",
+        "coding style",
+        "PSR-2",
+        "PSR-12",
+        "object calisthenics",
+        "PHP standards",
+        "WordPress",
+        "WordPress standards",
+        "Inpsyde"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Inpsyde GmbH",
+            "email": "hello@inpsyde.com",
+            "homepage": "https://inpsyde.com",
+            "role": "Company"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7",
+        "squizlabs/php_codesniffer": "~3.5.6",
+        "dealerdirect/phpcodesniffer-composer-installer": "~0.7.0",
+        "wp-coding-standards/wpcs": "^2.3",
+        "automattic/vipwpcs": "^2.2",
+        "phpcompatibility/php-compatibility": "^9.3.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "6.5.* || 9.4.*",
+        "vimeo/psalm": "^3"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Inpsyde\\CodingStandard\\Tests\\": [
+                "tests/src/",
+                "tests/cases/"
+            ]
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.0-dev"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.0"
+        }
     }
-  ],
-  "minimum-stability": "stable",
-  "require": {
-    "php": ">=7.0",
-    "squizlabs/php_codesniffer": "~3.5.0",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.5 || ^0.6",
-    "wp-coding-standards/wpcs": "^2",
-    "automattic/vipwpcs": "^2",
-    "automattic/phpcs-neutron-standard": "^1",
-    "phpcompatibility/php-compatibility": "^9.0",
-    "vimeo/psalm": "@stable"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "6.0.*"
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Inpsyde\\CodingStandard\\Tests\\": ["tests/src/", "tests/cases/"]
-    }
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "1.0.0-dev"
-    }
-  }
 }
