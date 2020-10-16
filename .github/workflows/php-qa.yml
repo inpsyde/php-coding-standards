@@ -8,15 +8,17 @@ jobs:
         strategy:
             matrix:
                 php: ['7.0', '7.1', '7.2', '7.3', '7.4']
-                dependencies:
-                    - "lowest"
-                    - "highest"
+                prefer:
+                  - " --prefer-lowest"
+                  - ""
+                ignore-platform:
+                  - ""
                 experimental:
-                    - false
+                  - false
                 include:
                     - php: "8.0"
-                      dependencies: "highest"
-                      composer-options: "--ignore-platform-reqs"
+                      prefer: ""
+                      ignore-platform: " --ignore-platform-reqs"
                       experimental: true
 
         continue-on-error: ${{ matrix.experimental }}
@@ -33,12 +35,7 @@ jobs:
               run: find ./src/ ./tests/src/ ./tests/cases/ -type f -name '*.php' -print0 | xargs -0 -L 1 -P 4 -- php -l
 
             - name: Install dependencies
-              run: composer install -q -n -a --no-progress --prefer-dist
-              if: ${{ matrix.php < 8 }}
-
-            - name: Install dependencies
-              run: composer install -q -n -a --no-progress --prefer-dist --ignore-platform-reqs
-              if: ${{ matrix.php >= 8 }}
+              run: composer install -q -n -a --no-progress --prefer-dist${{ matrix.prefer }}${{ matrix.ignore-platform }}
 
             - name: Run unit tests (>= 7.3)
               if: ${{ matrix.php >= 7.3 }}
