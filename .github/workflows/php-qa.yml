@@ -53,7 +53,7 @@ jobs:
               run: ./vendor/bin/phpcs
 
             - name: Check cross-version PHP compatibility
-              if: ${{ matrix.php-versions == '7.4' }}
+              if: ${{ matrix.php == '7.4' }}
               run: composer phpcompat
 
             - name: Check Psalm
