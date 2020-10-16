@@ -11,7 +11,8 @@ jobs:
                 dependencies:
                     - "lowest"
                     - "highest"
-                experimental: false
+                experimental:
+                    - false
                 include:
                     - php: "8.0"
                       composer-options: "--ignore-platform-reqs"
