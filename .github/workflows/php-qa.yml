@@ -34,11 +34,11 @@ jobs:
 
             - name: Install dependencies
               run: composer install -q -n -a --no-progress --prefer-dist
-              if: ${{ matrix.php-versions < 8 }}
+              if: ${{ matrix.php < 8 }}
 
             - name: Install dependencies
               run: composer install -q -n -a --no-progress --prefer-dist --ignore-platform-reqs
-              if: ${{ matrix.php-versions >= 8 }}
+              if: ${{ matrix.php >= 8 }}
 
             - name: Run unit tests (>= 7.3)
               if: ${{ matrix.php >= 7.3 }}
