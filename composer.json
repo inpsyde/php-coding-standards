@@ -33,7 +33,8 @@
         "dealerdirect/phpcodesniffer-composer-installer": "~0.7.0",
         "wp-coding-standards/wpcs": "^2.3",
         "automattic/vipwpcs": "^2.2",
-        "phpcompatibility/php-compatibility": "^9.3.5"
+        "phpcompatibility/php-compatibility": "^9.3.5",
+        "automattic/phpcs-neutron-standard": "^1.6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "6.5.* || 9.4.*",
