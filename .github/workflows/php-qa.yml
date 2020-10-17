@@ -1,25 +1,26 @@
 name: PHP Quality Assurance
 on: [push, pull_request]
 jobs:
-    QA:
+
+    Unit Tests:
         runs-on: ubuntu-latest
         if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
 
         strategy:
             matrix:
                 php: ['7.0', '7.1', '7.2', '7.3', '7.4']
-                prefer-lowest:
-                  - " --prefer-lowest"
-                  - ""
+                prefer:
+                  - "lowest"
+                  - "highest"
                 ignore-platform:
                   - ""
                 experimental:
                   - false
                 include:
-                    - php: "8.0"
-                      prefer: ""
-                      ignore-platform: " --ignore-platform-reqs"
-                      experimental: true
+                  - php: "8.0"
+                    prefer: "highest"
+                    ignore-platform: "--ignore-platform-reqs"
+                    experimental: true
 
         continue-on-error: ${{ matrix.experimental }}
 
@@ -35,24 +36,39 @@ jobs:
               run: find ./src/ ./tests/src/ ./tests/cases/ -type f -name '*.php' -print0 | xargs -0 -L 1 -P 4 -- php -l
 
             - name: Install dependencies
-              run: composer update -q -n -a --no-progress --prefer-dist${{ matrix.prefer-lowest }}${{ matrix.ignore-platform }}
+              uses: "ramsey/composer-install@v1"
+              with:
+                dependency-versions: ${{ matrix.prefer }}
+                composer-options: ${{ matrix.ignore-platform }}
 
-            - name: Run unit tests (>= 7.3)
-              if: ${{ (matrix.php >= 7.3) && (matrix.prefer-lowest == '') }}
+            - name: Run unit tests (PHPUnit 9)
+              if: ${{ (matrix.php >= 7.3) && (matrix.prefer == 'highest') }}
               run: ./vendor/bin/phpunit --migrate-configuration
 
-            - name: Run unit tests (< 7.3)
-              if: ${{ matrix.php-versions < 7.3 }}
+            - name: Run unit tests (PHPUnit 7)
+              if: ${{ (matrix.php < 7.3) || ((matrix.php == 7.3) && (matrix.prefer == 'lowest')) }}
               run: ./vendor/bin/phpunit
 
-            - name: Check code styles
-              if: ${{ (matrix.php == '7.4') && (matrix.prefer-lowest == '') }}
-              run: ./vendor/bin/phpcs
+    Static Analisys:
+      runs-on: ubuntu-latest
+      if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
 
-            - name: Check cross-version PHP compatibility
-              if: ${{ (matrix.php == '7.4') && (matrix.prefer-lowest == '') }}
-              run: composer phpcompat
+      steps:
+        - uses: actions/checkout@v2
 
-            - name: Check Psalm
-              if: ${{ (matrix.php == '7.4') && (matrix.prefer-lowest == '') }}
-              run: ./vendor/bin/psalm
+        - name: Setup PHP version
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: '7.4'
+
+        - name: Install dependencies
+          uses: "ramsey/composer-install@v1"
+
+        - name: Check code styles
+          run: ./vendor/bin/phpcs
+
+        - name: Check cross-version PHP compatibility
+          run: composer phpcompat
+
+        - name: Check Psalm
+          run: ./vendor/bin/psalm
