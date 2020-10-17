@@ -2,7 +2,7 @@ name: PHP Quality Assurance
 on: [push, pull_request]
 jobs:
 
-    Unit Tests:
+    Unit_Tests:
         runs-on: ubuntu-latest
         if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
 
@@ -49,7 +49,7 @@ jobs:
               if: ${{ (matrix.php < 7.3) || ((matrix.php == 7.3) && (matrix.prefer == 'lowest')) }}
               run: ./vendor/bin/phpunit
 
-    Static Analisys:
+    Static_Analisys:
       runs-on: ubuntu-latest
       if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
 
