@@ -332,7 +332,7 @@ class ReturnTypeDeclarationSniff implements Sniff
 
         return [
             'mixed' => in_array('mixed', $returnTypes, true),
-            'null' => in_array('null', $returnTypes, true)
+            'null' => in_array('null', $returnTypes, true),
         ];
     }
 
