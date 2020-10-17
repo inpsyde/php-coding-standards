@@ -125,7 +125,7 @@ class PhpcsHelpers
                 in_array($condCode, Tokens::$ooScopeTokens, true)
                 && ($condLevel === $targetLevel)
             ) {
-                return $condPosition;
+                return (int)$condPosition;
             }
         }
 
@@ -422,7 +422,7 @@ class PhpcsHelpers
     /**
      * @param File $file
      * @param int $functionPosition
-     * @return array<string>
+     * @return array<string, array<string>>
      */
     public static function functionDocBlockParamTypes(File $file, int $functionPosition): array
     {
@@ -688,6 +688,7 @@ class PhpcsHelpers
             return false;
         }
 
+        /** @var array<string> $psrInterfaces */
         static $psrInterfaces;
         $psrInterfaces or $psrInterfaces = [
             'LoggerInterface',
@@ -712,6 +713,7 @@ class PhpcsHelpers
             'StreamFactoryInterface',
         ];
 
+        /** @var string $name */
         foreach ($names as $name) {
             $lastName = array_slice(explode('\\', $name), -1, 1)[0];
             if (in_array($lastName, $psrInterfaces, true)) {

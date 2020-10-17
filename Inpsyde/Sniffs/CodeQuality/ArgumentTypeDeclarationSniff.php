@@ -81,7 +81,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
 
         foreach ($variables as $varPosition => $varToken) {
             // Not triggering error for variable explicitly declared as mixed (or mixed|null)
-            if ($this->isMixed($varToken['content'] ?? '', $docBlockTypes)) {
+            if ($this->isMixed((string)($varToken['content'] ?? ''), $docBlockTypes)) {
                 continue;
             }
 
@@ -102,7 +102,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
 
     /**
      * @param string $paramName
-     * @param array $docBlockTypes
+     * @param array<string, array<string>> $docBlockTypes
      * @return bool
      */
     private function isMixed(string $paramName, array $docBlockTypes): bool
