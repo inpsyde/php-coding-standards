@@ -416,7 +416,10 @@ class Test {
          * @wp-hook
          */
         $foo = static function () {
+            return '';
         };
+        
+        return '';
     }
 }
 PHP;
@@ -445,6 +448,131 @@ PHP;
             ],
             $tagsTwo
         );
+    }
+
+    /**
+     * @test
+     */
+    public function testParamTypes()
+    {
+        $php = <<<'PHP'
+<?php
+class Test {
+    /**
+     * @param string $foo
+     * @param string|int|\SomeClass $bar
+     * @return string
+     */
+    function something(string $foo, $bar): string {
+        /**
+         * @param string|int|\SomeClass $foo
+         * @return string
+         * @custom Hello World
+         * @wp-hook
+         */
+        $foo = static function ($foo) {
+            return '';
+        };
+        
+        return '';
+    }
+}
+PHP;
+        $file = $this->factoryFile($php);
+
+        $oneFuncPos = $file->findNext(T_FUNCTION, 1);
+        $twoFuncPos = $file->findNext(T_CLOSURE, $oneFuncPos + 1);
+
+        $paramsOne = PhpcsHelpers::functionDocBlockParamTypes($file, $oneFuncPos);
+        $paramsTwo = PhpcsHelpers::functionDocBlockParamTypes($file, $twoFuncPos);
+
+        static::assertSame(
+            [
+                '$foo' => ['string'],
+                '$bar' => ['string', 'int', '\SomeClass'],
+            ],
+            $paramsOne
+        );
+
+        static::assertSame(
+            ['$foo' => ['string', 'int', '\SomeClass']],
+            $paramsTwo
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testIsUntypedPsrMethodWithClass()
+    {
+        $php = <<<'PHP'
+<?php
+class Container implements \Psr\Container\ContainerInterface {
+
+    private $data = [];
+
+    public function get($id)
+    {
+        return $this->data[$id] ?? null;
+    }
+
+    public function has($id)
+    {
+        return isset($this->data[$id]);
+    }
+}
+PHP;
+        $file = $this->factoryFile($php);
+
+        $getFunc = $file->findNext(T_FUNCTION, 1);
+        $hasFunc = $file->findNext(T_FUNCTION, $getFunc + 1);
+
+        static::assertSame('get', $file->getDeclarationName($getFunc));
+        static::assertSame('has', $file->getDeclarationName($hasFunc));
+
+        $isPsrGet = PhpcsHelpers::isUntypedPsrMethod($file, $getFunc);
+        $isPsrHas = PhpcsHelpers::isUntypedPsrMethod($file, $hasFunc);
+
+        static::assertTrue($isPsrGet);
+        static::assertTrue($isPsrHas);
+    }
+
+    /**
+     * @test
+     */
+    public function testIsUntypedPsrMethodWithAnonClass()
+    {
+        $php = <<<'PHP'
+<?php
+use Psr\Container\ContainerInterface;
+$x = new class implements ContainerInterface {
+
+    private $data = [];
+
+    public function get($id)
+    {
+        return $this->data[$id] ?? null;
+    }
+
+    public function has($id)
+    {
+        return isset($this->data[$id]);
+    }
+};
+PHP;
+        $file = $this->factoryFile($php);
+
+        $getFunc = $file->findNext(T_FUNCTION, 1);
+        $hasFunc = $file->findNext(T_FUNCTION, $getFunc + 1);
+
+        static::assertSame('get', $file->getDeclarationName($getFunc));
+        static::assertSame('has', $file->getDeclarationName($hasFunc));
+
+        $isPsrGet = PhpcsHelpers::isUntypedPsrMethod($file, $getFunc);
+        $isPsrHas = PhpcsHelpers::isUntypedPsrMethod($file, $hasFunc);
+
+        static::assertTrue($isPsrGet);
+        static::assertTrue($isPsrHas);
     }
 
     /**

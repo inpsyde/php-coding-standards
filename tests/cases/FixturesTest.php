@@ -188,8 +188,6 @@ class FixturesTest extends TestCase
      * @param string $fixtureFile
      * @param array $properties
      * @return File
-     * @throws \PHP_CodeSniffer\Exceptions\RuntimeException
-     * @throws \ReflectionException
      */
     private function createPhpcsForFixture(
         string $sniffName,

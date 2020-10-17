@@ -52,7 +52,10 @@ class ReturnTypeDeclarationSniff implements Sniff
     {
         //  phpcs:enable Inpsyde.CodeQuality
 
-        if (PhpcsHelpers::functionIsArrayAccess($file, $position)) {
+        if (
+            PhpcsHelpers::functionIsArrayAccess($file, $position)
+            || PhpcsHelpers::isUntypedPsrMethod($file, $position)
+        ) {
             return;
         }
 
@@ -151,17 +154,17 @@ class ReturnTypeDeclarationSniff implements Sniff
             );
         }
 
+        $docBlock = $this->hasReturnNullOrMixedDocBloc($file, $position);
+
         if (
-            PhpcsHelpers::isHookClosure($file, $position)
+            $docBlock['mixed']
+            || PhpcsHelpers::isHookClosure($file, $position)
             || PhpcsHelpers::isHookFunction($file, $position)
         ) {
             return;
         }
 
-        if (
-            !$this->areNullableReturnTypesSupported()
-            && $this->hasReturnNullDocBloc($file, $position)
-        ) {
+        if (!$this->areNullableReturnTypesSupported() && $docBlock['null']) {
             return;
         }
 
@@ -305,24 +308,32 @@ class ReturnTypeDeclarationSniff implements Sniff
     /**
      * @param File $file
      * @param int $functionPosition
-     * @return bool
+     * @return array{mixed:bool, null:bool}
      */
-    private function hasReturnNullDocBloc(File $file, int $functionPosition): bool
+    private function hasReturnNullOrMixedDocBloc(File $file, int $functionPosition): array
     {
         $return = PhpcsHelpers::functionDocBlockTag('@return', $file, $functionPosition);
         if (!$return) {
-            return false;
+            return ['mixed' => false, 'null' => false];
         }
 
         $returnContentParts = preg_split('~\s+~', (string)reset($return), PREG_SPLIT_NO_EMPTY);
-        $returnTypes = $returnContentParts ? explode('|', (string)reset($returnContentParts)) : [];
-        $returnTypes and $returnTypes = array_map('strtolower', $returnTypes);
+        if (!$returnContentParts) {
+            return ['mixed' => false, 'null' => false];
+        }
 
-        return
-            $returnTypes
-            && count($returnTypes) < 3
-            && !in_array('mixed', $returnTypes, true)
-            && in_array('null', $returnTypes, true);
+        $returnTypes = array_map('strtolower', explode('|', (string)reset($returnContentParts)));
+        $returnTypes = array_map('trim', $returnTypes);
+        $returnTypesCount = count($returnTypes);
+        // Only if 1 or 2 types
+        if (!$returnTypesCount || ($returnTypesCount > 2)) {
+            return ['mixed' => false, 'null' => false];
+        }
+
+        return [
+            'mixed' => in_array('mixed', $returnTypes, true),
+            'null' => in_array('null', $returnTypes, true)
+        ];
     }
 
     /**

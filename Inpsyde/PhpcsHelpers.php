@@ -95,6 +95,16 @@ class PhpcsHelpers
      */
     public static function hasOopCondition(File $file, int $position): bool
     {
+        return static::findOopContext($file, $position) !== 0;
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return int
+     */
+    public static function findOopContext(File $file, int $position): int
+    {
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
@@ -103,7 +113,7 @@ class PhpcsHelpers
             || ((int)($tokens[$position]['level'] ?? 0) <= 0)
             || !is_array($tokens[$position]['conditions'])
         ) {
-            return false;
+            return 0;
         }
 
         $targetLevel = (int)$tokens[$position]['level'] - 1;
@@ -115,11 +125,11 @@ class PhpcsHelpers
                 in_array($condCode, Tokens::$ooScopeTokens, true)
                 && ($condLevel === $targetLevel)
             ) {
-                return true;
+                return $condPosition;
             }
         }
 
-        return false;
+        return 0;
     }
 
     /**
@@ -411,6 +421,31 @@ class PhpcsHelpers
 
     /**
      * @param File $file
+     * @param int $functionPosition
+     * @return array<string>
+     */
+    public static function functionDocBlockParamTypes(File $file, int $functionPosition): array
+    {
+        $params = PhpcsHelpers::functionDocBlockTag('@param', $file, $functionPosition);
+        if (!$params) {
+            return [];
+        }
+
+        $types = [];
+        foreach ($params as $param) {
+            preg_match('~^([^$]+)\s*(\$(?:[^\s]+))~', trim($param), $matches);
+            if (empty($matches[1]) || empty($matches[2])) {
+                continue;
+            }
+
+            $types[$matches[2]] = array_map('trim', explode('|', $matches[1]));
+        }
+
+        return $types;
+    }
+
+    /**
+     * @param File $file
      * @param int $position
      * @return bool
      */
@@ -626,5 +661,64 @@ class PhpcsHelpers
         preg_match('`^(\d+\.\d+)(?:\s*-\s*(?:\d+\.\d+)?)?$`', $testVersion, $matches);
 
         return $matches[1] ?? '';
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return bool
+     */
+    public static function isUntypedPsrMethod(File $file, int $position): bool
+    {
+        $tokens = $file->getTokens();
+
+        if (($tokens[$position]['type'] ?? '') !== 'T_FUNCTION') {
+            return false;
+        }
+
+        $classPos = static::findOopContext($file, $position);
+        $type = $tokens[$classPos]['type'] ?? null;
+        if (!$classPos || !in_array($type, ['T_CLASS', 'T_ANON_CLASS'], true)) {
+            return false;
+        }
+
+        $names = $file->findImplementedInterfaceNames($classPos);
+
+        if (!$names) {
+            return false;
+        }
+
+        static $psrInterfaces;
+        $psrInterfaces or $psrInterfaces = [
+            'LoggerInterface',
+            'CacheItemInterface',
+            'CacheItemPoolInterface',
+            'MessageInterface',
+            'RequestInterface',
+            'ServerRequestInterface',
+            'ResponseInterface',
+            'StreamInterface',
+            'UriInterface',
+            'UploadedFileInterface',
+            'ContainerInterface',
+            'LinkInterface',
+            'EvolvableLinkInterface',
+            'LinkProviderInterface',
+            'EvolvableLinkProviderInterface',
+            'CacheInterface',
+            'RequestFactoryInterface',
+            'ResponseFactoryInterface',
+            'ServerRequestFactoryInterface',
+            'StreamFactoryInterface',
+        ];
+
+        foreach ($names as $name) {
+            $lastName = array_slice(explode('\\', $name), -1, 1)[0];
+            if (in_array($lastName, $psrInterfaces, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

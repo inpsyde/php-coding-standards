@@ -16,6 +16,39 @@ function a($foo)
 
 }
 
+/**
+ * @param string $foo
+ * @param mixed $bar
+ * @param int $baz
+ * @return void
+ */
+function mixed(string $foo, $bar, int $baz)
+{
+
+}
+
+/**
+ * @param string $foo
+ * @param mixed|null $bar
+ * @param int $baz
+ * @return void
+ */
+function mixedNull(string $foo, $bar, int $baz)
+{
+
+}
+
+/**
+ * @param string $foo
+ * @param mixed|null|array $bar
+ * @param int $baz
+ * @return void
+ */
+function mixedNullAndMore(string $foo, $bar, int $baz) // @phpcsWarningOnThisLine
+{
+
+}
+
 function b(string $foo = 'foo')
 {
 
@@ -307,5 +340,20 @@ class SerializeTest implements \Serializable {
 
     public function unserialize($serialized)
     {
+    }
+}
+
+class Container implements \Psr\Container\ContainerInterface {
+
+    private $data = [];
+
+    public function get($id)
+    {
+        return $this->data[$id] ?? null;
+    }
+
+    public function has($id)
+    {
+        return isset($this->data[$id]);
     }
 }

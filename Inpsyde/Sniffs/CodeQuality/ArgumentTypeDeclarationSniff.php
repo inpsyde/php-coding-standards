@@ -58,6 +58,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
             PhpcsHelpers::functionIsArrayAccess($file, $position)
             || PhpcsHelpers::isHookClosure($file, $position)
             || PhpcsHelpers::isHookFunction($file, $position)
+            || PhpcsHelpers::isUntypedPsrMethod($file, $position)
             || (
                 PhpcsHelpers::functionIsMethod($file, $position)
                 && in_array($file->getDeclarationName($position), self::METHODS_WHITELIST, true)
@@ -75,9 +76,15 @@ class ArgumentTypeDeclarationSniff implements Sniff
             return;
         }
 
+        $docBlockTypes = PhpcsHelpers::functionDocBlockParamTypes($file, $position);
         $variables = PhpcsHelpers::filterTokensByType($paramsStart, $paramsEnd, $file, T_VARIABLE);
 
-        foreach (array_keys($variables) as $varPosition) {
+        foreach ($variables as $varPosition => $varToken) {
+            // Not triggering error for variable explicitly declared as mixed (or mixed|null)
+            if ($this->isMixed($varToken['content'] ?? '', $docBlockTypes)) {
+                continue;
+            }
+
             $typePosition = $file->findPrevious(
                 [T_WHITESPACE, T_ELLIPSIS, T_BITWISE_AND],
                 $varPosition - 1,
@@ -91,5 +98,30 @@ class ArgumentTypeDeclarationSniff implements Sniff
                 $file->addWarning('Argument type is missing', $position, 'NoArgumentType');
             }
         }
+    }
+
+    /**
+     * @param string $paramName
+     * @param array $docBlockTypes
+     * @return bool
+     */
+    private function isMixed(string $paramName, array $docBlockTypes): bool
+    {
+        $paramDocBlockTypes = $paramName ? ($docBlockTypes[$paramName] ?? null) : null;
+        if (!$paramDocBlockTypes) {
+            return false;
+        }
+
+        $paramDocBlockTypesCount = count($paramDocBlockTypes);
+        if (!$paramDocBlockTypesCount || $paramDocBlockTypesCount > 2) {
+            return false;
+        }
+
+        $paramDocBlockTypes = array_map('trim', $paramDocBlockTypes);
+        if (!in_array('mixed', $paramDocBlockTypes, true)) {
+            return false;
+        }
+
+        return ($paramDocBlockTypesCount === 1) || in_array('null', $paramDocBlockTypes, true);
     }
 }

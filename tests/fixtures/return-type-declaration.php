@@ -244,6 +244,13 @@ function noHookCallback() // @phpcsWarningCodeOnThisLine NoReturnType
     return 'x';
 }
 
+/**
+ * @return mixed|null
+ */
+function mixed() {
+    return $GLOBALS['thing'] ?? null;
+}
+
 class WrapperHookWrapper
 {
 
@@ -434,6 +441,21 @@ class FooAccess implements ArrayAccess
     {
         yield 1;
         yield 2;
+    }
+}
+
+class Container implements \Psr\Container\ContainerInterface {
+
+    private $data = [];
+
+    public function get($id)
+    {
+        return $this->data[$id] ?? null;
+    }
+
+    public function has($id)
+    {
+        return isset($this->data[$id]);
     }
 }
 
