@@ -15,11 +15,14 @@ It means they can be installed by adding the entry to composer.json `require-dev
 
 ```json
 {
-	"require-dev": {
-		"inpsyde/php-coding-standards": "@stable"
-	}
+    "require-dev": {
+        "inpsyde/php-coding-standards": "^1@dev"
+    }
 }
 ```
+
+(the `@dev` suffix can be removed if the project [`minimum-stability`](https://getcomposer.org/doc/04-schema.md#minimum-stability) is `"dev"`, or as soon as the stable v1.0.0 of the standards will be released.)
+
 
 or via command line with: 
 
