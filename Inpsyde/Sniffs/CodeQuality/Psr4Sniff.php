@@ -166,7 +166,7 @@ class Psr4Sniff implements Sniff
         foreach ($folders as $folder) {
             $folder = trim(str_replace('\\', '/', $folder), './');
             $folderSplit = explode("/{$folder}/", $filePath);
-            if (!$folderSplit || count($folderSplit) < 2) {
+            if (count($folderSplit) < 2) {
                 continue;
             }
 

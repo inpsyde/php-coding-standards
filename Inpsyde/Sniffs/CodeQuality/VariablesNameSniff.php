@@ -199,7 +199,6 @@ class VariablesNameSniff implements Sniff
             $this->ignoredNames = [];
         }
 
-        /** @var array $ignored */
         $ignored = $this->ignoredNames;
 
         /** @var array<string> $normalized */

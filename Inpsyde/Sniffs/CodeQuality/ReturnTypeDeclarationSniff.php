@@ -308,7 +308,7 @@ class ReturnTypeDeclarationSniff implements Sniff
     /**
      * @param File $file
      * @param int $functionPosition
-     * @return array{mixed:bool, null:bool}
+     * @return array{'mixed': bool, 'null': bool}
      */
     private function hasReturnNullOrMixedDocBloc(File $file, int $functionPosition): array
     {
@@ -317,12 +317,12 @@ class ReturnTypeDeclarationSniff implements Sniff
             return ['mixed' => false, 'null' => false];
         }
 
-        $returnContentParts = preg_split('~\s+~', (string)reset($return), PREG_SPLIT_NO_EMPTY);
+        $returnContentParts = preg_split('~\s+~', reset($return), PREG_SPLIT_NO_EMPTY);
         if (!$returnContentParts) {
             return ['mixed' => false, 'null' => false];
         }
 
-        $returnTypes = array_map('strtolower', explode('|', (string)reset($returnContentParts)));
+        $returnTypes = array_map('strtolower', explode('|', reset($returnContentParts)));
         $returnTypes = array_map('trim', $returnTypes);
         $returnTypesCount = count($returnTypes);
         // Only if 1 or 2 types

@@ -35,6 +35,9 @@ jobs:
             - name: Check syntax error in sources
               run: find ./src/ ./tests/src/ ./tests/cases/ -type f -name '*.php' -print0 | xargs -0 -L 1 -P 4 -- php -l
 
+            - name: Remove Psalm before tests, to prevent installation conflicts
+              run: composer.phar remove vimeo/psalm --no-update
+
             - name: Install dependencies
               uses: "ramsey/composer-install@v1"
               with:

@@ -265,7 +265,7 @@ class LineLengthSniff implements Sniff
             return false;
         }
 
-        $word = (string)reset($words);
+        $word = reset($words);
         $firstNonWhitePos = $file->findNext(T_WHITESPACE, $position, $lineEnd, true);
         $firstNonWhite = ($firstNonWhitePos === false) ? null : $tokens[$firstNonWhitePos];
         $tolerance = is_array($firstNonWhite) ? ((int)($firstNonWhite['column'] ?? 1) + 3) : 4;

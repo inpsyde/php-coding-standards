@@ -38,7 +38,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "6.5.* || 9.4.*",
-        "vimeo/psalm": "^3"
+        "vimeo/psalm": "@stable"
     },
     "autoload-dev": {
         "psr-4": {
@@ -54,8 +54,16 @@
         }
     },
     "scripts" : {
-        "phpcompat": [
-            "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs -p . --standard=PHPCompatibility --ignore=*/vendor/*,*tests/fixtures/* --extensions=php --basepath=./ --runtime-set testVersion 7.0-"
+        "cs": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs",
+        "phpcompat": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs -p . --standard=PHPCompatibility --ignore=*/vendor/*,*tests/fixtures/* --extensions=php --basepath=./ --runtime-set testVersion 7.0-",
+        "tests": "@php ./vendor/phpunit/phpunit/phpunit",
+        "tests:no-cov": "@php ./vendor/phpunit/phpunit/phpunit --no-coverage",
+        "psalm": "@php ./vendor/vimeo/psalm/psalm --no-cache",
+        "qa": [
+            "@cs",
+            "@phpcompat",
+            "@tests:no-cov",
+            "@psalm"
         ]
     }
 }

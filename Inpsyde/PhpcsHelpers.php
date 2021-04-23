@@ -653,7 +653,7 @@ class PhpcsHelpers
      */
     public static function minPhpTestVersion(): string
     {
-        $testVersion = trim((string)(Config::getConfigData('testVersion') ?: ''));
+        $testVersion = trim(Config::getConfigData('testVersion') ?: '');
         if (!$testVersion) {
             return '';
         }

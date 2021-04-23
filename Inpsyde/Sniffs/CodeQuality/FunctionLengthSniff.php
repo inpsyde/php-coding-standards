@@ -81,7 +81,7 @@ class FunctionLengthSniff implements Sniff
             'Your function is too long. Currently using %d lines%s, max is %d.',
             $length,
             $suffix,
-            (int)$this->maxLength
+            $this->maxLength
         );
 
         $file->addError($error, $position, 'TooLong');

@@ -2,29 +2,21 @@
 <psalm
     autoloader="./.psalm/autoloader.php"
     totallyTyped="true"
-    useDocblockTypes="true"
     useDocblockPropertyTypes="true"
     usePhpDocMethodsWithoutMagicCall="true"
     strictBinaryOperands="true"
-    requireVoidReturnType="true"
-    useAssertForType="true"
-    rememberPropertyAssignmentsAfterCall="true"
     allowPhpStormGenerics="true"
     allowCoercionFromStringToClassConst="true"
-    allowStringToStandInForClass="false"
-    memoizeMethodCallResults="false"
-    hoistConstants="false"
-    addParamDefaultToDocblockType="false"
-    checkForThrowsInGlobalScope="false"
     ignoreInternalFunctionFalseReturn="false"
     ignoreInternalFunctionNullReturn="false"
     hideExternalErrors="true"
-    allowFileIncludes="true"
     allowNamedArgumentCalls="false"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
-        <directory name="Inpsyde/Sniffs"/>
-        <file name="Inpsyde/PhpcsHelpers.php"/>
+        <directory name="Inpsyde"/>
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>

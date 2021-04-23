@@ -3,6 +3,7 @@
 $vendor = dirname(__DIR__) . '/vendor';
 $phpcsSrc = "{$vendor}/squizlabs/php_codesniffer/src";
 
+require_once dirname(__DIR__) . '/Inpsyde/PhpcsHelpers.php';
 require_once "{$phpcsSrc}/Sniffs/Sniff.php";
 require_once "{$phpcsSrc}/Files/File.php";
 require_once "{$phpcsSrc}/Fixer.php";
