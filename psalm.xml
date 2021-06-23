@@ -6,7 +6,6 @@
     usePhpDocMethodsWithoutMagicCall="true"
     strictBinaryOperands="true"
     allowPhpStormGenerics="true"
-    allowCoercionFromStringToClassConst="true"
     ignoreInternalFunctionFalseReturn="false"
     ignoreInternalFunctionNullReturn="false"
     hideExternalErrors="true"
