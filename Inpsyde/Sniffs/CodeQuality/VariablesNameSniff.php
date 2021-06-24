@@ -23,6 +23,7 @@ class VariablesNameSniff implements Sniff
     ];
 
     const WP_GLOBALS = [
+        '$current_user',
         '$is_iphone',
         '$is_chrome',
         '$is_safari',
