@@ -115,7 +115,7 @@ class NoAccessorsSniff implements Sniff
         $file->addWarning(
             'Getters are discouraged. "Tell Don\'t Ask" principle should be applied if possible, '
             . 'and if getters are really needed consider naming methods after properties, '
-            . 'e.g. id() instead of geId().',
+            . 'e.g. id() instead of getId().',
             $position,
             'NoGetter'
         );
