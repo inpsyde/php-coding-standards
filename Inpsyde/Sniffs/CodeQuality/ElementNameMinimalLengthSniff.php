@@ -78,7 +78,7 @@ class ElementNameMinimalLengthSniff implements Sniff
         // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
         $elementName = PhpcsHelpers::tokenName($file, $position);
-        $elementNameLength = (int)mb_strlen($elementName);
+        $elementNameLength = mb_strlen($elementName);
 
         if ($this->shouldBeSkipped($elementNameLength, $elementName)) {
             return;

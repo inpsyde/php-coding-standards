@@ -328,7 +328,7 @@ class ReturnTypeDeclarationSniff implements Sniff
         $returnTypes = array_map('trim', $returnTypes);
         $returnTypesCount = count($returnTypes);
         // Only if 1 or 2 types
-        if (!$returnTypesCount || ($returnTypesCount > 2)) {
+        if ($returnTypesCount !== 1 && $returnTypesCount !== 2) {
             return ['mixed' => false, 'null' => false];
         }
 
