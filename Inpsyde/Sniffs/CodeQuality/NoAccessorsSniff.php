@@ -50,6 +50,7 @@ class NoAccessorsSniff implements Sniff
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
      * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      * phpcs:disable Inpsyde.CodeQuality.FunctionLength
+     * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
      */
     public function process(File $file, $position)
     {

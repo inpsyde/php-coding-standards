@@ -116,6 +116,8 @@ class ReturnTypeDeclarationSniff implements Sniff
      * @param File $file
      * @param int $position
      * @return void
+     *
+     * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
      */
     private function maybeErrors(
         bool $hasNonVoidReturnType,
