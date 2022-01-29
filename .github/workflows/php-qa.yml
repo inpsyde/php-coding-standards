@@ -58,7 +58,7 @@ jobs:
 
       - name: Check syntax error in sources
         if: ${{ (matrix.deps-mode == 'highest') }}
-        run: parallel-lint ./src/ ./tests/src/ ./tests/cases/ --checkstyle | cs2pr
+        run: parallel-lint ./Inpsyde/ ./tests/src/ ./tests/cases/ --checkstyle | cs2pr
 
       - name: Remove Psalm before tests to prevent installation conflicts
         run: composer remove vimeo/psalm --no-update
