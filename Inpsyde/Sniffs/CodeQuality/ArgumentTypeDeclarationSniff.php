@@ -113,7 +113,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
         }
 
         $paramDocBlockTypesCount = count($paramDocBlockTypes);
-        if (!$paramDocBlockTypesCount || $paramDocBlockTypesCount > 2) {
+        if ($paramDocBlockTypesCount !== 1 && $paramDocBlockTypesCount !== 2) {
             return false;
         }
 

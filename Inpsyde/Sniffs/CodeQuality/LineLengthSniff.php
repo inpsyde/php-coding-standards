@@ -183,8 +183,12 @@ class LineLengthSniff implements Sniff
                 ? $this->isLongHtmlAttribute($start, $end, $file, $tokens)
                 : $this->isLongSingleWord($start, $end, $file, $tokens);
 
-            if (!$isLong || $isHtml) {
-                return $isLong && $isHtml;
+            if (!$isLong) {
+                return false;
+            }
+
+            if ($isHtml) {
+                return true;
             }
 
             $start++;
