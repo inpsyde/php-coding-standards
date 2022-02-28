@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <psalm
     autoloader="./.psalm/autoloader.php"
-    totallyTyped="true"
     useDocblockPropertyTypes="true"
     usePhpDocMethodsWithoutMagicCall="true"
     strictBinaryOperands="true"
