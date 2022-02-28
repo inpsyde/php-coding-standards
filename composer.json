@@ -65,5 +65,12 @@
             "@tests:no-cov",
             "@psalm"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "inpsyde/*": true,
+            "composer/*": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
