@@ -38,7 +38,7 @@ class ReturnTypeDeclarationSniff implements Sniff
     {
         // phpcs:enable Inpsyde.CodeQuality
 
-        return [T_FUNCTION, T_CLOSURE];
+        return [T_FUNCTION, T_CLOSURE, T_FN];
     }
 
     /**
@@ -170,7 +170,9 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
-        $name = (string)$file->getDeclarationName($position);
+        $tokenCode = $file->getTokens()[$position]['code'] ?? '';
+        // TODO Remove check on T_FN if getDeclarationName() will support T_FN out of the box
+        $name = $tokenCode !== T_FN ? (string)$file->getDeclarationName($position) : '';
         if (
             PhpcsHelpers::functionIsMethod($file, $position)
             && (in_array($name, self::METHODS_WHITELIST, true) || strpos($name, '__') === 0)

@@ -288,7 +288,7 @@ class PhpcsHelpers
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
-        if (($tokens[$position]['code'] ?? '') !== T_CLOSURE) {
+        if (!in_array(($tokens[$position]['code'] ?? ''), [T_CLOSURE, T_FN], true)) {
             return false;
         }
 
@@ -486,7 +486,7 @@ class PhpcsHelpers
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
-        if (!in_array(($tokens[$position]['code'] ?? null), [T_FUNCTION, T_CLOSURE], true)) {
+        if (!in_array(($tokens[$position]['code'] ?? null), [T_FUNCTION, T_CLOSURE, T_FN], true)) {
             return [-1, -1];
         }
 
@@ -538,6 +538,15 @@ class PhpcsHelpers
 
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
+
+        if (T_FN === $tokens[$position]['code'] ?? null) {
+            return [
+                'nonEmpty' => 1,
+                'void' => 0,
+                'null' => 0,
+                'total' => 1,
+            ];
+        }
 
         $pos = $start + 1;
         while ($pos < $end) {

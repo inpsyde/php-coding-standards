@@ -218,6 +218,11 @@ function filter_wrapper(): bool
     return true;
 }
 
+// @phpcsWarningCodeOnNextLine NoReturnType
+fn() => true;
+
+fn(): bool => true;
+
 /**
  * @return string
  * @wp-hook Meh
@@ -266,6 +271,8 @@ class WrapperHookWrapper
             return "$x, $y";
         });
 
+        add_filter('x', fn($x, $y) => "$x, $y");
+
         return true;
     }
 
@@ -283,6 +290,8 @@ class WrapperHookWrapper
             10,
             2
         );
+
+        add_action('x', fn($x, $y) => "$x, $y");
     }
 
     // @phpcsWarningCodeOnNextLine NoReturnType
