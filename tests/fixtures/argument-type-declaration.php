@@ -142,6 +142,11 @@ fn(int $foo, $bar) => true;
 fn(int $foo, string $bar) => true;
 
 // @phpcsWarningOnNextLine
+fn(...$foo) => true;
+
+fn(int ...$foo) => true;
+
+// @phpcsWarningOnNextLine
 function ($foo)
 {
 
