@@ -91,6 +91,8 @@ function i(string $foo, ArrayObject ...$bar)
 
 }
 
+add_action('foo', fn ($foo) => 'x');
+
 add_action(
     'foo',
     function ($foo) {
@@ -116,6 +118,8 @@ add_filter(
         return true;
     }
 );
+
+add_filter('foo', fn ($foo) => 'x');
 
 array_map(
     function ($foo) { // @phpcsWarningOnThisLine
