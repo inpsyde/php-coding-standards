@@ -129,6 +129,18 @@ function ()
 
 }
 
+fn() => true;
+
+// @phpcsWarningOnNextLine
+fn($foo) => $foo*2;
+
+fn(int $foo) => $foo*2;
+
+// @phpcsWarningOnNextLine
+fn(int $foo, $bar) => true;
+
+fn(int $foo, string $bar) => true;
+
 // @phpcsWarningOnNextLine
 function ($foo)
 {

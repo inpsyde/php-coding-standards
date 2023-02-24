@@ -40,7 +40,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
     {
         // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
-        return [T_FUNCTION, T_CLOSURE];
+        return [T_FUNCTION, T_CLOSURE, T_FN];
     }
 
     /**
