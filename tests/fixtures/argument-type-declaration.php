@@ -300,6 +300,21 @@ class ArgumentTypeDeclarationSniffTestFixture
         }
     }
 
+    // @phpcsWarningOnNextLine
+    public function d(...$foo) {
+
+    }
+
+    // @phpcsWarningOnNextLine
+    public function e(...$foo) {
+        $bar = [1, 2, 3];
+
+        // @phpcsWarningOnNextLine
+        return function (...$bar) {
+
+        };
+    }
+
     public function buildCallback(): callable {
 
         /**
