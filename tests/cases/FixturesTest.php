@@ -1,9 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-# -*- coding: utf-8 -*-
-/*
+/**
  * This file is part of the php-coding-standards package.
  *
  * (c) Inpsyde GmbH
@@ -11,6 +8,8 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace Inpsyde\CodingStandard\Tests;
 
@@ -22,12 +21,11 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @package php-coding-standards
- * @license http://opensource.org/licenses/MIT MIT
- */
 class FixturesTest extends TestCase
 {
+    /**
+     * @return \Traversable
+     */
     public function fixtureProvider(): \Traversable
     {
         foreach ((glob(getenv('FIXTURES_PATH') . '/*.php') ?: []) as $fixtureFile) {
@@ -39,7 +37,7 @@ class FixturesTest extends TestCase
     /**
      * @dataProvider fixtureProvider
      */
-    public function testAllFixtures(string $fixtureFile)
+    public function testAllFixtures(string $fixtureFile): void
     {
         $parser = new FixtureContentParser();
         $failures = new \SplStack();
@@ -71,7 +69,7 @@ class FixturesTest extends TestCase
         string $fixtureFile,
         FixtureContentParser $parser,
         \SplStack $failures
-    ) {
+    ): void {
 
         $fixtureBasename = basename($fixtureFile);
 
@@ -81,7 +79,7 @@ class FixturesTest extends TestCase
              * @var SniffMessages $expected
              * @var array $properties
              */
-            list($sniffClass, $expected, $properties) = $parser->parse($fixtureFile);
+            [$sniffClass, $expected, $properties] = $parser->parse($fixtureFile);
 
             $file = $this->createPhpcsForFixture($sniffClass, $fixtureFile, $properties);
             $actual = (new SniffMessagesExtractor($file))->extractMessages();
@@ -105,7 +103,7 @@ class FixturesTest extends TestCase
         SniffMessages $actual,
         string $fixture,
         string $sniffClass
-    ) {
+    ): void {
 
         $where = sprintf("\nin fixture file '%s' line %%d\nfor sniff '%s'", $fixture, $sniffClass);
 
@@ -136,7 +134,7 @@ class FixturesTest extends TestCase
         string $code,
         string $where,
         string $actualCode = null
-    ) {
+    ): void {
 
         $message = $code
             ? sprintf('Expected %s code \'%s\' was not found', $type, $code)
@@ -158,7 +156,7 @@ class FixturesTest extends TestCase
         SniffMessages $actual,
         string $fixtureFile,
         string $sniffClass
-    ) {
+    ): void {
 
         $expectedTotal = $expected->total();
         $actualTotal = $actual->total();
@@ -195,21 +193,20 @@ class FixturesTest extends TestCase
         array $properties
     ): File {
 
-        $sniffName = str_replace('.', DIRECTORY_SEPARATOR, $sniffName) . 'Sniff';
-        $sniffFile = getenv('SNIFFS_PATH') . DIRECTORY_SEPARATOR . "{$sniffName}.php";
-        if (!file_exists($sniffFile) || !is_readable($sniffFile)) {
-            throw new Exception("Non-existent of unreadable sniff file '$sniffFile' found.");
+        $sniffFile = str_replace('.', '/', "{$sniffName}Sniff");
+        $sniffPath = getenv('SNIFFS_PATH') . "/{$sniffFile}.php";
+        if (!file_exists($sniffPath) || !is_readable($sniffPath)) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+            throw new Exception("Non-existent of unreadable sniff file '{$sniffPath}' found.");
         }
 
         $config = new Config();
-        $config->standards = [];
-        /** @var Ruleset $ruleset */
-        $ruleset = (new \ReflectionClass(Ruleset::class))->newInstanceWithoutConstructor();
-        $ruleset->registerSniffs([$sniffFile], [], []);
-        $ruleset->populateTokenListeners();
+        $config->standards = [dirname(getenv('SNIFFS_PATH'))];
+        $config->sniffs = ["Inpsyde.{$sniffName}"];
+        $ruleset = new Ruleset($config);
 
         $baseSniffNamespace = getenv('SNIFFS_NAMESPACE');
-        $sniffFqn = str_replace(DIRECTORY_SEPARATOR, '\\', $sniffName);
+        $sniffFqn = str_replace('/', '\\', $sniffFile);
         foreach ($properties as $name => $value) {
             $ruleset->setSniffProperty("{$baseSniffNamespace}\\{$sniffFqn}", $name, $value);
         }

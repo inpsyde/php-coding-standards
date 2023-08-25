@@ -19,65 +19,54 @@ use PHP_CodeSniffer\Files\File;
 
 class ArgumentTypeDeclarationSniff implements Sniff
 {
-    const TYPE_CODES = [
+    public const TYPE_CODES = [
         T_STRING,
         T_ARRAY_HINT,
         T_CALLABLE,
         T_SELF,
     ];
 
-    const METHODS_WHITELIST = [
+    public const METHODS_WHITELIST = [
         'unserialize',
         'seek',
     ];
 
     /**
-     * @return array<int|string>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
+     * @return list<int|string>
      */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_FUNCTION, T_CLOSURE, T_FN];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
-     * phpcs:disable Inpsyde.CodeQuality
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     * phpcs:disable Generic.Metrics.CyclomaticComplexity
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
-        // phpcs:enable Inpsyde.CodeQuality
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+        // phpcs:enable Generic.Metrics.CyclomaticComplexity
 
-        if (
-            PhpcsHelpers::functionIsArrayAccess($file, $position)
-            || PhpcsHelpers::isHookClosure($file, $position)
-            || PhpcsHelpers::isHookFunction($file, $position)
-            || PhpcsHelpers::isUntypedPsrMethod($file, $position)
-            || (
-                PhpcsHelpers::functionIsMethod($file, $position)
-                && in_array($file->getDeclarationName($position), self::METHODS_WHITELIST, true)
-            )
-        ) {
+        if ($this->shouldIgnore($phpcsFile, $stackPtr)) {
             return;
         }
 
         /** @var array<int, array<string, mixed>> $tokens */
-        $tokens = $file->getTokens();
-        $paramsStart = (int)($tokens[$position]['parenthesis_opener'] ?? 0);
-        $paramsEnd = (int)($tokens[$position]['parenthesis_closer'] ?? 0);
+        $tokens = $phpcsFile->getTokens();
+        $paramsStart = (int)($tokens[$stackPtr]['parenthesis_opener'] ?? 0);
+        $paramsEnd = (int)($tokens[$stackPtr]['parenthesis_closer'] ?? 0);
 
         if (!$paramsStart || !$paramsEnd || $paramsStart >= ($paramsEnd - 1)) {
             return;
         }
 
-        $docBlockTypes = PhpcsHelpers::functionDocBlockParamTypes($file, $position);
-        $variables = PhpcsHelpers::filterTokensByType($paramsStart, $paramsEnd, $file, T_VARIABLE);
+        $docBlockTypes = PhpcsHelpers::functionDocBlockParamTypes($phpcsFile, $stackPtr);
+        $variables = PhpcsHelpers::filterTokensByType($paramsStart, $paramsEnd, $phpcsFile, T_VARIABLE);
 
         foreach ($variables as $varPosition => $varToken) {
             // Not triggering error for variable explicitly declared as mixed (or mixed|null)
@@ -85,7 +74,7 @@ class ArgumentTypeDeclarationSniff implements Sniff
                 continue;
             }
 
-            $typePosition = $file->findPrevious(
+            $typePosition = $phpcsFile->findPrevious(
                 [T_WHITESPACE, T_ELLIPSIS, T_BITWISE_AND],
                 $varPosition - 1,
                 $paramsStart + 1,
@@ -93,11 +82,33 @@ class ArgumentTypeDeclarationSniff implements Sniff
             );
 
             $type = $tokens[$typePosition] ?? null;
-            /** @psalm-suppress MixedArgument */
-            if ($type && !in_array($type['code'], self::TYPE_CODES, true)) {
-                $file->addWarning('Argument type is missing', $position, 'NoArgumentType');
+            if ($type && !in_array($type['code'] ?? '', self::TYPE_CODES, true)) {
+                $phpcsFile->addWarning('Argument type is missing', $stackPtr, 'NoArgumentType');
             }
         }
+    }
+
+    /**
+     * @param File $phpcsFile
+     * @param int $stackPtr
+     * @return bool
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+     */
+    private function shouldIgnore(File $phpcsFile, $stackPtr): bool
+    {
+        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
+
+        $name = $phpcsFile->getDeclarationName($stackPtr);
+
+        return PhpcsHelpers::functionIsArrayAccess($phpcsFile, $stackPtr)
+            || PhpcsHelpers::isHookClosure($phpcsFile, $stackPtr)
+            || PhpcsHelpers::isHookFunction($phpcsFile, $stackPtr)
+            || PhpcsHelpers::isUntypedPsrMethod($phpcsFile, $stackPtr)
+            || (
+                PhpcsHelpers::functionIsMethod($phpcsFile, $stackPtr)
+                && in_array($name, self::METHODS_WHITELIST, true)
+            );
     }
 
     /**

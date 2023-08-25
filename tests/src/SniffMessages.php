@@ -1,9 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-# -*- coding: utf-8 -*-
-/*
+/**
  * This file is part of the php-coding-standards package.
  *
  * (c) Inpsyde GmbH
@@ -11,6 +8,8 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace Inpsyde\CodingStandard\Tests;
 
@@ -20,34 +19,19 @@ namespace Inpsyde\CodingStandard\Tests;
  */
 final class SniffMessages
 {
-    /**
-     * @var array
-     */
-    private $warnings;
-
-    /**
-     * @var array
-     */
-    private $errors;
-
-    /**
-     * @var array
-     */
-    private $messages;
-
-    /**
-     * @var bool
-     */
-    private $messagesContainTotal = false;
+    private array $warnings;
+    private array $errors;
+    private array $messages;
+    private bool $messagesContainTotal = false;
 
     /**
      * @param array $warnings
      * @param array $errors
      * @param array|null $messages
      */
-    public function __construct(array $warnings, array $errors, array $messages = null)
+    public function __construct(array $warnings, array $errors, ?array $messages = null)
     {
-        if (is_null($messages)) {
+        if ($messages === null) {
             $messages = $errors + $warnings;
             $this->messagesContainTotal = true;
         }
@@ -69,7 +53,7 @@ final class SniffMessages
      * @param int $line
      * @return string|null
      */
-    public function messageIn(int $line)
+    public function messageIn(int $line): ?string
     {
         return $this->messages[$line] ?? null;
     }
@@ -99,7 +83,7 @@ final class SniffMessages
      * @param int $line
      * @return string|null
      */
-    public function errorIn(int $line)
+    public function errorIn(int $line): ?string
     {
         return $this->errors[$line] ?? null;
     }
@@ -124,7 +108,7 @@ final class SniffMessages
      * @param int $line
      * @return string|null
      */
-    public function warningIn(int $line)
+    public function warningIn(int $line): ?string
     {
         return $this->warnings[$line] ?? null;
     }

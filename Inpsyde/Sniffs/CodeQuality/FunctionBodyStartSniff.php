@@ -11,35 +11,27 @@ use PHP_CodeSniffer\Util\Tokens;
 class FunctionBodyStartSniff implements Sniff
 {
     /**
-     * @return array<int>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
+     * @return list<int>
      */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_FUNCTION];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
         /** @var array<int, array<string, mixed>> $tokens */
-        $tokens = $file->getTokens();
-        $token = $tokens[$position] ?? [];
+        $tokens = $phpcsFile->getTokens();
+        $token = $tokens[$stackPtr] ?? [];
 
         $scopeOpener = (int)($token['scope_opener'] ?? -1);
         $scopeCloser = (int)($token['scope_closer'] ?? -1);
@@ -48,7 +40,7 @@ class FunctionBodyStartSniff implements Sniff
             return;
         }
 
-        $bodyStart = $file->findNext([T_WHITESPACE], $scopeOpener + 1, null, true);
+        $bodyStart = $phpcsFile->findNext([T_WHITESPACE], $scopeOpener + 1, null, true);
         if (
             !$bodyStart
             || !array_key_exists($bodyStart, $tokens)
@@ -58,20 +50,20 @@ class FunctionBodyStartSniff implements Sniff
             return;
         }
 
-        list($code, $message, $expectedLine) = $this->checkBodyStart(
+        [$code, $message, $expectedLine] = $this->checkBodyStart(
             $bodyStart,
             (int)($tokens[$scopeOpener]['line'] ?? -1),
             (int)($token['line'] ?? -1),
-            $file
+            $phpcsFile
         );
 
         if (
             $code
             && $message
             && $expectedLine
-            && $file->addFixableWarning($message, $position, $code)
+            && $phpcsFile->addFixableWarning($message, $stackPtr, $code)
         ) {
-            $this->fix($bodyStart, $expectedLine, $scopeOpener, $file);
+            $this->fix($bodyStart, $expectedLine, $scopeOpener, $phpcsFile);
         }
     }
 
@@ -80,7 +72,7 @@ class FunctionBodyStartSniff implements Sniff
      * @param int $openerLine
      * @param int $functionLine
      * @param File $file
-     * @return array{null, null, null}|array{string, string, int}
+     * @return list{null, null, null}|list{string, string, int}
      */
     private function checkBodyStart(
         int $bodyStart,
@@ -143,7 +135,7 @@ class FunctionBodyStartSniff implements Sniff
      * @param File $file
      * @return void
      */
-    private function fix(int $bodyStart, int $expectedLine, int $scopeOpener, File $file)
+    private function fix(int $bodyStart, int $expectedLine, int $scopeOpener, File $file): void
     {
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();

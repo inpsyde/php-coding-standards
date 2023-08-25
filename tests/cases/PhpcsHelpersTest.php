@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the php-coding-standards package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace Inpsyde\CodingStandard\Tests;
@@ -11,12 +20,13 @@ use PHP_CodeSniffer\Ruleset;
 use PHPUnit\Framework\TestCase;
 use PHP_CodeSniffer\Files\File;
 
+// phpcs:disable Inpsyde.CodeQuality.FunctionLength
 class PhpcsHelpersTest extends TestCase
 {
     /**
      * @test
      */
-    public function testClassProperties()
+    public function testClassProperties(): void
     {
         $php = <<<'PHP'
 <?php
@@ -70,7 +80,7 @@ PHP;
     /**
      * @test
      */
-    public function testClassMethods()
+    public function testClassMethods(): void
     {
         $php = <<<'PHP'
 <?php
@@ -121,7 +131,7 @@ PHP;
     /**
      * @test
      */
-    public function testFunctionCall()
+    public function testFunctionCall(): void
     {
         $php = <<<'PHP'
 <?php
@@ -171,7 +181,7 @@ PHP;
     /**
      * @test
      */
-    public function testTokenName()
+    public function testTokenName(): void
     {
         $php = <<<'PHP'
 <?php
@@ -214,7 +224,7 @@ PHP;
     /**
      * @test
      */
-    public function testHookClosure()
+    public function testHookClosure(): void
     {
         $php = <<<'PHP'
 <?php
@@ -256,14 +266,9 @@ PHP;
 
     /**
      * @test
-     *
-     * phpcs:disable Inpsyde.CodeQuality.FunctionLength
      */
-    public function testReturnCount()
+    public function testReturnCount(): void
     {
-        // phpcs:enable Inpsyde.CodeQuality.FunctionLength
-
-        /** @noinspection PhpInconsistentReturnPointsInspection */
         $php = <<<'PHP'
 <?php
 class Test {
@@ -328,13 +333,9 @@ PHP;
 
     /**
      * @test
-     *
-     * phpcs:disable Inpsyde.CodeQuality.FunctionLength
      */
     public function testDocBlocTag()
     {
-        // phpcs:enable Inpsyde.CodeQuality.FunctionLength
-
         $php = <<<'PHP'
 <?php
 class Test {
@@ -453,7 +454,7 @@ PHP;
     /**
      * @test
      */
-    public function testParamTypes()
+    public function testParamTypes(): void
     {
         $php = <<<'PHP'
 <?php
@@ -503,7 +504,7 @@ PHP;
     /**
      * @test
      */
-    public function testIsUntypedPsrMethodWithClass()
+    public function testIsUntypedPsrMethodWithClass(): void
     {
         $php = <<<'PHP'
 <?php
@@ -540,7 +541,7 @@ PHP;
     /**
      * @test
      */
-    public function testIsUntypedPsrMethodWithAnonClass()
+    public function testIsUntypedPsrMethodWithAnonClass(): void
     {
         $php = <<<'PHP'
 <?php

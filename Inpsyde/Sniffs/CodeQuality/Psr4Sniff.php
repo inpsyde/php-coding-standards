@@ -10,48 +10,33 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 
 class Psr4Sniff implements Sniff
 {
-    /**
-     * @var mixed
-     */
-    public $psr4;
+    public array $psr4 = [];
+    public array $exclude = [];
 
     /**
-     * @var mixed
+     * @return list<int>
      */
-    public $exclude = [];
-
-    /**
-     * @return array<int>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
-     */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_CLASS, T_INTERFACE, T_TRAIT];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
-        $className = (string)$file->getDeclarationName($position);
+        $className = (string)$phpcsFile->getDeclarationName($stackPtr);
 
         /** @var array<int, array<string, mixed>> $tokens */
-        $tokens = $file->getTokens();
-        $code = $tokens[$position]['code'];
+        $tokens = $phpcsFile->getTokens();
+        $code = $tokens[$stackPtr]['code'];
         $entityType = 'class';
         if ($code !== T_CLASS) {
             $entityType = $code === T_TRAIT ? 'trait' : 'interface';
@@ -59,13 +44,13 @@ class Psr4Sniff implements Sniff
 
         $this->normalizeExcluded();
 
-        if (!$this->psr4 || !is_array($this->psr4)) {
-            $this->checkFilenameOnly($file, $position, $className, $entityType);
+        if (!$this->psr4) {
+            $this->checkFilenameOnly($phpcsFile, $stackPtr, $className, $entityType);
 
             return;
         }
 
-        $this->checkPsr4($file, $position, $className, $entityType);
+        $this->checkPsr4($phpcsFile, $stackPtr, $className, $entityType);
     }
 
     /**
@@ -104,7 +89,7 @@ class Psr4Sniff implements Sniff
      */
     private function checkPsr4(File $file, int $position, string $className, string $entityType)
     {
-        list(, $namespace) = PhpcsHelpers::findNamespace($file, $position);
+        [, $namespace] = PhpcsHelpers::findNamespace($file, $position);
         $namespace = is_string($namespace) ? "{$namespace}\\" : '';
         $namespace = rtrim($namespace, '\\');
 
@@ -155,6 +140,14 @@ class Psr4Sniff implements Sniff
         );
     }
 
+    /**
+     * @param string $filePath
+     * @param string $baseNamespace
+     * @param string $namespace
+     * @param string $className
+     * @param string ...$folders
+     * @return bool
+     */
     private function checkPsr4Folders(
         string $filePath,
         string $baseNamespace,
@@ -193,14 +186,9 @@ class Psr4Sniff implements Sniff
      * @return void
      * @psalm-assert array<string> $this->exclude
      */
-    private function normalizeExcluded()
+    private function normalizeExcluded(): void
     {
         $excluded = $this->exclude;
-        if (!$excluded || !is_array($excluded)) {
-            $this->exclude = [];
-
-            return;
-        }
 
         $this->exclude = [];
         foreach ($excluded as $className) {

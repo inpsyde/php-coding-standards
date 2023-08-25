@@ -1,9 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-# -*- coding: utf-8 -*-
-/*
+/**
  * This file is part of the php-coding-standards package.
  *
  * (c) Inpsyde GmbH
@@ -12,9 +9,9 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Inpsyde\CodingStandard\Tests;
+declare(strict_types=1);
 
-use PHPUnit\Framework\Exception;
+namespace Inpsyde\CodingStandard\Tests;
 
 /**
  * @package php-coding-standards
@@ -22,11 +19,11 @@ use PHPUnit\Framework\Exception;
  */
 class FixtureContentParser
 {
-    const TOKEN_SNIFF = '@phpcsSniff';
-    const TOKEN_PROCESS_START = '@phpcsProcessFixtureStart';
-    const TOKEN_PROCESS_END = '@phpcsProcessFixtureEnd';
-    const TOKEN_PROPERTIES_START = '@phpcsSniffPropertiesStart';
-    const TOKEN_PROPERTIES_END = '@phpcsSniffPropertiesEnd';
+    public const TOKEN_SNIFF = '@phpcsSniff';
+    public const TOKEN_PROCESS_START = '@phpcsProcessFixtureStart';
+    public const TOKEN_PROCESS_END = '@phpcsProcessFixtureEnd';
+    public const TOKEN_PROPERTIES_START = '@phpcsSniffPropertiesStart';
+    public const TOKEN_PROPERTIES_END = '@phpcsSniffPropertiesEnd';
 
     /**
      * @param string $fixturePath
@@ -35,7 +32,7 @@ class FixtureContentParser
     public function parse(string $fixturePath): array
     {
         if (!file_exists($fixturePath) || !is_readable($fixturePath)) {
-            throw new Exception("Fixture file {$fixturePath} is not readable.");
+            throw new \Error("Fixture file {$fixturePath} is not readable.");
         }
 
         $accumulator = (object)[
@@ -55,55 +52,56 @@ class FixtureContentParser
             ],
         ];
 
-        // phpcs:disable VariableAnalysis
         foreach ($this->readFile($fixturePath) as $lineNum => $line) {
             $this->readLine($lineNum, $line, $accumulator);
         }
-        // phpcs:enable
 
         return $this->processResults($accumulator, $fixturePath);
     }
 
     /**
-     * @param \stdClass $accumulator
+     * @param object $accumulator
      * @param string $fixturePath
      * @return array
      */
-    private function processResults(\stdClass $accumulator, string $fixturePath): array
+    private function processResults(object $accumulator, string $fixturePath): array
     {
-        $results = [
-            $accumulator->sniff,
-            $accumulator->messages,
-            $accumulator->warnings,
-            $accumulator->errors,
-            $accumulator->properties->values,
-        ];
-
         if (!$accumulator->process->content) {
             return [
-                $this->checkSniffName(array_shift($results)),
-                new SniffMessages($results[1], $results[2], $results[0]),
+                $this->checkSniffName($accumulator->sniff),
+                new SniffMessages(
+                    $accumulator->warnings,
+                    $accumulator->errors,
+                    $accumulator->messages
+                ),
                 $accumulator->properties->values,
             ];
         }
 
         // phpcs:disable
         eval("\$cb = {$accumulator->process->content};");
-        /** @var callable $cb */
-        $results = $cb(...$results);
+        $params = [
+            $accumulator->sniff,
+            $accumulator->messages,
+            $accumulator->warnings,
+            $accumulator->errors,
+            $accumulator->properties->values,
+        ];
+        /** @var mixed $cb */
+        $results = is_callable($cb) ? $cb(...$params) : null;
         // phpcs:enable
 
+        $results = array_values(array_pad(is_array($results) ? $results : [], 5, null));
+        [$sniff, $messages, $warnings, $errors, $properties] = $results;
+
         if (
-            $accumulator->process->content
-            && !is_array($results)
-            || count($results) !== 5
-            || !is_string($results[0] ?? null)
-            || !is_array($results[1] ?? null)
-            || !is_array($results[2] ?? null)
-            || !is_array($results[3] ?? null)
-            || !is_array($results[4] ?? null)
+            !is_string($sniff)
+            || !is_array($messages)
+            || !is_array($warnings)
+            || !is_array($errors)
+            || !is_array($properties)
         ) {
-            throw new Exception(
+            throw new \Error(
                 sprintf(
                     "Process callback for fixture '%s' (lines #%s:#%s) returned invalid output.",
                     $fixturePath,
@@ -114,9 +112,9 @@ class FixtureContentParser
         }
 
         return [
-            $this->checkSniffName(array_shift($results)),
-            new SniffMessages($results[1], $results[2], $results[0]),
-            $results[3],
+            $this->checkSniffName($sniff),
+            new SniffMessages($warnings, $errors, $messages),
+            $properties,
         ];
     }
 
@@ -124,10 +122,10 @@ class FixtureContentParser
      * @param string|null $sniff
      * @return string
      */
-    private function checkSniffName(string $sniff = null): string
+    private function checkSniffName(?string $sniff): string
     {
         if ($sniff === null) {
-            throw new Exception("No sniff class found for the test.");
+            throw new \Error("No sniff class found for the test.");
         }
 
         static $regex;
@@ -137,7 +135,7 @@ class FixtureContentParser
         }
 
         if (!preg_match('~^' . $regex . '$~', $sniff)) {
-            throw new Exception("Invalid sniff name '{$sniff}'.");
+            throw new \Error("Invalid sniff name '{$sniff}'.");
         }
 
         return $sniff;
@@ -150,6 +148,10 @@ class FixtureContentParser
     private function readFile(string $file): \Generator
     {
         $handle = fopen($file, 'rb');
+        if ($handle === false) {
+            throw new \Error("Could not open '{$file}' for reading.");
+        }
+
         $lineNum = 1;
 
         $line = fgets($handle);
@@ -164,9 +166,9 @@ class FixtureContentParser
     /**
      * @param int $lineNum
      * @param string $line
-     * @param \stdClass $accumulator
+     * @param object $accumulator
      */
-    private function readLine(int $lineNum, string $line, \stdClass $accumulator)
+    private function readLine(int $lineNum, string $line, object $accumulator): void
     {
         if (
             !$this->readProcessLine($lineNum, $line, $accumulator)
@@ -180,10 +182,10 @@ class FixtureContentParser
     /**
      * @param int $lineNum
      * @param string $line
-     * @param \stdClass $accumulator
+     * @param object $accumulator
      * @return bool
      */
-    private function readProcessLine(int $lineNum, string $line, \stdClass $accumulator): bool
+    private function readProcessLine(int $lineNum, string $line, object $accumulator): bool
     {
         if ($accumulator->process->end !== false) {
             return false;
@@ -209,10 +211,10 @@ class FixtureContentParser
 
     /**
      * @param string $line
-     * @param \stdClass $accumulator
+     * @param object $accumulator
      * @return bool
      */
-    private function readSniffLine(string $line, \stdClass $accumulator): bool
+    private function readSniffLine(string $line, object $accumulator): bool
     {
         if ($accumulator->sniff) {
             return false;
@@ -234,10 +236,10 @@ class FixtureContentParser
     /**
      * @param int $lineNum
      * @param string $line
-     * @param \stdClass $accumulator
+     * @param object $accumulator
      * @return bool
      */
-    private function readPropertiesLine(int $lineNum, string $line, \stdClass $accumulator): bool
+    private function readPropertiesLine(int $lineNum, string $line, object $accumulator): bool
     {
         static $pattern;
         $pattern or $pattern = '~\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*=\s*([^;]+);~';
@@ -270,9 +272,9 @@ class FixtureContentParser
     /**
      * @param int $lineNum
      * @param string $line
-     * @param \stdClass $accumulator
+     * @param object $accumulator
      */
-    private function readTokenLine(int $lineNum, string $line, \stdClass $accumulator)
+    private function readTokenLine(int $lineNum, string $line, object $accumulator): void
     {
         static $pattern;
         if (!$pattern) {

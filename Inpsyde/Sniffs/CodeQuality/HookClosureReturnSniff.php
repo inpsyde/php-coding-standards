@@ -11,42 +11,34 @@ use PHP_CodeSniffer\Files\File;
 class HookClosureReturnSniff implements Sniff
 {
     /**
-     * @return array<string>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
+     * @return list<string>
      */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_CLOSURE];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
-        if (!PhpcsHelpers::isHookClosure($file, $position)) {
+        if (!PhpcsHelpers::isHookClosure($phpcsFile, $stackPtr)) {
             return;
         }
 
-        list($functionStart, $functionEnd) = PhpcsHelpers::functionBoundaries($file, $position);
+        [$functionStart, $functionEnd] = PhpcsHelpers::functionBoundaries($phpcsFile, $stackPtr);
         if ($functionStart < 0 || $functionEnd <= 0) {
             return;
         }
 
-        $returnData = PhpcsHelpers::returnsCountInfo($file, $position);
+        $returnData = PhpcsHelpers::returnsCountInfo($phpcsFile, $stackPtr);
         $nonVoidReturnCount = $returnData['nonEmpty'];
         $voidReturnCount = $returnData['void'];
         $nullReturnsCount = $returnData['null'];
@@ -54,18 +46,22 @@ class HookClosureReturnSniff implements Sniff
         // Allow a filter to return null on purpose
         $nonVoidReturnCount += $nullReturnsCount;
 
-        $isFilterClosure = PhpcsHelpers::isHookClosure($file, $position, true, false);
+        $isFilterClosure = PhpcsHelpers::isHookClosure($phpcsFile, $stackPtr, true, false);
 
         if ($isFilterClosure && (!$nonVoidReturnCount || $voidReturnCount)) {
-            $file->addError(
+            $phpcsFile->addError(
                 'No (or void) return from filter closure.',
-                $position,
+                $stackPtr,
                 'NoReturnFromFilter'
             );
         }
 
         if (!$isFilterClosure && $nonVoidReturnCount) {
-            $file->addError('Return value from action closure.', $position, 'ReturnFromAction');
+            $phpcsFile->addError(
+                'Return value from action closure.',
+                $stackPtr,
+                'ReturnFromAction'
+            );
         }
     }
 }

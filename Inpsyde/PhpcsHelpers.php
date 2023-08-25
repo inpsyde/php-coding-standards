@@ -119,13 +119,14 @@ class PhpcsHelpers
         $targetLevel = (int)$tokens[$position]['level'] - 1;
 
         foreach ($tokens[$position]['conditions'] as $condPosition => $condCode) {
+            assert(is_int($condPosition));
             $condLevel = (int)($tokens[$condPosition]['level'] ?? -1);
 
             if (
                 in_array($condCode, Tokens::$ooScopeTokens, true)
                 && ($condLevel === $targetLevel)
             ) {
-                return (int)$condPosition;
+                return $condPosition;
             }
         }
 
@@ -387,7 +388,7 @@ class PhpcsHelpers
         $normalizedTags = [];
         static $rand;
         $rand or $rand = bin2hex(random_bytes(3));
-        foreach ($tags as list($tagName, $tagContent)) {
+        foreach ($tags as [$tagName, $tagContent]) {
             empty($normalizedTags[$tagName]) and $normalizedTags[$tagName] = [];
             if (!$normalizeContent) {
                 $normalizedTags[$tagName][] = $tagContent;
@@ -433,7 +434,7 @@ class PhpcsHelpers
 
         $types = [];
         foreach ($params as $param) {
-            preg_match('~^([^$]+)\s*(\$(?:[^\s]+))~', trim($param), $matches);
+            preg_match('~^([^$]+)\s*(\$\S+)~', trim($param), $matches);
             if (empty($matches[1]) || empty($matches[2])) {
                 continue;
             }
@@ -461,7 +462,7 @@ class PhpcsHelpers
      */
     public static function functionBody(File $file, int $position): string
     {
-        list($start, $end) = static::functionBoundaries($file, $position);
+        [$start, $end] = static::functionBoundaries($file, $position);
         if ($start < 0 || $end < 0) {
             return '';
         }
@@ -470,7 +471,7 @@ class PhpcsHelpers
         $tokens = $file->getTokens();
         $body = '';
         for ($i = $start + 1; $i < $end; $i++) {
-            $body .= (string)$tokens[$i]['content'];
+            $body .= (string)($tokens[$i]['content'] ?? '');
         }
 
         return $body;
@@ -531,7 +532,7 @@ class PhpcsHelpers
     {
         $returnCount = ['nonEmpty' => 0, 'void' => 0, 'null' => 0, 'total' => 0];
 
-        list($start, $end) = self::functionBoundaries($file, $position);
+        [$start, $end] = self::functionBoundaries($file, $position);
         if ($start < 0 || $end <= 0) {
             return $returnCount;
         }
@@ -550,8 +551,8 @@ class PhpcsHelpers
 
         $pos = $start + 1;
         while ($pos < $end) {
-            list(, $innerFunctionEnd) = self::functionBoundaries($file, $pos);
-            list(, $innerClassEnd) = self::classBoundaries($file, $pos);
+            [, $innerFunctionEnd] = self::functionBoundaries($file, $pos);
+            [, $innerClassEnd] = self::classBoundaries($file, $pos);
             if ($innerFunctionEnd > 0 || $innerClassEnd > 0) {
                 $pos = ($innerFunctionEnd > 0) ? $innerFunctionEnd + 1 : $innerClassEnd + 1;
                 continue;
