@@ -12,46 +12,38 @@ use PHP_CodeSniffer\Util\Tokens;
 class ForbiddenPublicPropertySniff implements Sniff
 {
     /**
-     * @return array<int>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
+     * @return list<int>
      */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_VARIABLE];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
-        if (!PhpcsHelpers::variableIsProperty($file, $position)) {
+        if (!PhpcsHelpers::variableIsProperty($phpcsFile, $stackPtr)) {
             return;
         }
 
         // Skip sniff classes, they have public properties for configuration (unfortunately)
-        if ($this->isSniffClass($file, $position)) {
+        if ($this->isSniffClass($phpcsFile, $stackPtr)) {
             return;
         }
 
-        $scopeModifierToken = $this->propertyScopeModifier($file, $position);
+        $scopeModifierToken = $this->propertyScopeModifier($phpcsFile, $stackPtr);
         if ($scopeModifierToken['code'] === T_PUBLIC) {
-            $file->addError(
+            $phpcsFile->addError(
                 'Do not use public properties. Use method access instead.',
-                $position,
+                $stackPtr,
                 'Found'
             );
         }
@@ -87,7 +79,7 @@ class ForbiddenPublicPropertySniff implements Sniff
     /**
      * @param File $file
      * @param int $position
-     * @return array
+     * @return array<string, mixed>
      */
     private function propertyScopeModifier(File $file, int $position): array
     {

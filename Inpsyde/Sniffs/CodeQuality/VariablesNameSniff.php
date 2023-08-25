@@ -10,7 +10,7 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 
 class VariablesNameSniff implements Sniff
 {
-    const GLOBALS = [
+    public const GLOBALS = [
         '$_GET',
         '$_POST',
         '$_REQUEST',
@@ -22,7 +22,7 @@ class VariablesNameSniff implements Sniff
         '$GLOBALS',
     ];
 
-    const WP_GLOBALS = [
+    public const WP_GLOBALS = [
         '$current_user',
         '$is_iphone',
         '$is_chrome',
@@ -46,58 +46,35 @@ class VariablesNameSniff implements Sniff
         '$interim_login',
     ];
 
-    /**
-     * @var mixed
-     */
-    public $checkType = 'camelCase';
+    public string $checkType = 'camelCase';
+    public array $ignoredNames = [];
+    public bool $ignoreLocalVars = false;
+    public bool $ignoreProperties = false;
 
     /**
-     * @var mixed
+     * @return list<int>
      */
-    public $ignoredNames = [];
-
-    /**
-     * @var mixed
-     */
-    public $ignoreLocalVars = false;
-
-    /**
-     * @var mixed
-     */
-    public $ignoreProperties = false;
-
-    /**
-     * @return array<int>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
-     */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_VARIABLE];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
         $ignored = $this->allIgnored();
 
         /** @var array<int, array<string, mixed>> $tokens */
-        $tokens = $file->getTokens();
-        $name = (string)$tokens[$position]['content'];
+        $tokens = $phpcsFile->getTokens();
+        $name = (string)$tokens[$stackPtr]['content'];
 
         if (
             in_array($name, $ignored, true)
@@ -114,7 +91,7 @@ class VariablesNameSniff implements Sniff
             return;
         }
 
-        $isProperty = PhpcsHelpers::variableIsProperty($file, $position);
+        $isProperty = PhpcsHelpers::variableIsProperty($phpcsFile, $stackPtr);
 
         if (
             ($isProperty && $this->arePropertiesIgnored())
@@ -123,12 +100,12 @@ class VariablesNameSniff implements Sniff
             return;
         }
 
-        $file->addWarning(
+        $phpcsFile->addWarning(
             sprintf(
                 '"%s" should be used for variable names.',
                 $isCamelCase ? '$camelCase' : '$snake_case'
             ),
-            $position,
+            $stackPtr,
             $isCamelCase ? 'SnakeCaseVar' : 'CamelCaseVar'
         );
     }
@@ -138,10 +115,6 @@ class VariablesNameSniff implements Sniff
      */
     private function checkType(): string
     {
-        if (!is_string($this->checkType)) {
-            return 'camelCase';
-        }
-
         $type = strtolower(trim($this->checkType));
         if (in_array($type, ['camelcase', 'snake_case'], true)) {
             return $type === 'camelcase' ? 'camelCase' : 'snake_case';
@@ -192,17 +165,9 @@ class VariablesNameSniff implements Sniff
      */
     private function allIgnored(): array
     {
-        if (is_string($this->ignoredNames)) {
-            $this->ignoredNames = explode(',', $this->ignoredNames);
-        }
-
-        if (!is_array($this->ignoredNames)) {
-            $this->ignoredNames = [];
-        }
-
         $ignored = $this->ignoredNames;
 
-        /** @var array<string> $normalized */
+        /** @var list<string> $normalized */
         $normalized = [];
         foreach ($ignored as $name) {
             if (is_string($name)) {

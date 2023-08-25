@@ -11,53 +11,38 @@ use PHP_CodeSniffer\Util\Tokens;
 
 class PropertyPerClassLimitSniff implements Sniff
 {
-    /**
-     * @var mixed
-     */
-    public $maxCount = 10;
+    public int $maxCount = 10;
 
     /**
-     * @return array<int|string>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
+     * @return list<int|string>
      */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return array_values(Tokens::$ooScopeTokens);
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
-        is_numeric($this->maxCount) or $this->maxCount = 10;
-        $this->maxCount = (int)$this->maxCount;
-
-        $count = count(PhpcsHelpers::allPropertiesTokenPositions($file, $position));
+        $count = count(PhpcsHelpers::allPropertiesTokenPositions($phpcsFile, $stackPtr));
         if ($count <= $this->maxCount) {
             return;
         }
 
         $message = sprintf(
             '"%s" has too many properties: %d. Can be up to %d properties.',
-            PhpcsHelpers::tokenTypeName($file, $position),
+            PhpcsHelpers::tokenTypeName($phpcsFile, $stackPtr),
             $count,
             $this->maxCount
         );
 
-        $file->addWarning($message, $position, 'TooManyProperties');
+        $phpcsFile->addWarning($message, $stackPtr, 'TooManyProperties');
     }
 }

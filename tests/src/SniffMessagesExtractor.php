@@ -1,9 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-# -*- coding: utf-8 -*-
-/*
+/**
  * This file is part of the php-coding-standards package.
  *
  * (c) Inpsyde GmbH
@@ -11,6 +8,8 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace Inpsyde\CodingStandard\Tests;
 
@@ -22,10 +21,7 @@ use PHP_CodeSniffer\Files\File;
  */
 class SniffMessagesExtractor
 {
-    /**
-     * @var File
-     */
-    private $file;
+    private File $file;
 
     /**
      * @param File $file
@@ -41,7 +37,7 @@ class SniffMessagesExtractor
     public function extractMessages(): SniffMessages
     {
         $this->file->process();
-        list($warnings, $errors) = $this->normalize(
+        [$warnings, $errors] = $this->normalize(
             $this->file->getWarnings(),
             $this->file->getErrors()
         );

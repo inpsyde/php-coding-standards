@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
 <psalm
+    errorLevel="1"
     autoloader="./.psalm/autoloader.php"
     useDocblockPropertyTypes="true"
     usePhpDocMethodsWithoutMagicCall="true"
     strictBinaryOperands="true"
     ignoreInternalFunctionFalseReturn="false"
     ignoreInternalFunctionNullReturn="false"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="false"
     hideExternalErrors="true"
     allowNamedArgumentCalls="false"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -21,8 +24,5 @@
 
     <issueHandlers>
         <MixedAssignment errorLevel="suppress" />
-        <MixedArrayTypeCoercion errorLevel="suppress" />
-        <InvalidCast errorLevel="suppress" />
-        <ParamNameMismatch errorLevel="suppress" />
     </issueHandlers>
 </psalm>

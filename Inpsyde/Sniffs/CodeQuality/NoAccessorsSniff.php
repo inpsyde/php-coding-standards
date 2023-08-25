@@ -11,66 +11,51 @@ use PHP_CodeSniffer\Util\Tokens;
 
 class NoAccessorsSniff implements Sniff
 {
-    const ALLOWED_NAMES = [
+    public const ALLOWED_NAMES = [
         'getIterator',
         'getInnerIterator',
         'getChildren',
         'setUp',
     ];
 
-    /**
-     * @var bool
-     */
-    public $skipForPrivate = true;
+    public bool $skipForPrivate = true;
+    public bool $skipForProtected = false;
 
     /**
-     * @var bool
+     * @return list<int>
      */
-    public $skipForProtected = false;
-
-    /**
-     * @return array<int>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
-     */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_FUNCTION];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      * phpcs:disable Inpsyde.CodeQuality.FunctionLength
      * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
         // phpcs:enable Inpsyde.CodeQuality.FunctionLength
 
-        if (!PhpcsHelpers::functionIsMethod($file, $position)) {
+        if (!PhpcsHelpers::functionIsMethod($phpcsFile, $stackPtr)) {
             return;
         }
 
-        $functionName = $file->getDeclarationName($position);
+        $functionName = $phpcsFile->getDeclarationName($stackPtr);
         if (!$functionName || in_array($functionName, self::ALLOWED_NAMES, true)) {
             return;
         }
 
         if ($this->skipForPrivate || $this->skipForProtected) {
-            $modifierPointerPosition = $file->findPrevious(
+            $modifierPointerPosition = $phpcsFile->findPrevious(
                 [T_WHITESPACE, T_ABSTRACT],
-                $position - 1,
+                $stackPtr - 1,
                 null,
                 true,
                 null,
@@ -78,7 +63,7 @@ class NoAccessorsSniff implements Sniff
             );
 
             /** @var array<int, array<string, mixed>> $tokens */
-            $tokens = $file->getTokens();
+            $tokens = $phpcsFile->getTokens();
             $modifierPointer = $tokens[$modifierPointerPosition] ?? null;
             if (
                 $modifierPointer
@@ -102,22 +87,22 @@ class NoAccessorsSniff implements Sniff
         }
 
         if ($matches[1] === 'set') {
-            $file->addWarning(
+            $phpcsFile->addWarning(
                 'Setters are discouraged. Try to use immutable objects, constructor injection '
                 . 'and for objects that really needs changing state try behavior naming instead, '
                 . 'e.g. changeName() instead of setName().',
-                $position,
+                $stackPtr,
                 'NoSetter'
             );
 
             return;
         }
 
-        $file->addWarning(
+        $phpcsFile->addWarning(
             'Getters are discouraged. "Tell Don\'t Ask" principle should be applied if possible, '
             . 'and if getters are really needed consider naming methods after properties, '
             . 'e.g. id() instead of getId().',
-            $position,
+            $stackPtr,
             'NoGetter'
         );
     }

@@ -9,57 +9,31 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 
 class FunctionLengthSniff implements Sniff
 {
-    /**
-     * @var mixed
-     */
-    public $maxLength = 50;
+    public int $maxLength = 50;
+    public bool $ignoreDocBlocks = true;
+    public bool $ignoreComments = true;
+    public bool $ignoreBlankLines = true;
 
     /**
-     * @var mixed
+     * @return list<int>
      */
-    public $ignoreDocBlocks = true;
-
-    /**
-     * @var mixed
-     */
-    public $ignoreComments = true;
-
-    /**
-     * @var mixed
-     */
-    public $ignoreBlankLines = true;
-
-    /**
-     * @return array<int>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
-     */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_FUNCTION];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
-        is_numeric($this->maxLength) or $this->maxLength = 50;
-        $this->maxLength = (int)$this->maxLength;
-
-        $length = $this->structureLinesCount($file, $position);
+        $length = $this->structureLinesCount($phpcsFile, $stackPtr);
         if ($length <= $this->maxLength) {
             return;
         }
@@ -84,7 +58,7 @@ class FunctionLengthSniff implements Sniff
             $this->maxLength
         );
 
-        $file->addError($error, $position, 'TooLong');
+        $phpcsFile->addError($error, $stackPtr, 'TooLong');
     }
 
     /**
@@ -200,7 +174,7 @@ class FunctionLengthSniff implements Sniff
     /**
      * @return void
      */
-    private function normalizeIgnoreFlags()
+    private function normalizeIgnoreFlags(): void
     {
         $flags = [
             'ignoreBlankLines',
