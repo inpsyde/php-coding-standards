@@ -52,12 +52,13 @@ class ArgumentTypeDeclarationSniff implements Sniff
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
         // phpcs:enable Generic.Metrics.CyclomaticComplexity
 
-        if ($this->shouldIgnore($phpcsFile, $stackPtr)) {
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $phpcsFile->getTokens();
+
+        if ($this->shouldIgnore($phpcsFile, $stackPtr, $tokens)) {
             return;
         }
 
-        /** @var array<int, array<string, mixed>> $tokens */
-        $tokens = $phpcsFile->getTokens();
         $paramsStart = (int)($tokens[$stackPtr]['parenthesis_opener'] ?? 0);
         $paramsEnd = (int)($tokens[$stackPtr]['parenthesis_closer'] ?? 0);
 
@@ -91,15 +92,17 @@ class ArgumentTypeDeclarationSniff implements Sniff
     /**
      * @param File $phpcsFile
      * @param int $stackPtr
+     * @param array<int, array<string, mixed>> $tokens
      * @return bool
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
      */
-    private function shouldIgnore(File $phpcsFile, $stackPtr): bool
+    private function shouldIgnore(File $phpcsFile, $stackPtr, array $tokens): bool
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
 
-        $name = $phpcsFile->getDeclarationName($stackPtr);
+        $tokenCode = $tokens[$stackPtr]['code'] ?? '';
+        $name = ($tokenCode !== T_FN) ? ($phpcsFile->getDeclarationName($stackPtr) ?: '') : '';
 
         return PhpcsHelpers::functionIsArrayAccess($phpcsFile, $stackPtr)
             || PhpcsHelpers::isHookClosure($phpcsFile, $stackPtr)
