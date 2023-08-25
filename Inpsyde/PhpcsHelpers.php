@@ -540,13 +540,8 @@ class PhpcsHelpers
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
-        if (T_FN === $tokens[$position]['code'] ?? null) {
-            return [
-                'nonEmpty' => 1,
-                'void' => 0,
-                'null' => 0,
-                'total' => 1,
-            ];
+        if (T_FN === ($tokens[$position]['code'] ?? null)) {
+            return ['nonEmpty' => 1, 'void' => 0, 'null' => 0, 'total' => 1];
         }
 
         $pos = $start + 1;
