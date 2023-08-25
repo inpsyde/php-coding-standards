@@ -198,6 +198,7 @@ class FixturesTest extends TestCase
         $sniffName = str_replace('.', DIRECTORY_SEPARATOR, $sniffName) . 'Sniff';
         $sniffFile = getenv('SNIFFS_PATH') . DIRECTORY_SEPARATOR . "{$sniffName}.php";
         if (!file_exists($sniffFile) || !is_readable($sniffFile)) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             throw new Exception("Non-existent of unreadable sniff file '$sniffFile' found.");
         }
 

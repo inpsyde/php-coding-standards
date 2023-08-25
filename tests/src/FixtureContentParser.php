@@ -35,6 +35,7 @@ class FixtureContentParser
     public function parse(string $fixturePath): array
     {
         if (!file_exists($fixturePath) || !is_readable($fixturePath)) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             throw new Exception("Fixture file {$fixturePath} is not readable.");
         }
 
@@ -104,12 +105,14 @@ class FixtureContentParser
             || !is_array($results[4] ?? null)
         ) {
             throw new Exception(
+                // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
                 sprintf(
                     "Process callback for fixture '%s' (lines #%s:#%s) returned invalid output.",
                     $fixturePath,
                     $accumulator->process->start,
                     $accumulator->process->end
                 )
+                // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
             );
         }
 
@@ -137,6 +140,7 @@ class FixtureContentParser
         }
 
         if (!preg_match('~^' . $regex . '$~', $sniff)) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             throw new Exception("Invalid sniff name '{$sniff}'.");
         }
 
