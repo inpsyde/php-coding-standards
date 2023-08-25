@@ -342,7 +342,7 @@ class PhpcsHelpers
 
         if (
             !array_key_exists($position, $tokens)
-            || !in_array($tokens[$position]['code'], [T_FUNCTION, T_CLOSURE], true)
+            || !in_array($tokens[$position]['code'], [T_FUNCTION, T_CLOSURE, T_FN], true)
         ) {
             return [];
         }
@@ -480,7 +480,7 @@ class PhpcsHelpers
     /**
      * @param File $file
      * @param int $position
-     * @return array{int, int}
+     * @return list{int, int}
      */
     public static function functionBoundaries(File $file, int $position): array
     {
@@ -491,19 +491,13 @@ class PhpcsHelpers
             return [-1, -1];
         }
 
-        $functionStart = (int)($tokens[$position]['scope_opener'] ?? 0);
-        $functionEnd = (int)($tokens[$position]['scope_closer'] ?? 0);
-        if ($functionStart <= 0 || $functionEnd <= 0 || $functionStart >= ($functionEnd - 1)) {
-            return [-1, -1];
-        }
-
-        return [$functionStart, $functionEnd];
+        return static::boundaries($tokens, $position);
     }
 
     /**
      * @param File $file
      * @param int $position
-     * @return array{int, int}
+     * @return list{int, int}
      */
     public static function classBoundaries(File $file, int $position): array
     {
@@ -514,13 +508,7 @@ class PhpcsHelpers
             return [-1, -1];
         }
 
-        $start = (int)($tokens[$position]['scope_opener'] ?? 0);
-        $end = (int)($tokens[$position]['scope_closer'] ?? 0);
-        if ($start <= 0 || $end <= 0 || $start >= ($end - 1)) {
-            return [-1, -1];
-        }
-
-        return [$start, $end];
+        return static::boundaries($tokens, $position);
     }
 
     /**
@@ -727,5 +715,21 @@ class PhpcsHelpers
         }
 
         return false;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $tokens
+     * @param int $position
+     * @return list{int, int}
+     */
+    private static function boundaries(array $tokens, int $position): array
+    {
+        $start = (int)($tokens[$position]['scope_opener'] ?? 0);
+        $end = (int)($tokens[$position]['scope_closer'] ?? 0);
+        if ($start <= 0 || $end <= 0 || $start >= ($end - 1)) {
+            return [-1, -1];
+        }
+
+        return [$start, $end];
     }
 }

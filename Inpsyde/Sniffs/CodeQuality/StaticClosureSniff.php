@@ -11,11 +11,11 @@ use PHP_CodeSniffer\Files\File;
 class StaticClosureSniff implements Sniff
 {
     /**
-     * @return list<string>
+     * @return list<int|string>
      */
     public function register(): array
     {
-        return [T_CLOSURE];
+        return [T_CLOSURE, T_FN];
     }
 
     /**

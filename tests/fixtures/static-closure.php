@@ -32,6 +32,10 @@ function () {
     return $foo;
 };
 
+fn() => $this;
+
+static fn() => 'Foo';
+
 static function () {
     return 'Foo';
 };
@@ -60,6 +64,8 @@ class Foo {
             return 'Foo';
         };
 
+        $a = fn () => 'x'; // @phpcsWarningOnThisLine
+
         return $a;
     }
 
@@ -80,5 +86,13 @@ class Foo {
         function () {
             return 'Foo';
         };
+
+        /** @bound */
+        fn() => 'Foo';
+
+        fn() => $this;
     }
 }
+
+add_filter('x', fn() => 'y'); // @phpcsWarningOnThisLine
+add_filter('x', static fn() => 'y');
