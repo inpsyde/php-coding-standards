@@ -11,7 +11,6 @@
     -->
     <rule ref="PSR12">
         <exclude name="Generic.Files.LineLength.TooLong"/>
-        <exclude name="PSR12.Properties.ConstantVisibility"/>
     </rule>
 
     <!--

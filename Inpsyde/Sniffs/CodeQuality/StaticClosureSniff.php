@@ -11,38 +11,30 @@ use PHP_CodeSniffer\Files\File;
 class StaticClosureSniff implements Sniff
 {
     /**
-     * @return array<string>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
+     * @return list<int|string>
      */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
-        return [T_CLOSURE];
+        return [T_CLOSURE, T_FN];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
-        list($functionStart, $functionEnd) = PhpcsHelpers::functionBoundaries($file, $position);
+        [$functionStart, $functionEnd] = PhpcsHelpers::functionBoundaries($phpcsFile, $stackPtr);
         if ($functionStart < 0 || $functionEnd <= 0) {
             return;
         }
 
-        $isStatic = $file->findPrevious(T_STATIC, $position, $position - 3, false, null, true);
+        $isStatic = $phpcsFile->findPrevious(T_STATIC, $stackPtr, $stackPtr - 3, false, null, true);
         if ($isStatic) {
             return;
         }
@@ -51,7 +43,7 @@ class StaticClosureSniff implements Sniff
         $i = $functionStart + 1;
 
         /** @var array<int, array<string, mixed>> $tokens */
-        $tokens = $file->getTokens();
+        $tokens = $phpcsFile->getTokens();
         while (!$thisFound && ($i < $functionEnd)) {
             $token = $tokens[$i];
             $thisFound = ($token['code'] === T_VARIABLE) && ($token['content'] === '$this');
@@ -62,23 +54,23 @@ class StaticClosureSniff implements Sniff
             return;
         }
 
-        $boundDoc = PhpcsHelpers::functionDocBlockTag('@bound', $file, $position);
+        $boundDoc = PhpcsHelpers::functionDocBlockTag('@bound', $phpcsFile, $stackPtr);
         if ($boundDoc) {
             return;
         }
 
-        $varDoc = PhpcsHelpers::functionDocBlockTag('@var', $file, $position);
+        $varDoc = PhpcsHelpers::functionDocBlockTag('@var', $phpcsFile, $stackPtr);
         foreach ($varDoc as $content) {
             if (preg_match('~(?:^|\s+)\$this(?:$|\s+)~', $content)) {
                 return;
             }
         }
 
-        $line = (int)$tokens[$position]['line'];
+        $line = (int)$tokens[$stackPtr]['line'];
         $message = sprintf('Closure found at line %d could be static.', $line);
 
-        if ($file->addFixableWarning($message, $position, 'PossiblyStaticClosure')) {
-            $this->fix($position, $file);
+        if ($phpcsFile->addFixableWarning($message, $stackPtr, 'PossiblyStaticClosure')) {
+            $this->fix($stackPtr, $phpcsFile);
         }
     }
 

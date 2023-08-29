@@ -18,16 +18,10 @@ use PHP_CodeSniffer\Standards\Generic\Sniffs\PHP as Generic;
 class DisallowShortOpenTagSniff extends Generic\DisallowShortOpenTagSniff
 {
     /**
-     * @return array<int>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
+     * @return list<int>
      */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_OPEN_TAG, T_INLINE_HTML];
     }
 }

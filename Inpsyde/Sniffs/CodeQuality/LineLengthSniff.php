@@ -10,7 +10,7 @@ use PHP_CodeSniffer\Util\Tokens;
 
 class LineLengthSniff implements Sniff
 {
-    const I18N_FUNCTIONS = [
+    public const I18N_FUNCTIONS = [
         '__',
         '_e',
         '_x',
@@ -29,58 +29,47 @@ class LineLengthSniff implements Sniff
 
     /**
      * The limit that the length of a line should not exceed.
-     *
-     * @var integer
      */
-    public $lineLimit = 100;
+    public int $lineLimit = 100;
 
     /**
-     * @return array<int>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
+     * @return list<int>
      */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_OPEN_TAG];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return int
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): int
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
-        $longLinesData = $this->collectLongLinesData($file, max(1, $position));
+        $longLinesData = $this->collectLongLinesData($phpcsFile, max(1, $stackPtr));
         if (!$longLinesData) {
-            return $file->numTokens + 1;
+            return $phpcsFile->numTokens + 1;
         }
 
-        foreach ($longLinesData as $lineNum => list($length, $position)) {
-            $file->addWarning(
+        foreach ($longLinesData as $lineNum => [$length, $stackPtr]) {
+            $phpcsFile->addWarning(
                 sprintf(
                     'Line %d exceeds %s characters; contains %s characters.',
                     $lineNum,
                     $this->lineLimit,
                     $length
                 ),
-                $position,
+                $stackPtr,
                 'TooLong'
             );
         }
-        // phpcs:enable
 
-        return $file->numTokens + 1;
+        return $phpcsFile->numTokens + 1;
     }
 
     /**
@@ -93,31 +82,27 @@ class LineLengthSniff implements Sniff
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
-        /** @var array<
-         *  int,
-         *  array{length:int, nonEmptyLength:int, start:int, end:int|null}
-         * > $linesData
-         */
-        $linesData = [];
+        /** @var array<int, array{length:int, nonEmptyLength:int, start:int, end:int|null}> $data */
+        $data = [];
         /** @var int|null $lastLine */
         $lastLine = null;
         for ($i = $start; $i < $file->numTokens; $i++) {
             // Still processing previous line: increment length and continue.
             if ($lastLine && ($tokens[$i]['line'] === $lastLine)) {
                 $content = (string)$tokens[$i]['content'];
-                $linesData[$lastLine]['length'] += strlen($content);
-                $linesData[$lastLine]['nonEmptyLength'] += strlen(trim($content));
+                $data[$lastLine]['length'] += strlen($content);
+                $data[$lastLine]['nonEmptyLength'] += strlen(trim($content));
                 continue;
             }
 
             // A new line started: let's set "end" for the previous line (if this isn't 1st line)
-            if ($lastLine && isset($linesData[$lastLine])) {
-                $linesData[$lastLine]['end'] = $i - 1;
+            if ($lastLine && isset($data[$lastLine])) {
+                $data[$lastLine]['end'] = $i - 1;
             }
 
             $lastLine = (int)$tokens[$i]['line'];
             $content = (string)$tokens[$i]['content'];
-            $linesData[$lastLine] = [
+            $data[$lastLine] = [
                 'length' => strlen($content),
                 'nonEmptyLength' => strlen(trim($content)),
                 'start' => $i,
@@ -126,12 +111,12 @@ class LineLengthSniff implements Sniff
         }
 
         // We still have to set the "end" for last file line.
-        if ($lastLine && ($linesData[$lastLine]['end'] === null)) {
-            $linesData[$lastLine]['end'] = $i - 1;
+        if ($lastLine && ($data[$lastLine]['end'] === null)) {
+            $data[$lastLine]['end'] = $i - 1;
         }
 
         $longLines = [];
-        foreach ($linesData as $lineNumber => $lineData) {
+        foreach ($data as $lineNumber => $lineData) {
             $lineEnd = $lineData['end'] ?? $lineData['start'];
             if (
                 (($lineData['length'] - $this->lineLimit) <= 1) // 1 char of tolerance
@@ -228,7 +213,7 @@ class LineLengthSniff implements Sniff
         }
 
         // Instead of counting single _word_ length we will count single _attribute_ length
-        preg_match_all('~[^\s]+\s*=\s*["\'][^"\']*["\']~', $content, $matches);
+        preg_match_all('~\S+\s*=\s*["\'][^"\']*["\']~', $content, $matches);
         /** @var non-empty-array<int, array> $matches */
         $attributesNumber = count($matches[0]);
 

@@ -91,6 +91,8 @@ function i(string $foo, ArrayObject ...$bar)
 
 }
 
+add_action('foo', fn ($foo) => 'x');
+
 add_action(
     'foo',
     function ($foo) {
@@ -117,6 +119,8 @@ add_filter(
     }
 );
 
+add_filter('foo', fn ($foo) => 'x');
+
 array_map(
     function ($foo) { // @phpcsWarningOnThisLine
 
@@ -128,6 +132,23 @@ function ()
 {
 
 }
+
+fn() => true;
+
+// @phpcsWarningOnNextLine
+fn($foo) => $foo*2;
+
+fn(int $foo) => $foo*2;
+
+// @phpcsWarningOnNextLine
+fn(int $foo, $bar) => true;
+
+fn(int $foo, string $bar) => true;
+
+// @phpcsWarningOnNextLine
+fn(...$foo) => true;
+
+fn(int ...$foo) => true;
 
 // @phpcsWarningOnNextLine
 function ($foo)
@@ -277,6 +298,21 @@ class ArgumentTypeDeclarationSniffTestFixture
 
             }
         }
+    }
+
+    // @phpcsWarningOnNextLine
+    public function d(...$foo) {
+
+    }
+
+    // @phpcsWarningOnNextLine
+    public function e(...$foo) {
+        $bar = [1, 2, 3];
+
+        // @phpcsWarningOnNextLine
+        return function (...$bar) {
+
+        };
     }
 
     public function buildCallback(): callable {

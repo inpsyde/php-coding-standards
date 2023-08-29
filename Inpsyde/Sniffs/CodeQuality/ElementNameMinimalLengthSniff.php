@@ -10,15 +10,12 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 
 class ElementNameMinimalLengthSniff implements Sniff
 {
-    /**
-     * @var int
-     */
-    public $minLength = 3;
+    public int $minLength = 3;
 
     /**
-     * @var string[]
+     * @var list<string>
      */
-    public $allowedShortNames = [
+    public array $allowedShortNames = [
         'as',
         'at',
         'be',
@@ -45,46 +42,36 @@ class ElementNameMinimalLengthSniff implements Sniff
         'wp',
     ];
 
-    /**
-     * @var string[]
-     */
-    public $additionalAllowedNames = [];
+    /** @var list<string> */
+    public array $additionalAllowedNames = [];
 
     /**
-     * @return array<int>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
+     * @return list<int>
      */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_CLASS, T_TRAIT, T_INTERFACE, T_CONST, T_FUNCTION, T_VARIABLE];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
-        $elementName = PhpcsHelpers::tokenName($file, $position);
+        $elementName = PhpcsHelpers::tokenName($phpcsFile, $stackPtr);
         $elementNameLength = mb_strlen($elementName);
 
         if ($this->shouldBeSkipped($elementNameLength, $elementName)) {
             return;
         }
 
-        $typeName = PhpcsHelpers::tokenTypeName($file, $position);
+        $typeName = PhpcsHelpers::tokenTypeName($phpcsFile, $stackPtr);
         $message = sprintf(
             '%s name "%s" is only %d chars long. Must be at least %d.',
             $typeName,
@@ -93,7 +80,7 @@ class ElementNameMinimalLengthSniff implements Sniff
             $this->minLength
         );
 
-        $file->addError($message, $position, 'TooShort');
+        $phpcsFile->addError($message, $stackPtr, 'TooShort');
     }
 
     /**

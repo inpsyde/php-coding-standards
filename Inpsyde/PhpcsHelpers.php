@@ -119,13 +119,14 @@ class PhpcsHelpers
         $targetLevel = (int)$tokens[$position]['level'] - 1;
 
         foreach ($tokens[$position]['conditions'] as $condPosition => $condCode) {
+            assert(is_int($condPosition));
             $condLevel = (int)($tokens[$condPosition]['level'] ?? -1);
 
             if (
                 in_array($condCode, Tokens::$ooScopeTokens, true)
                 && ($condLevel === $targetLevel)
             ) {
-                return (int)$condPosition;
+                return $condPosition;
             }
         }
 
@@ -288,7 +289,7 @@ class PhpcsHelpers
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
-        if (($tokens[$position]['code'] ?? '') !== T_CLOSURE) {
+        if (!in_array(($tokens[$position]['code'] ?? ''), [T_CLOSURE, T_FN], true)) {
             return false;
         }
 
@@ -341,7 +342,7 @@ class PhpcsHelpers
 
         if (
             !array_key_exists($position, $tokens)
-            || !in_array($tokens[$position]['code'], [T_FUNCTION, T_CLOSURE], true)
+            || !in_array($tokens[$position]['code'], [T_FUNCTION, T_CLOSURE, T_FN], true)
         ) {
             return [];
         }
@@ -387,7 +388,7 @@ class PhpcsHelpers
         $normalizedTags = [];
         static $rand;
         $rand or $rand = bin2hex(random_bytes(3));
-        foreach ($tags as list($tagName, $tagContent)) {
+        foreach ($tags as [$tagName, $tagContent]) {
             empty($normalizedTags[$tagName]) and $normalizedTags[$tagName] = [];
             if (!$normalizeContent) {
                 $normalizedTags[$tagName][] = $tagContent;
@@ -433,7 +434,7 @@ class PhpcsHelpers
 
         $types = [];
         foreach ($params as $param) {
-            preg_match('~^([^$]+)\s*(\$(?:[^\s]+))~', trim($param), $matches);
+            preg_match('~^([^$]+)\s*(\$\S+)~', trim($param), $matches);
             if (empty($matches[1]) || empty($matches[2])) {
                 continue;
             }
@@ -461,7 +462,7 @@ class PhpcsHelpers
      */
     public static function functionBody(File $file, int $position): string
     {
-        list($start, $end) = static::functionBoundaries($file, $position);
+        [$start, $end] = static::functionBoundaries($file, $position);
         if ($start < 0 || $end < 0) {
             return '';
         }
@@ -470,7 +471,7 @@ class PhpcsHelpers
         $tokens = $file->getTokens();
         $body = '';
         for ($i = $start + 1; $i < $end; $i++) {
-            $body .= (string)$tokens[$i]['content'];
+            $body .= (string)($tokens[$i]['content'] ?? '');
         }
 
         return $body;
@@ -479,30 +480,24 @@ class PhpcsHelpers
     /**
      * @param File $file
      * @param int $position
-     * @return array{int, int}
+     * @return list{int, int}
      */
     public static function functionBoundaries(File $file, int $position): array
     {
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
-        if (!in_array(($tokens[$position]['code'] ?? null), [T_FUNCTION, T_CLOSURE], true)) {
+        if (!in_array(($tokens[$position]['code'] ?? null), [T_FUNCTION, T_CLOSURE, T_FN], true)) {
             return [-1, -1];
         }
 
-        $functionStart = (int)($tokens[$position]['scope_opener'] ?? 0);
-        $functionEnd = (int)($tokens[$position]['scope_closer'] ?? 0);
-        if ($functionStart <= 0 || $functionEnd <= 0 || $functionStart >= ($functionEnd - 1)) {
-            return [-1, -1];
-        }
-
-        return [$functionStart, $functionEnd];
+        return static::boundaries($tokens, $position);
     }
 
     /**
      * @param File $file
      * @param int $position
-     * @return array{int, int}
+     * @return list{int, int}
      */
     public static function classBoundaries(File $file, int $position): array
     {
@@ -513,13 +508,7 @@ class PhpcsHelpers
             return [-1, -1];
         }
 
-        $start = (int)($tokens[$position]['scope_opener'] ?? 0);
-        $end = (int)($tokens[$position]['scope_closer'] ?? 0);
-        if ($start <= 0 || $end <= 0 || $start >= ($end - 1)) {
-            return [-1, -1];
-        }
-
-        return [$start, $end];
+        return static::boundaries($tokens, $position);
     }
 
     /**
@@ -531,7 +520,7 @@ class PhpcsHelpers
     {
         $returnCount = ['nonEmpty' => 0, 'void' => 0, 'null' => 0, 'total' => 0];
 
-        list($start, $end) = self::functionBoundaries($file, $position);
+        [$start, $end] = self::functionBoundaries($file, $position);
         if ($start < 0 || $end <= 0) {
             return $returnCount;
         }
@@ -539,10 +528,14 @@ class PhpcsHelpers
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
+        if (T_FN === ($tokens[$position]['code'] ?? null)) {
+            return ['nonEmpty' => 1, 'void' => 0, 'null' => 0, 'total' => 1];
+        }
+
         $pos = $start + 1;
         while ($pos < $end) {
-            list(, $innerFunctionEnd) = self::functionBoundaries($file, $pos);
-            list(, $innerClassEnd) = self::classBoundaries($file, $pos);
+            [, $innerFunctionEnd] = self::functionBoundaries($file, $pos);
+            [, $innerClassEnd] = self::classBoundaries($file, $pos);
             if ($innerFunctionEnd > 0 || $innerClassEnd > 0) {
                 $pos = ($innerFunctionEnd > 0) ? $innerFunctionEnd + 1 : $innerClassEnd + 1;
                 continue;
@@ -722,5 +715,21 @@ class PhpcsHelpers
         }
 
         return false;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $tokens
+     * @param int $position
+     * @return list{int, int}
+     */
+    private static function boundaries(array $tokens, int $position): array
+    {
+        $start = (int)($tokens[$position]['scope_opener'] ?? 0);
+        $end = (int)($tokens[$position]['scope_closer'] ?? 0);
+        if ($start <= 0 || $end <= 0 || $start >= ($end - 1)) {
+            return [-1, -1];
+        }
+
+        return [$start, $end];
     }
 }

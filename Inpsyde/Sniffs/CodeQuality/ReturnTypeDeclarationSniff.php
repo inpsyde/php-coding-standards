@@ -10,14 +10,14 @@ use PHP_CodeSniffer\Files\File;
 
 class ReturnTypeDeclarationSniff implements Sniff
 {
-    const TYPE_CODES = [
+    public const TYPE_CODES = [
         T_STRING,
         T_ARRAY_HINT,
         T_CALLABLE,
         T_SELF,
     ];
 
-    const METHODS_WHITELIST = [
+    public const METHODS_WHITELIST = [
         'serialize',
         'jsonSerialize',
         'getIterator',
@@ -30,63 +30,59 @@ class ReturnTypeDeclarationSniff implements Sniff
     ];
 
     /**
-     * @return array<int|string>
-     *
-     * phpcs:disable Inpsyde.CodeQuality
+     * @return list<int|string>
      */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality
-
-        return [T_FUNCTION, T_CLOSURE];
+        return [T_FUNCTION, T_CLOSURE, T_FN];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
-     * phpcs:disable Inpsyde.CodeQuality
+     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
-        //  phpcs:enable Inpsyde.CodeQuality
+        //  phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
 
         if (
-            PhpcsHelpers::functionIsArrayAccess($file, $position)
-            || PhpcsHelpers::isUntypedPsrMethod($file, $position)
+            PhpcsHelpers::functionIsArrayAccess($phpcsFile, $stackPtr)
+            || PhpcsHelpers::isUntypedPsrMethod($phpcsFile, $stackPtr)
         ) {
             return;
         }
 
-        list($functionStart, $functionEnd) = PhpcsHelpers::functionBoundaries($file, $position);
+        [$functionStart, $functionEnd] = PhpcsHelpers::functionBoundaries($phpcsFile, $stackPtr);
 
         if (($functionStart < 0) || ($functionEnd <= 0)) {
             return;
         }
 
-        list(
+        [
             $hasNonVoidReturnType,
             $hasVoidReturnType,
             $hasNoReturnType,
             $hasNullableReturn,
             $returnsGenerator
-            ) = $this->returnTypeInfo($file, $position);
+        ] = $this->returnTypeInfo($phpcsFile, $stackPtr);
 
-        $returnData = PhpcsHelpers::returnsCountInfo($file, $position);
+        $returnData = PhpcsHelpers::returnsCountInfo($phpcsFile, $stackPtr);
         $nonVoidReturnCount = $returnData['nonEmpty'];
         $voidReturnCount = $returnData['void'];
         $nullReturnCount = $returnData['null'];
 
-        $yieldCount = $this->countYield($functionStart, $functionEnd, $file);
+        $yieldCount = $this->countYield($functionStart, $functionEnd, $phpcsFile);
 
         if ($yieldCount || $returnsGenerator) {
             $this->maybeGeneratorErrors(
                 $yieldCount,
                 $returnsGenerator,
                 $nonVoidReturnCount,
-                $file,
-                $position
+                $phpcsFile,
+                $stackPtr
             );
 
             return;
@@ -100,8 +96,8 @@ class ReturnTypeDeclarationSniff implements Sniff
             $nonVoidReturnCount,
             $nullReturnCount,
             $voidReturnCount,
-            $file,
-            $position
+            $phpcsFile,
+            $stackPtr
         );
     }
 
@@ -129,7 +125,7 @@ class ReturnTypeDeclarationSniff implements Sniff
         int $voidReturnCount,
         File $file,
         int $position
-    ) {
+    ): void {
 
         $hasNullableReturn
             ? $nonVoidReturnCount += $nullReturnCount
@@ -170,7 +166,9 @@ class ReturnTypeDeclarationSniff implements Sniff
             return;
         }
 
-        $name = (string)$file->getDeclarationName($position);
+        $tokenCode = $file->getTokens()[$position]['code'] ?? '';
+        $name = ($tokenCode !== T_FN) ? ($file->getDeclarationName($position) ?: '') : '';
+
         if (
             PhpcsHelpers::functionIsMethod($file, $position)
             && (in_array($name, self::METHODS_WHITELIST, true) || strpos($name, '__') === 0)
@@ -197,7 +195,7 @@ class ReturnTypeDeclarationSniff implements Sniff
         int $nonVoidReturnCount,
         File $file,
         int $position
-    ) {
+    ): void {
 
         if ($nonVoidReturnCount > 1) {
             $file->addWarning(
@@ -287,16 +285,13 @@ class ReturnTypeDeclarationSniff implements Sniff
             return [false, false, true, false, false];
         }
 
-        $start = (int)((int)($tokens[$functionPosition]['parenthesis_closer']) + 1);
+        $start = (int)($tokens[$functionPosition]['parenthesis_closer']) + 1;
         $end = (int)($tokens[$functionPosition]['scope_opener']);
         $hasNullable = false;
         for ($i = $start; $i < $end; $i++) {
             if ($tokens[$i]['code'] === T_NULLABLE) {
                 $hasNullable = true;
                 break;
-            }
-            if ($tokens[$i]['code'] === T_WHITESPACE) {
-                continue;
             }
         }
 
@@ -361,8 +356,7 @@ class ReturnTypeDeclarationSniff implements Sniff
         $tokens = $file->getTokens();
         for ($i = ($functionStart + 1); $i < $functionEnd; $i++) {
             if ($tokens[$i]['code'] === T_CLOSURE) {
-                /** @psalm-suppress LoopInvalidation */
-                $i = (int)($tokens[$i]['scope_closer']);
+                $i = (int)($tokens[$i]['scope_closer'] ?? -1);
                 continue;
             }
             if ($tokens[$i]['code'] === T_YIELD || $tokens[$i]['code'] === T_YIELD_FROM) {

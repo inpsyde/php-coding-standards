@@ -1,0 +1,51 @@
+name: PHP Quality Assurance
+
+on:
+    push:
+        paths:
+            - '**workflows/quality-assurance-php.yml'
+            - '**.php'
+            - '**phpcs.xml.dist'
+            - '**phpunit.xml.dist'
+            - '**psalm.xml'
+    workflow_dispatch:
+        inputs:
+            jobs:
+                required: true
+                type: choice
+                default: 'Run all'
+                description: 'Choose jobs to run'
+                options:
+                    - 'Run all'
+                    - 'Run PHPCS only'
+                    - 'Run Psalm only'
+                    - 'Run lint only'
+                    - 'Run static analysis'
+                    - 'Run unit tests only'
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    lint-php:
+        uses: inpsyde/reusable-workflows/.github/workflows/lint-php.yml@main
+        if: ${{ (github.event_name != 'workflow_dispatch') || ((github.event.inputs.jobs == 'Run all') || (github.event.inputs.jobs == 'Run lint only') || (github.event.inputs.jobs == 'Run static analysis')) }}
+        with:
+            PHP_MATRIX: '["7.4", "8.0", "8.1", "8.2"]'
+            LINT_ARGS: '-e php --colors --show-deprecated ./Inpsyde'
+
+    coding-standards-analysis-php:
+        if: ${{ (github.event_name != 'workflow_dispatch') || ((github.event.inputs.jobs == 'Run all') || (github.event.inputs.jobs == 'Run PHPCS only') || (github.event.inputs.jobs == 'Run static analysis')) }}
+        uses: inpsyde/reusable-workflows/.github/workflows/coding-standards-php.yml@main
+
+    static-code-analysis-php:
+        if: ${{ (github.event_name != 'workflow_dispatch') || ((github.event.inputs.jobs == 'Run all') || (github.event.inputs.jobs == 'Run Psalm only') || (github.event.inputs.jobs == 'Run static analysis')) }}
+        uses: inpsyde/reusable-workflows/.github/workflows/static-analysis-php.yml@main
+
+    tests-unit-php:
+        if: ${{ (github.event_name != 'workflow_dispatch') || ((github.event.inputs.jobs == 'Run all') || (github.event.inputs.jobs == 'Run unit tests only')) }}
+        uses: inpsyde/reusable-workflows/.github/workflows/tests-unit-php.yml@main
+        with:
+            PHP_MATRIX: '["7.4", "8.0", "8.1", "8.2"]'
+            PHPUNIT_ARGS: '--no-coverage'

@@ -9,60 +9,41 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 
 class NestingLevelSniff implements Sniff
 {
-    /**
-     * @var mixed
-     */
-    public $warningLimit = 3;
+    public int $warningLimit = 3;
+    public int $errorLimit = 5;
+    public bool $ignoreTopLevelTryBlock = true;
 
     /**
-     * @var mixed
+     * @return list<int>
      */
-    public $errorLimit = 5;
-
-    /**
-     * @var mixed
-     */
-    public $ignoreTopLevelTryBlock = true;
-
-    /**
-     * @return array<int>
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
-     */
-    public function register()
+    public function register(): array
     {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
-
         return [T_FUNCTION];
     }
 
     /**
-     * @param File $file
-     * @param int $position
+     * @param File $phpcsFile
+     * @param int $stackPtr
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Inpsyde.CodeQuality.ReturnTypeDeclaration
      */
-    public function process(File $file, $position)
+    public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Inpsyde.CodeQuality.ReturnTypeDeclaration
 
         /** @var array<int, array<string, mixed>> $tokens */
-        $tokens = $file->getTokens();
+        $tokens = $phpcsFile->getTokens();
 
         // Ignore abstract methods.
-        if (isset($tokens[$position]['scope_opener']) === false) {
+        if (isset($tokens[$stackPtr]['scope_opener']) === false) {
             return;
         }
 
-        $start = (int)$tokens[$position]['scope_opener'];
-        $end = (int)$tokens[$position]['scope_closer'];
+        $start = (int)$tokens[$stackPtr]['scope_opener'];
+        $end = (int)$tokens[$stackPtr]['scope_closer'];
 
-        $baseLevel = (int)$tokens[$position]['level'];
+        $baseLevel = (int)$tokens[$stackPtr]['level'];
         $nestingLevel = 0;
         $inTry = false;
         $endTry = null;
@@ -90,7 +71,7 @@ class NestingLevelSniff implements Sniff
                 && ($tokens[$i]['code'] === T_CATCH || $tokens[$i]['code'] === T_FINALLY)
                 && $level === $tryTargetLevel
             ) {
-                $endTry = $this->endOfTryBlock($i, $file);
+                $endTry = $this->endOfTryBlock($i, $phpcsFile);
                 continue;
             }
 
@@ -106,16 +87,16 @@ class NestingLevelSniff implements Sniff
         // We subtract the nesting level of the function itself .
         $nestingLevel -= ($baseLevel + 1);
 
-        $this->maybeTrigger($nestingLevel, $file, $position);
+        $this->maybeTrigger($nestingLevel, $phpcsFile, $stackPtr);
     }
 
     /**
      * @param int $nestingLevel
-     * @param File $file
+     * @param File $phpcsFile
      * @param int $stackPtr
      * @return void
      */
-    private function maybeTrigger(int $nestingLevel, File $phpcsFile, int $stackPtr)
+    private function maybeTrigger(int $nestingLevel, File $phpcsFile, int $stackPtr): void
     {
         $isError = $nestingLevel >= $this->errorLimit;
         $isWarning = !$isError && ($nestingLevel >= $this->warningLimit);
