@@ -153,8 +153,8 @@
             <property type="boolean" name="ignoreNewlines" value="yes" />
         </properties>
     </rule>
-    <rule ref="Generic.Whitespace.LanguageConstructSpacing"/>
-    <rule ref="Generic.Whitespace.SpreadOperatorSpacingAfter"/>
+    <rule ref="Generic.WhiteSpace.LanguageConstructSpacing"/>
+    <rule ref="Generic.WhiteSpace.SpreadOperatorSpacingAfter"/>
     <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
     <rule ref="Squiz.PHP.CommentedOutCode">
         <properties>
