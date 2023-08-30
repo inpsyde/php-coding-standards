@@ -41,7 +41,6 @@ class DisableCallUserFuncSniff extends AbstractFunctionRestrictionsSniff
                 'functions' => [
                     'call_user_func',
                     'call_user_func_array',
-                    'suca',
                 ],
             ],
         ];
