@@ -15,7 +15,7 @@ $foo = [
 
 class Foo {
 
-    pribate function test() {
+    private function test() {
         // @phpcsErrorOnNextLine
         return call_user_func_array('strtolower', ['foo']);
     }
