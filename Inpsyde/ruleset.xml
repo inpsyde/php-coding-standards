@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="Inpsyde Coding Standard">
+<ruleset name="Inpsyde PHP Coding Standard">
 
     <description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
 
@@ -14,44 +14,21 @@
     </rule>
 
     <!--
-    Neutron standard are quality tools for PHP7 development from Automattic.
-    See https://github.com/Automattic/phpcs-neutron-standard
-    -->
-    <rule ref="NeutronStandard.AssignAlign.DisallowAssignAlign">
-        <type>warning</type>
-    </rule>
-    <rule ref="NeutronStandard.Functions.DisallowCallUserFunc">
-        <type>warning</type>
-    </rule>
-    <rule ref="NeutronStandard.Globals.DisallowGlobalFunctions">
-        <type>warning</type>
-    </rule>
-    <rule ref="NeutronStandard.MagicMethods.DisallowMagicSerialize">
-        <type>warning</type>
-    </rule>
-    <rule ref="NeutronStandard.StrictTypes.RequireStrictTypes">
-        <type>warning</type>
-    </rule>
-    <rule ref="NeutronStandard.Whitespace.DisallowMultipleNewlines">
-        <type>warning</type>
-    </rule>
-    <rule ref="NeutronStandard.Whitespace.RequireNewlineBetweenFunctions">
-        <type>warning</type>
-    </rule>
-
-    <!--
     Curated list of WordPress specific rules.
     See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
     -->
-    <rule ref="WordPress.Arrays.CommaAfterArrayItem"/>
-    <rule ref="WordPress.CodeAnalysis.AssignmentInCondition"/>
-    <rule ref="WordPress.CodeAnalysis.EmptyStatement"/>
+    <rule ref="WordPress.CodeAnalysis.AssignmentInTernaryCondition"/>
     <rule ref="WordPress.CodeAnalysis.EscapedNotTranslated"/>
     <rule ref="WordPress.DB.PreparedSQLPlaceholders"/>
     <rule ref="WordPress.DB.PreparedSQL"/>
     <rule ref="WordPress.DB.RestrictedClasses"/>
     <rule ref="WordPress.DB.RestrictedFunctions"/>
     <rule ref="WordPress.DateTime.CurrentTimeTimestamp"/>
+    <rule ref="WordPress.DateTime.RestrictedFunctions">
+        <properties>
+            <property name="exclude" type="array" value="date"/>
+        </properties>
+    </rule>
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals"/>
     <rule ref="WordPress.NamingConventions.ValidHookName">
         <properties>
@@ -81,7 +58,6 @@
     <rule ref="WordPress.PHP.POSIXFunctions"/>
     <rule ref="WordPress.PHP.PregQuoteDelimiter"/>
     <rule ref="WordPress.PHP.RestrictedPHPFunctions"/>
-    <rule ref="WordPress.PHP.StrictComparisons"/>
     <rule ref="WordPress.PHP.StrictInArray"/>
     <rule ref="WordPress.PHP.TypeCasts"/>
     <rule ref="WordPress.Security.EscapeOutput"/>
@@ -132,9 +108,37 @@
     </rule>
 
     <!--
+    PHPCS Extra
+    -->
+    <rule ref="NormalizedArrays.Arrays.CommaAfterLast" />
+    <rule ref="Universal.Operators.StrictComparisons" />
+    <rule ref="Universal.WhiteSpace.PrecisionAlignment" />
+
+    <!--
+    Slevomat
+    -->
+    <rule ref="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration">
+        <properties>
+            <property name="allowMultiLine" type="boolean" value="yes"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
+        <properties>
+            <property name="spacesCountAroundEqualsSign" type="integer" value="0"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
+        <properties>
+            <property type="boolean" name="ignoreSpacesInComment" value="yes" />
+        </properties>
+    </rule>
+
+    <!--
     Generic
     -->
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    <rule ref="Generic.CodeAnalysis.AssignmentInCondition"/>
+    <rule ref="Generic.CodeAnalysis.EmptyPHPStatement"/>
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="absoluteComplexity" value="50"/>
@@ -144,6 +148,13 @@
     <rule ref="Generic.PHP.CharacterBeforePHPOpeningTag"/>
     <rule ref="Generic.PHP.LowerCaseConstant"/>
     <rule ref="Generic.VersionControl.GitMergeConflict"/>
+    <rule ref="Generic.WhiteSpace.ArbitraryParenthesesSpacing">
+        <properties>
+            <property type="boolean" name="ignoreNewlines" value="yes" />
+        </properties>
+    </rule>
+    <rule ref="Generic.Whitespace.LanguageConstructSpacing"/>
+    <rule ref="Generic.Whitespace.SpreadOperatorSpacingAfter"/>
     <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
     <rule ref="Squiz.PHP.CommentedOutCode">
         <properties>
@@ -156,6 +167,13 @@
     <rule ref="Squiz.PHP.NonExecutableCode"/>
     <rule ref="Squiz.Scope.MemberVarScope"/>
     <rule ref="Squiz.Scope.StaticThisUsage"/>
+    <rule ref="Squiz.WhiteSpace.FunctionSpacing">
+        <properties>
+            <property name="spacing" value="1"/>
+            <property name="spacingBeforeFirst" value="0"/>
+            <property name="spacingAfterLast" value="0"/>
+        </properties>
+    </rule>
 
     <!--
     PHPCompatibility
