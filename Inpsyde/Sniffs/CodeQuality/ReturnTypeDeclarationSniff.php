@@ -34,7 +34,7 @@ class ReturnTypeDeclarationSniff implements Sniff
      */
     public function register(): array
     {
-        return [T_FUNCTION, T_CLOSURE, T_FN];
+        return [T_FUNCTION, T_CLOSURE];
     }
 
     /**
