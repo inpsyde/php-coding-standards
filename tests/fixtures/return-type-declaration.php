@@ -218,7 +218,6 @@ function filter_wrapper(): bool
     return true;
 }
 
-// @phpcsWarningCodeOnNextLine NoReturnType
 fn() => true;
 
 fn(): bool => true;
