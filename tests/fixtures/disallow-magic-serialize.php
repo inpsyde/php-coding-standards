@@ -25,4 +25,26 @@ class Foo {
     {
         return [];
     }
+
+    // @phpcsErrorOnNextLine
+    public function __wakeup(): array
+    {
+        return [];
+    }
+
+    public function wakeup(): array
+    {
+        return [];
+    }
+
+    // @phpcsErrorOnNextLine
+    public function __unserialize(): array
+    {
+        return [];
+    }
+
+    public function unserialize(): array
+    {
+        return [];
+    }
 }
