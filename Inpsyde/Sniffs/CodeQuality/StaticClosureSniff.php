@@ -71,10 +71,11 @@ class StaticClosureSniff implements Sniff
         $tokens = $phpcsFile->getTokens();
         while (!$thisFound && ($i < $functionEnd)) {
             $token = $tokens[$i];
-            $thisFound = (($token['code'] === T_VARIABLE) && ($token['content'] === '$this'))
+            $content = (string)($token['content'] ?? '');
+            $thisFound = (($token['code'] === T_VARIABLE) && ($content === '$this'))
                 || (
                     in_array($token['code'], [T_DOUBLE_QUOTED_STRING, T_HEREDOC], true)
-                    && (strpos($token['content'], '$this->') !== false)
+                    && (strpos($content, '$this->') !== false)
                 );
             $i++;
         }
