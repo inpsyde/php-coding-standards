@@ -14,7 +14,7 @@
             <file>tests/cases/FixturesTest.php</file>
         </testsuite>
         <testsuite name="helpers">
-            <file>tests/cases/PhpcsHelpersTest.php</file>
+            <directory>tests/cases/Helpers</directory>
         </testsuite>
     </testsuites>
 </phpunit>

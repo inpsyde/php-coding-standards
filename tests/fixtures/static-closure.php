@@ -96,3 +96,39 @@ class Foo {
 
 add_filter('x', fn() => 'y'); // @phpcsWarningOnThisLine
 add_filter('x', static fn() => 'y');
+
+class Test {
+
+    public static function new(string $basePath): Test
+    {
+        return new self($basePath);
+    }
+
+    private function __construct(private string $basePath)
+    {
+    }
+
+    public function foo(): array
+    {
+        return [
+            'a' => fn () => Test::new("{$this->basePath}/resources/templates"),
+            'b' => fn () => Test::new("$this->basePath/resources/templates"),
+            'c' => fn () => Test::new($this->basePath . "/resources/templates"),
+        ];
+    }
+}
+
+function () {
+    $value = <<<PHP
+    $this->x
+    PHP;
+    print $value;
+};
+
+// @phpcsWarningOnNextLine
+function () {
+    $value = <<<'PHP'
+    $this->x
+    PHP;
+    print $value;
+};

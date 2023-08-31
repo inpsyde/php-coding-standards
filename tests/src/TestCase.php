@@ -26,55 +26,37 @@
 
 declare(strict_types=1);
 
-namespace Inpsyde\Sniffs\CodeQuality;
+namespace Inpsyde\CodingStandard\Tests;
 
+use PHP_CodeSniffer\Config;
+use PHP_CodeSniffer\Files\DummyFile;
 use PHP_CodeSniffer\Files\File;
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHPCSUtils\Utils\FunctionDeclarations;
-use PHPCSUtils\Utils\Scopes;
+use PHP_CodeSniffer\Ruleset;
 
-class DisableMagicSerializeSniff implements Sniff
+abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
-    /** @var list<string>  */
-    public array $disabledFunctions = [
-        '__serialize',
-        '__sleep',
-        '__unserialize',
-        '__wakeup',
-    ];
-
     /**
-     * @return list<int>
+     * @param string $content
+     * @param string|null $minTestVersion
+     * @return File
+     * @throws \ReflectionException
      */
-    public function register(): array
+    protected function factoryFile(string $content, ?string $minTestVersion = null): File
     {
-        return [T_FUNCTION];
-    }
+        $args = ($minTestVersion === null)
+            ? []
+            : ['--runtime-set', 'testVersion', "{$minTestVersion}-"];
 
-    /**
-     * @param File $phpcsFile
-     * @param int $stackPtr
-     * @return void
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     */
-    public function process(File $phpcsFile, $stackPtr): void
-    {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        if (!Scopes::isOOMethod($phpcsFile, $stackPtr)) {
-            return;
-        }
+        $config = new Config($args, false);
+        $config->standards = [];
+        $config->extensions = ['php' => 'PHP'];
+        $config->setCommandLineValues([]);
+        /** @var Ruleset $ruleset */
+        $ruleset = (new \ReflectionClass(Ruleset::class))->newInstanceWithoutConstructor();
 
-        $name = FunctionDeclarations::getName($phpcsFile, $stackPtr);
-        if (in_array($name, $this->disabledFunctions, true)) {
-            $phpcsFile->addError(
-                sprintf(
-                    'The method "%s" is forbidden, please use Serializable interface.',
-                    $name
-                ),
-                $stackPtr,
-                'Found'
-            );
-        }
+        $file = new DummyFile($content, $ruleset, $config);
+        $file->parse();
+
+        return $file;
     }
 }

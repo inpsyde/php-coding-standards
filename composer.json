@@ -41,6 +41,11 @@
         "phpunit/phpunit": "^9.6.11",
         "vimeo/psalm": "^5.15.0"
     },
+    "autoload": {
+        "psr-4": {
+            "Inpsyde\\Helpers\\": "Inpsyde/Helpers/"
+        }
+    },
     "autoload-dev": {
         "psr-4": {
             "Inpsyde\\CodingStandard\\Tests\\": [

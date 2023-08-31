@@ -26,55 +26,68 @@
 
 declare(strict_types=1);
 
-namespace Inpsyde\Sniffs\CodeQuality;
+namespace Inpsyde\CodingStandard\Tests\Helpers;
 
-use PHP_CodeSniffer\Files\File;
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHPCSUtils\Utils\FunctionDeclarations;
-use PHPCSUtils\Utils\Scopes;
+use Inpsyde\CodingStandard\Tests\TestCase;
+use Inpsyde\Helpers\Names;
 
-class DisableMagicSerializeSniff implements Sniff
+class NamesTest extends TestCase
 {
-    /** @var list<string>  */
-    public array $disabledFunctions = [
-        '__serialize',
-        '__sleep',
-        '__unserialize',
-        '__wakeup',
-    ];
-
     /**
-     * @return list<int>
+     * @test
      */
-    public function register(): array
+    public function testNameableTokenName(): void
     {
-        return [T_FUNCTION];
+        $php = <<<'PHP'
+<?php
+namespace {
+
+    interface a {
+        public static function b(): string;
     }
+    function c(string $d): string {
+        return '';
+    }
+    abstract class e implements a {
+        const f = 'f';
+        function g(): string {
+            return c($h = 'h');
+        }
+    }
+    trait i {
+        public function j() {
+        }
+    }
+    class k {
+        use i;
+        function l() {
+        }
+    }
+    enum m {
+        case n;
+        case o;
+    }
+    enum p {
+        case q = 'q';
+        case r = 'r';
+    }
+    ((new k())->l());
+    $s = 's';
+}
 
-    /**
-     * @param File $phpcsFile
-     * @param int $stackPtr
-     * @return void
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     */
-    public function process(File $phpcsFile, $stackPtr): void
-    {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        if (!Scopes::isOOMethod($phpcsFile, $stackPtr)) {
-            return;
+namespace t {
+
+}
+PHP;
+        $file = $this->factoryFile($php);
+        $tokens = $file->getTokens();
+
+        $names = [];
+        foreach ($tokens as $pos => $token) {
+            $name = Names::nameableTokenName($file, $pos);
+            $name and $names[] = $name;
         }
 
-        $name = FunctionDeclarations::getName($phpcsFile, $stackPtr);
-        if (in_array($name, $this->disabledFunctions, true)) {
-            $phpcsFile->addError(
-                sprintf(
-                    'The method "%s" is forbidden, please use Serializable interface.',
-                    $name
-                ),
-                $stackPtr,
-                'Found'
-            );
-        }
+        static::assertSame(range('a', 't'), $names);
     }
 }
