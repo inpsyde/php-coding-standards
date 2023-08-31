@@ -3,8 +3,6 @@
 
     <description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
 
-    <autoload>./Inpsyde/PhpcsHelpers.php</autoload>
-
     <file>./Inpsyde/Sniffs</file>
     <file>./Inpsyde/PhpcsHelpers.php</file>
     <file>./tests/src</file>
@@ -21,118 +19,8 @@
     <arg name="colors"/>
     <arg value="sp"/>
 
-    <!--
-    PSR 12 Code style.
-    See http://www.php-fig.org/psr/psr-12/
-    -->
-    <rule ref="PSR12">
-        <exclude name="Generic.Files.LineLength.TooLong"/>
+    <rule ref="Inpsyde">
+        <exclude name="WordPress.Security"/>
     </rule>
-
-    <!--
-    Curated list of WordPress specific rules.
-    See https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
-    -->
-    <rule ref="WordPress.CodeAnalysis.AssignmentInTernaryCondition"/>
-    <rule ref="WordPress.CodeAnalysis.EscapedNotTranslated"/>
-    <rule ref="WordPress.DB.PreparedSQLPlaceholders"/>
-    <rule ref="WordPress.DB.PreparedSQL"/>
-    <rule ref="WordPress.DB.RestrictedClasses"/>
-    <rule ref="WordPress.DB.RestrictedFunctions"/>
-    <rule ref="WordPress.PHP.DontExtract"/>
-    <rule ref="WordPress.PHP.IniSet"/>
-    <rule ref="WordPress.PHP.NoSilencedErrors"/>
-    <rule ref="WordPress.PHP.POSIXFunctions"/>
-    <rule ref="WordPress.PHP.PregQuoteDelimiter"/>
-    <rule ref="WordPress.PHP.RestrictedPHPFunctions"/>
-    <rule ref="WordPress.PHP.StrictInArray"/>
-    <rule ref="WordPress.PHP.TypeCasts"/>
-    <rule ref="WordPress.Security.SafeRedirect"/>
-    <rule ref="WordPress.WP.CapitalPDangit"/>
-    <rule ref="WordPress.WP.DeprecatedClasses"/>
-    <rule ref="WordPress.WP.DeprecatedFunctions"/>
-    <rule ref="WordPress.WP.DeprecatedParameters"/>
-    <rule ref="WordPress.WP.DeprecatedParameterValues"/>
-    <rule ref="WordPress.WP.DiscouragedConstants"/>
-    <rule ref="WordPress.WP.DiscouragedFunctions"/>
-
-    <!--
-    Curated list of WordPress VIP rules.
-    See https://github.com/Automattic/VIP-Coding-Standards/
-    -->
-    <rule ref="WordPressVIPMinimum.Classes.DeclarationCompatibility"/>
-    <rule ref="WordPressVIPMinimum.Constants.ConstantString"/>
-    <rule ref="WordPressVIPMinimum.Constants.RestrictedConstants"/>
-    <rule ref="WordPressVIPMinimum.Files.IncludingNonPHPFile"/>
-    <rule ref="WordPressVIPMinimum.Functions.CheckReturnValue"/>
-    <rule ref="WordPressVIPMinimum.Functions.DynamicCalls"/>
-    <rule ref="WordPressVIPMinimum.Functions.StripTags"/>
-    <rule ref="WordPressVIPMinimum.Hooks.AlwaysReturnInFilter"/>
-    <rule ref="WordPressVIPMinimum.Hooks.PreGetPosts"/>
-    <rule ref="WordPressVIPMinimum.Performance.RegexpCompare"/>
-    <rule ref="WordPressVIPMinimum.Security.EscapingVoidReturnFunctions"/>
-    <rule ref="WordPressVIPMinimum.Security.ExitAfterRedirect"/>
-    <rule ref="WordPressVIPMinimum.Security.PHPFilterFunctions"/>
-    <rule ref="WordPressVIPMinimum.Security.ProperEscapingFunction"/>
-    <rule ref="WordPressVIPMinimum.Security.StaticStrreplace"/>
-    <rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis">
-        <exclude name="VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable" />
-    </rule>
-
-    <!--
-    Generic
-    -->
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
-    <rule ref="Generic.CodeAnalysis.AssignmentInCondition"/>
-    <rule ref="Generic.CodeAnalysis.EmptyPHPStatement"/>
-    <rule ref="Generic.Metrics.CyclomaticComplexity">
-        <properties>
-            <property name="absoluteComplexity" value="50"/>
-        </properties>
-    </rule>
-    <rule ref="Generic.NamingConventions.ConstructorName"/>
-    <rule ref="Generic.PHP.CharacterBeforePHPOpeningTag"/>
-    <rule ref="Generic.PHP.LowerCaseConstant"/>
-    <rule ref="Generic.VersionControl.GitMergeConflict"/>
-    <rule ref="NormalizedArrays.Arrays.CommaAfterLast"/>
-    <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
-    <rule ref="Squiz.PHP.CommentedOutCode">
-        <properties>
-            <property name="maxPercentage" value="45"/>
-        </properties>
-    </rule>
-    <rule ref="Squiz.PHP.Eval"/>
-    <rule ref="Squiz.PHP.InnerFunctions"/>
-    <rule ref="Squiz.PHP.LowercasePHPFunctions"/>
-    <rule ref="Squiz.PHP.NonExecutableCode"/>
-    <rule ref="Squiz.Scope.MemberVarScope"/>
-    <rule ref="Squiz.Scope.StaticThisUsage"/>
-    <rule ref="Universal.Operators.StrictComparisons" />
-    <rule ref="Universal.WhiteSpace.CommaSpacing"/>
-
-    <!--
-    PHPCompatibility
-    -->
-    <rule ref="PHPCompatibility"/>
-
-    <!--
-    Use own rules :)
-    -->
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/ArgumentTypeDeclarationSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/DisallowShortOpenTagSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/ElementNameMinimalLengthSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/ForbiddenPublicPropertySniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/FunctionBodyStartSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/FunctionLengthSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/LineLengthSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/NestingLevelSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/NoAccessorsSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/NoElseSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/NoTopLevelDefineSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/PropertyPerClassLimitSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/Psr4Sniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/ReturnTypeDeclarationSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/StaticClosureSniff.php"/>
-    <rule ref="./Inpsyde/Sniffs/CodeQuality/VariablesNameSniff.php"/>
 
 </ruleset>

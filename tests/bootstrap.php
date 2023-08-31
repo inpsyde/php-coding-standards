@@ -29,9 +29,7 @@ if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
     require_once $autoload;
 }
 
-require_once "{$vendorDir}/squizlabs/php_codesniffer/autoload.php";
-require_once "{$vendorDir}/squizlabs/php_codesniffer/tests/bootstrap.php";
-require_once "{$libDir}/Inpsyde/PhpcsHelpers.php";
+require_once "{$testsDir}/autoload.php";
 
 unset($libDir, $testsDir, $vendorDir, $autoload);
 

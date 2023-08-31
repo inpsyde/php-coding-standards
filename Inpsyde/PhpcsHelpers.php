@@ -590,8 +590,7 @@ class PhpcsHelpers
      */
     public static function isNullReturn(File $file, int $returnPosition): bool
     {
-        return
-            !self::isVoidReturn($file, $returnPosition, false)
+        return !self::isVoidReturn($file, $returnPosition, false)
             && self::isVoidReturn($file, $returnPosition, true);
     }
 
