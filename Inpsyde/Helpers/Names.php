@@ -64,7 +64,9 @@ final class Names
 
         if (!in_array($code, self::NAMEABLE_TOKENS, true)) {
             return null;
-        } elseif ($code === T_VARIABLE) {
+        }
+
+        if ($code === T_VARIABLE) {
             $name = ltrim((string)($tokens[$position]['content'] ?? ''), '$');
 
             return ($name === '') ? null : $name;
