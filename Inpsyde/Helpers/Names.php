@@ -26,7 +26,7 @@
 
 declare(strict_types=1);
 
-namespace Inpsyde\Helpers;
+namespace Inpsyde\CodingStandard\Helpers;
 
 use PHP_CodeSniffer\Files\File;
 use PHPCSUtils\Tokens\Collections;

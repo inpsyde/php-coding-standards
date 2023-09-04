@@ -28,8 +28,8 @@ declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\Helpers\Boundaries;
-use Inpsyde\Helpers\FunctionDocBlock;
+use Inpsyde\CodingStandard\Helpers\Boundaries;
+use Inpsyde\CodingStandard\Helpers\FunctionDocBlock;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 

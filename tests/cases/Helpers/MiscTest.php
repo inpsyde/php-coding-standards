@@ -29,7 +29,7 @@ declare(strict_types=1);
 namespace Inpsyde\CodingStandard\Tests\Helpers;
 
 use Inpsyde\CodingStandard\Tests\TestCase;
-use Inpsyde\Helpers\Misc;
+use Inpsyde\CodingStandard\Helpers\Misc;
 use PHP_CodeSniffer\Util\Tokens;
 
 class MiscTest extends TestCase

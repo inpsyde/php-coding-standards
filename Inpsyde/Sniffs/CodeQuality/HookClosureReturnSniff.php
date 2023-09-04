@@ -28,9 +28,9 @@ declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\Helpers\Boundaries;
-use Inpsyde\Helpers\FunctionReturnStatement;
-use Inpsyde\Helpers\WpHooks;
+use Inpsyde\CodingStandard\Helpers\Boundaries;
+use Inpsyde\CodingStandard\Helpers\FunctionReturnStatement;
+use Inpsyde\CodingStandard\Helpers\WpHooks;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 

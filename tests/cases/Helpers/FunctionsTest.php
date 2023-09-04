@@ -29,7 +29,7 @@ declare(strict_types=1);
 namespace Inpsyde\CodingStandard\Tests\Helpers;
 
 use Inpsyde\CodingStandard\Tests\TestCase;
-use Inpsyde\Helpers\Functions;
+use Inpsyde\CodingStandard\Helpers\Functions;
 
 class FunctionsTest extends TestCase
 {

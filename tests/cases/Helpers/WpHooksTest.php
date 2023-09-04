@@ -29,8 +29,8 @@ declare(strict_types=1);
 namespace Inpsyde\CodingStandard\Tests\Helpers;
 
 use Inpsyde\CodingStandard\Tests\TestCase;
-use Inpsyde\Helpers\Functions;
-use Inpsyde\Helpers\WpHooks;
+use Inpsyde\CodingStandard\Helpers\Functions;
+use Inpsyde\CodingStandard\Helpers\WpHooks;
 
 class WpHooksTest extends TestCase
 {

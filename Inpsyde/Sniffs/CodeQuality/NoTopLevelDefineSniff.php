@@ -28,7 +28,7 @@ declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\Helpers\Functions;
+use Inpsyde\CodingStandard\Helpers\Functions;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 

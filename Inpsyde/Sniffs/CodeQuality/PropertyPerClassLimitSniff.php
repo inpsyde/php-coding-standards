@@ -28,8 +28,8 @@ declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\Helpers\Names;
-use Inpsyde\Helpers\Objects;
+use Inpsyde\CodingStandard\Helpers\Names;
+use Inpsyde\CodingStandard\Helpers\Objects;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHPCSUtils\Tokens\Collections;
