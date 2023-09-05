@@ -30,7 +30,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "automattic/vipwpcs": "dev-develop",
+        "automattic/vipwpcs": "^3.0.0",
         "dealerdirect/phpcodesniffer-composer-installer": "~1.0.0",
         "phpcompatibility/php-compatibility": "^9.3.5",
         "phpcsstandards/phpcsextra": "^1.1",
