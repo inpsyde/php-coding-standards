@@ -1,12 +1,42 @@
 <?php
 
+/*
+ * This file is part of the "php-coding-standards" package.
+ *
+ * Copyright (c) 2023 Inpsyde GmbH
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\PhpcsHelpers;
+use Inpsyde\CodingStandard\Helpers\FunctionDocBlock;
+use Inpsyde\CodingStandard\Helpers\FunctionReturnStatement;
+use Inpsyde\CodingStandard\Helpers\Functions;
+use Inpsyde\CodingStandard\Helpers\Misc;
+use Inpsyde\CodingStandard\Helpers\WpHooks;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
+use PHPCSUtils\Utils\FunctionDeclarations;
+use PHPCSUtils\Utils\Scopes;
 
 class ReturnTypeDeclarationSniff implements Sniff
 {
@@ -18,8 +48,6 @@ class ReturnTypeDeclarationSniff implements Sniff
     ];
 
     public const METHODS_WHITELIST = [
-        'serialize',
-        'jsonSerialize',
         'getIterator',
         'getInnerIterator',
         'getChildren',
@@ -48,322 +76,303 @@ class ReturnTypeDeclarationSniff implements Sniff
     {
         //  phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
 
+        /** @var array<int, array<string, mixed>> $tokens */
+        $tokens = $phpcsFile->getTokens();
+
+        $data = FunctionDeclarations::getProperties($phpcsFile, $stackPtr);
+        if (!$data['has_body']) {
+            return;
+        }
+
+        $returnType = $data['return_type'] ?? null;
+        $returnTypes = $returnType ? $this->normalizeReturnTypes($phpcsFile, $data) : [];
+        $returnInfo = FunctionReturnStatement::allInfo($phpcsFile, $stackPtr);
+
+        if ($returnTypes) {
+            $this->checkNonEmptyReturnTypes($phpcsFile, $stackPtr, $returnTypes, $returnInfo);
+
+            return;
+        }
+
+        if ($this->checkMissingGeneratorReturnType($phpcsFile, $stackPtr)) {
+            return;
+        }
+
+        $docTags = FunctionDocBlock::tag('return', $phpcsFile, $stackPtr);
+        $docTypes = (count($docTags) === 1)
+            ? FunctionDocBlock::normalizeTypesString(reset($docTags))
+            : [];
+
         if (
-            PhpcsHelpers::functionIsArrayAccess($phpcsFile, $stackPtr)
-            || PhpcsHelpers::isUntypedPsrMethod($phpcsFile, $stackPtr)
+            !Functions::isNonDeclarableDocBlockType($docTypes, true)
+            && !$this->shouldIgnore($phpcsFile, $stackPtr, $tokens)
         ) {
-            return;
-        }
-
-        [$functionStart, $functionEnd] = PhpcsHelpers::functionBoundaries($phpcsFile, $stackPtr);
-
-        if (($functionStart < 0) || ($functionEnd <= 0)) {
-            return;
-        }
-
-        [
-            $hasNonVoidReturnType,
-            $hasVoidReturnType,
-            $hasNoReturnType,
-            $hasNullableReturn,
-            $returnsGenerator
-        ] = $this->returnTypeInfo($phpcsFile, $stackPtr);
-
-        $returnData = PhpcsHelpers::returnsCountInfo($phpcsFile, $stackPtr);
-        $nonVoidReturnCount = $returnData['nonEmpty'];
-        $voidReturnCount = $returnData['void'];
-        $nullReturnCount = $returnData['null'];
-
-        $yieldCount = $this->countYield($functionStart, $functionEnd, $phpcsFile);
-
-        if ($yieldCount || $returnsGenerator) {
-            $this->maybeGeneratorErrors(
-                $yieldCount,
-                $returnsGenerator,
-                $nonVoidReturnCount,
-                $phpcsFile,
-                $stackPtr
-            );
+            $phpcsFile->addWarning('Return type is missing', $stackPtr, 'NoReturnType');
 
             return;
         }
 
-        $this->maybeErrors(
-            $hasNonVoidReturnType,
-            $hasVoidReturnType,
-            $hasNoReturnType,
-            $hasNullableReturn,
-            $nonVoidReturnCount,
-            $nullReturnCount,
-            $voidReturnCount,
-            $phpcsFile,
-            $stackPtr
-        );
+        $this->checkNonEmptyReturnTypes($phpcsFile, $stackPtr, $docTypes, $returnInfo);
     }
 
     /**
-     * @param bool $hasNonVoidReturnType
-     * @param bool $hasVoidReturnType
-     * @param bool $hasNoReturnType
-     * @param bool $hasNullableReturn
-     * @param int $nonVoidReturnCount
-     * @param int $nullReturnCount
-     * @param int $voidReturnCount
      * @param File $file
      * @param int $position
-     * @return void
-     *
-     * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
+     * @param array<int, array<string, mixed>> $tokens
+     * @return bool
      */
-    private function maybeErrors(
-        bool $hasNonVoidReturnType,
-        bool $hasVoidReturnType,
-        bool $hasNoReturnType,
-        bool $hasNullableReturn,
-        int $nonVoidReturnCount,
-        int $nullReturnCount,
-        int $voidReturnCount,
-        File $file,
-        int $position
-    ): void {
+    private function shouldIgnore(File $file, int $position, array $tokens): bool
+    {
+        $tokenCode = $tokens[$position]['code'] ?? '';
+        $name = ($tokenCode !== T_FN) ? FunctionDeclarations::getName($file, $position) : '';
 
-        $hasNullableReturn
-            ? $nonVoidReturnCount += $nullReturnCount
-            : $voidReturnCount += $nullReturnCount;
-
-        if ($hasNonVoidReturnType && ($nonVoidReturnCount === 0 || $voidReturnCount > 0)) {
-            $msg = 'Return type with';
-            $file->addError(
-                $nonVoidReturnCount === 0 ? "{$msg} no return" : "{$msg} void return",
-                $position,
-                $nonVoidReturnCount === 0 ? 'MissingReturn' : 'IncorrectVoidReturn'
+        return Functions::isArrayAccess($file, $position)
+            || Functions::isPsrMethod($file, $position)
+            || FunctionDeclarations::isSpecialMethod($file, $position)
+            || WpHooks::isHookClosure($file, $position)
+            || WpHooks::isHookFunction($file, $position)
+            || (
+                Scopes::isOOMethod($file, $position)
+                && in_array($name, self::METHODS_WHITELIST, true)
             );
-        }
-
-        if ($nonVoidReturnCount <= 0) {
-            return;
-        }
-
-        if ($hasVoidReturnType) {
-            $file->addError(
-                'Void return type when returning non-void',
-                $position,
-                'IncorrectVoidReturnType'
-            );
-        }
-
-        $docBlock = $this->hasReturnNullOrMixedDocBloc($file, $position);
-
-        if (
-            $docBlock['mixed']
-            || PhpcsHelpers::isHookClosure($file, $position)
-            || PhpcsHelpers::isHookFunction($file, $position)
-        ) {
-            return;
-        }
-
-        if (!$this->areNullableReturnTypesSupported() && $docBlock['null']) {
-            return;
-        }
-
-        $tokenCode = $file->getTokens()[$position]['code'] ?? '';
-        $name = ($tokenCode !== T_FN) ? ($file->getDeclarationName($position) ?: '') : '';
-
-        if (
-            PhpcsHelpers::functionIsMethod($file, $position)
-            && (in_array($name, self::METHODS_WHITELIST, true) || strpos($name, '__') === 0)
-        ) {
-            return;
-        }
-
-        if ($hasNoReturnType) {
-            $file->addWarning('Return type is missing', $position, 'NoReturnType');
-        }
     }
 
     /**
-     * @param int $yieldCount
-     * @param bool $returnsGenerator
-     * @param int $nonVoidReturnCount
+     * @param File $file
+     * @param $returnType
+     * @param array $data
+     * @return list<string>
+     */
+    private function normalizeReturnTypes(File $file, array $data): array
+    {
+        /** @var int $start */
+        $start = is_int($data['return_type_token'] ?? null) ? $data['return_type_token'] : -1;
+        /** @var int $end */
+        $end = is_int($data['return_type_end_token'] ?? null) ? $data['return_type_end_token'] : -1;
+
+        if (($start > 0) && ($end > 0)) {
+            $returnTypesStr = Misc::tokensSubsetToString($start, $end, $file, []);
+            if ($data['nullable_return_type'] ?? false) {
+                $returnTypesStr .= '|null';
+            }
+
+            return FunctionDocBlock::normalizeTypesString($returnTypesStr);
+        }
+
+        return [];
+    }
+
+    /**
      * @param File $file
      * @param int $position
+     * @param list<string> $returnTypes
+     * @param array $returnInfo
      * @return void
      */
-    private function maybeGeneratorErrors(
-        int $yieldCount,
-        bool $returnsGenerator,
-        int $nonVoidReturnCount,
+    private function checkNonEmptyReturnTypes(
         File $file,
-        int $position
+        int $position,
+        array $returnTypes,
+        array $returnInfo
     ): void {
 
-        if ($nonVoidReturnCount > 1) {
-            $file->addWarning(
-                'A generator should only contain a single return point.',
-                $position,
-                'InvalidGeneratorManyReturns'
-            );
-        }
-
-        if ($yieldCount && $returnsGenerator) {
-            return;
-        }
-
-        if (!$yieldCount) {
-            $file->addError(
-                'Found a generator return type in non-yielding function.',
-                $position,
-                'GeneratorReturnTypeWithoutYield'
-            );
+        if (($returnTypes === ['void']) || ($returnTypes === ['null'])) {
+            $this->checkIsActualVoid($file, $position, $returnInfo, $returnTypes === ['null']);
 
             return;
         }
 
-        $returnType = $this->returnTypeContent($file, $position);
-        if (in_array($returnType, ['Traversable', 'Iterator', 'iterable'], true)) {
-            return;
-        }
+        $this->checkInvalidGenerator($file, $position, $returnTypes, $returnInfo)
+            || $this->checkMissingReturn($file, $position, $returnTypes, $returnInfo)
+            || $this->checkIncorrectVoid($file, $position, $returnTypes, $returnInfo);
+    }
 
-        if (!$nonVoidReturnCount) {
-            $file->addWarning(
-                'Found a function that yield values but missing compatible return type.',
-                $position,
-                'NoGeneratorReturnType'
-            );
+    /**
+     * @param File $file
+     * @param int $position
+     * @param array $returnInfo
+     * @param bool $checkNull
+     * @return void
+     */
+    private function checkIsActualVoid(
+        File $file,
+        int $position,
+        array $returnInfo,
+        bool $checkNull
+    ): void {
 
+        $key = $checkNull ? 'null' : 'void';
+
+        if (($returnInfo['total'] >= 0) && ($returnInfo['total'] === $returnInfo[$key])) {
             return;
         }
 
         $file->addError(
-            'Found a function that yield values using a return type incompatible with Generator.',
+            sprintf(
+                'Return type is declared "%s" but incompatible return statement(s) found',
+                $checkNull ? 'null' : 'void'
+            ),
             $position,
-            'IncorrectReturnTypeForGenerator'
+            $checkNull ? 'IncorrectNullReturnType' : 'IncorrectVoidReturnType'
         );
     }
 
     /**
      * @param File $file
-     * @param int $functionPosition
-     * @return string
-     */
-    private function returnTypeContent(File $file, int $functionPosition): string
-    {
-        $info = $file->getMethodProperties($functionPosition);
-        if (array_key_exists('return_type', $info) && is_string($info['return_type'])) {
-            return ltrim($info['return_type'], '\\');
-        }
-
-        /** @var array<int, array<string, mixed>> $tokens */
-        $tokens = $file->getTokens();
-        $returnTypeToken = $file->findNext(
-            [T_RETURN_TYPE],
-            $functionPosition + 3, // 3: open parenthesis, close parenthesis, colon
-            (int)($tokens[$functionPosition]['scope_opener'] ?? 0) - 1
-        );
-
-        $returnType = $tokens[$returnTypeToken] ?? null;
-        if (!$returnType || $returnType['code'] !== T_RETURN_TYPE) {
-            return '';
-        }
-
-        return ltrim((string)($returnType['content'] ?? ''), '\\');
-    }
-
-    /**
-     * @param File $file
-     * @param int $functionPosition
-     * @return array{bool, bool, bool, bool, bool}
-     */
-    private function returnTypeInfo(File $file, int $functionPosition): array
-    {
-        /** @var array<int, array<string, mixed>> $tokens */
-        $tokens = $file->getTokens();
-
-        $returnTypeContent = $this->returnTypeContent($file, $functionPosition);
-
-        if (!$returnTypeContent) {
-            return [false, false, true, false, false];
-        }
-
-        $start = (int)($tokens[$functionPosition]['parenthesis_closer']) + 1;
-        $end = (int)($tokens[$functionPosition]['scope_opener']);
-        $hasNullable = false;
-        for ($i = $start; $i < $end; $i++) {
-            if ($tokens[$i]['code'] === T_NULLABLE) {
-                $hasNullable = true;
-                break;
-            }
-        }
-
-        $hasNonVoidReturnType = $returnTypeContent !== 'void';
-        $hasVoidReturnType = $returnTypeContent === 'void';
-        $returnsGenerator = $returnTypeContent === 'Generator';
-
-        return [$hasNonVoidReturnType, $hasVoidReturnType, false, $hasNullable, $returnsGenerator];
-    }
-
-    /**
-     * @param File $file
-     * @param int $functionPosition
-     * @return array{'mixed': bool, 'null': bool}
-     */
-    private function hasReturnNullOrMixedDocBloc(File $file, int $functionPosition): array
-    {
-        $return = PhpcsHelpers::functionDocBlockTag('@return', $file, $functionPosition);
-        if (!$return) {
-            return ['mixed' => false, 'null' => false];
-        }
-
-        $returnContentParts = preg_split('~\s+~', reset($return), PREG_SPLIT_NO_EMPTY);
-        if (!$returnContentParts) {
-            return ['mixed' => false, 'null' => false];
-        }
-
-        $returnTypes = array_map('strtolower', explode('|', reset($returnContentParts)));
-        $returnTypes = array_map('trim', $returnTypes);
-        $returnTypesCount = count($returnTypes);
-        // Only if 1 or 2 types
-        if ($returnTypesCount !== 1 && $returnTypesCount !== 2) {
-            return ['mixed' => false, 'null' => false];
-        }
-
-        return [
-            'mixed' => in_array('mixed', $returnTypes, true),
-            'null' => in_array('null', $returnTypes, true),
-        ];
-    }
-
-    /**
+     * @param int $position
+     * @param list<string> $returnTypes
+     * @param array $returnInfo
      * @return bool
      */
-    private function areNullableReturnTypesSupported(): bool
-    {
-        $min = PhpcsHelpers::minPhpTestVersion();
+    private function checkIncorrectVoid(
+        File $file,
+        int $position,
+        array $returnTypes,
+        array $returnInfo
+    ): bool {
 
-        return $min && version_compare($min, '7.1', '>=');
+        $hasReturnNull = $returnInfo['null'] > 0;
+
+        if (
+            ($hasReturnNull && !in_array('null', $returnTypes, true))
+            || (!in_array('void', $returnTypes, true) && ($returnInfo['void'] > 0))
+        ) {
+            $file->addError(
+                sprintf(
+                    'Return type %s but %s found',
+                    $hasReturnNull ? 'is not nullable' : 'contains no void',
+                    $hasReturnNull ? 'return null' : 'void return',
+                ),
+                $position,
+                $hasReturnNull ? 'IncorrectNullReturn' : 'IncorrectVoidReturn'
+            );
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
-     * @param int $functionStart
-     * @param int $functionEnd
      * @param File $file
-     * @return int
+     * @param int $position
+     * @param list<string> $returnTypes
+     * @param array $returnInfo
+     * @return bool
      */
-    private function countYield(int $functionStart, int $functionEnd, File $file): int
-    {
-        $count = 0;
-        /** @var array<int, array<string, mixed>> $tokens */
-        $tokens = $file->getTokens();
-        for ($i = ($functionStart + 1); $i < $functionEnd; $i++) {
-            if ($tokens[$i]['code'] === T_CLOSURE) {
-                $i = (int)($tokens[$i]['scope_closer'] ?? -1);
-                continue;
-            }
-            if ($tokens[$i]['code'] === T_YIELD || $tokens[$i]['code'] === T_YIELD_FROM) {
-                $count++;
-            }
+    private function checkMissingReturn(
+        File $file,
+        int $position,
+        array $returnTypes,
+        array $returnInfo
+    ): bool {
+
+        $nonEmptyTypes = array_diff($returnTypes, ['void', 'null', 'never']);
+        if ($nonEmptyTypes !== $returnTypes) {
+            return false;
         }
 
-        return $count;
+        $hasNull = $returnInfo['null'] > 0;
+        $hasVoid = $returnInfo['void'] > 0;
+
+        if ($hasNull || $hasVoid) {
+            $file->addError(
+                sprintf(
+                    'Non-empty return type declared, but %s return found',
+                    $hasNull ? ($hasVoid ? 'empty' : 'null') : 'empty'
+                ),
+                $position,
+                $hasNull ? 'IncorrectNullReturn' : 'IncorrectVoidReturn'
+            );
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @param list<string> $returnTypes
+     * @param array $returnInfo
+     * @return bool
+     */
+    private function checkInvalidGenerator(
+        File $file,
+        int $position,
+        array $returnTypes,
+        array $returnInfo
+    ): bool {
+
+        $hasGenerator = false;
+        while (!$hasGenerator && $returnTypes) {
+            $returnType = explode('&', rtrim(ltrim(array_shift($returnTypes), '('), ')'));
+            $hasGenerator = in_array('Generator', $returnType, true)
+                || in_array('\Generator', $returnType, true)
+                || in_array('Traversable', $returnType, true)
+                || in_array('\Traversable', $returnType, true)
+                || in_array('Iterator', $returnType, true)
+                || in_array('\Iterator', $returnType, true)
+                || in_array('iterable', $returnType, true);
+        }
+
+        $yieldCount = Functions::countYieldInBody($file, $position);
+
+        $return = false;
+
+        if ($hasGenerator || ($yieldCount > 0)) {
+            if ($returnInfo['total'] > 1) {
+                $file->addError(
+                    'A function returning a Generator should only contain a single return point.',
+                    $position,
+                    'InvalidGeneratorManyReturns'
+                );
+            }
+            $return = true;
+        }
+
+        if ($hasGenerator && ($yieldCount === 0)) {
+            $file->addError(
+                'Return type contains "Generator" but no yield found in the function body',
+                $position,
+                'GeneratorReturnTypeWithoutYield'
+            );
+
+            return true;
+        }
+
+        if (!$hasGenerator && ($yieldCount > 0)) {
+            $file->addError(
+                'Return type does not contain "Generator" but yield found in the function body',
+                $position,
+                'NoGeneratorReturnType'
+            );
+
+            return true;
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @return bool
+     */
+    private function checkMissingGeneratorReturnType(File $file, int $position): bool
+    {
+        $yield = Functions::countYieldInBody($file, $position);
+        if ($yield > 0) {
+            $file->addError(
+                'Return type does not contain "Generator" but yield found in the function body',
+                $position,
+                'NoGeneratorReturnType'
+            );
+
+            return true;
+        }
+
+        return false;
     }
 }

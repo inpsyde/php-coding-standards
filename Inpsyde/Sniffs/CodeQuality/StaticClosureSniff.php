@@ -1,10 +1,35 @@
 <?php
 
+/*
+ * This file is part of the "php-coding-standards" package.
+ *
+ * Copyright (c) 2023 Inpsyde GmbH
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\PhpcsHelpers;
+use Inpsyde\CodingStandard\Helpers\Boundaries;
+use Inpsyde\CodingStandard\Helpers\FunctionDocBlock;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 
@@ -29,7 +54,7 @@ class StaticClosureSniff implements Sniff
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
 
-        [$functionStart, $functionEnd] = PhpcsHelpers::functionBoundaries($phpcsFile, $stackPtr);
+        [$functionStart, $functionEnd] = Boundaries::functionBoundaries($phpcsFile, $stackPtr);
         if ($functionStart < 0 || $functionEnd <= 0) {
             return;
         }
@@ -46,7 +71,12 @@ class StaticClosureSniff implements Sniff
         $tokens = $phpcsFile->getTokens();
         while (!$thisFound && ($i < $functionEnd)) {
             $token = $tokens[$i];
-            $thisFound = ($token['code'] === T_VARIABLE) && ($token['content'] === '$this');
+            $content = (string)($token['content'] ?? '');
+            $thisFound = (($token['code'] === T_VARIABLE) && ($content === '$this'))
+                || (
+                    in_array($token['code'], [T_DOUBLE_QUOTED_STRING, T_HEREDOC], true)
+                    && (strpos($content, '$this->') !== false)
+                );
             $i++;
         }
 
@@ -54,12 +84,12 @@ class StaticClosureSniff implements Sniff
             return;
         }
 
-        $boundDoc = PhpcsHelpers::functionDocBlockTag('@bound', $phpcsFile, $stackPtr);
+        $boundDoc = FunctionDocBlock::tag('@bound', $phpcsFile, $stackPtr);
         if ($boundDoc) {
             return;
         }
 
-        $varDoc = PhpcsHelpers::functionDocBlockTag('@var', $phpcsFile, $stackPtr);
+        $varDoc = FunctionDocBlock::tag('@var', $phpcsFile, $stackPtr);
         foreach ($varDoc as $content) {
             if (preg_match('~(?:^|\s+)\$this(?:$|\s+)~', $content)) {
                 return;
@@ -79,7 +109,7 @@ class StaticClosureSniff implements Sniff
      * @param File $file
      * @return void
      */
-    private function fix(int $position, File $file)
+    private function fix(int $position, File $file): void
     {
         $fixer = $file->fixer;
         $fixer->beginChangeset();

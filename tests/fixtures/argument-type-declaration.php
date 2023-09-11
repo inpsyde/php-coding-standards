@@ -1,6 +1,8 @@
 <?php
 // @phpcsSniff CodeQuality.ArgumentTypeDeclaration
 
+use Psr\Container as PsrContainer;
+
 /** @wp-hook */
 $cb = function ($foo) {
     return true;
@@ -33,7 +35,7 @@ function mixed(string $foo, $bar, int $baz)
  * @param int $baz
  * @return void
  */
-function mixedNull(string $foo, $bar, int $baz)
+function mixedNull(string $foo, $bar, int $baz)  // @phpcsWarningOnThisLine
 {
 
 }
@@ -379,7 +381,7 @@ class SerializeTest implements \Serializable {
     }
 }
 
-class Container implements \Psr\Container\ContainerInterface {
+class Container implements PsrContainer\ContainerInterface {
 
     private $data = [];
 

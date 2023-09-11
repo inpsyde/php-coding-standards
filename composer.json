@@ -30,7 +30,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "automattic/vipwpcs": "dev-develop",
+        "automattic/vipwpcs": "^3.0.0",
         "dealerdirect/phpcodesniffer-composer-installer": "~1.0.0",
         "phpcompatibility/php-compatibility": "^9.3.5",
         "phpcsstandards/phpcsextra": "^1.1",
@@ -40,6 +40,11 @@
     "require-dev": {
         "phpunit/phpunit": "^9.6.11",
         "vimeo/psalm": "^5.15.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Inpsyde\\CodingStandard\\Helpers\\": "Inpsyde/Helpers/"
+        }
     },
     "autoload-dev": {
         "psr-4": {

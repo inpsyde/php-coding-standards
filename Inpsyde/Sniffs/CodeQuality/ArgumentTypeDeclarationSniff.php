@@ -1,31 +1,43 @@
 <?php
 
 /*
- * This file is part of the php-coding-standards package.
+ * This file is part of the "php-coding-standards" package.
  *
- * (c) Inpsyde GmbH
+ * Copyright (c) 2023 Inpsyde GmbH
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 declare(strict_types=1);
 
 namespace Inpsyde\Sniffs\CodeQuality;
 
-use Inpsyde\PhpcsHelpers;
+use Inpsyde\CodingStandard\Helpers\FunctionDocBlock;
+use Inpsyde\CodingStandard\Helpers\Functions;
+use Inpsyde\CodingStandard\Helpers\WpHooks;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
+use PHPCSUtils\Utils\FunctionDeclarations;
+use PHPCSUtils\Utils\Scopes;
 
 class ArgumentTypeDeclarationSniff implements Sniff
 {
-    public const TYPE_CODES = [
-        T_STRING,
-        T_ARRAY_HINT,
-        T_CALLABLE,
-        T_SELF,
-    ];
-
     public const METHODS_WHITELIST = [
         'unserialize',
         'seek',
@@ -45,12 +57,10 @@ class ArgumentTypeDeclarationSniff implements Sniff
      * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     * phpcs:disable Generic.Metrics.CyclomaticComplexity
      */
     public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        // phpcs:enable Generic.Metrics.CyclomaticComplexity
 
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $phpcsFile->getTokens();
@@ -59,34 +69,32 @@ class ArgumentTypeDeclarationSniff implements Sniff
             return;
         }
 
-        $paramsStart = (int)($tokens[$stackPtr]['parenthesis_opener'] ?? 0);
-        $paramsEnd = (int)($tokens[$stackPtr]['parenthesis_closer'] ?? 0);
+        /** @var array<array{name: string, type_hint?: string|false}> $parameters */
+        $parameters = FunctionDeclarations::getParameters($phpcsFile, $stackPtr);
+        $docBlockTypes = FunctionDocBlock::allParamTypes($phpcsFile, $stackPtr);
 
-        if (!$paramsStart || !$paramsEnd || $paramsStart >= ($paramsEnd - 1)) {
-            return;
-        }
-
-        $docBlockTypes = PhpcsHelpers::functionDocBlockParamTypes($phpcsFile, $stackPtr);
-        $variables = PhpcsHelpers::filterTokensByType($paramsStart, $paramsEnd, $phpcsFile, T_VARIABLE);
-
-        foreach ($variables as $varPosition => $varToken) {
-            // Not triggering error for variable explicitly declared as mixed (or mixed|null)
-            if ($this->isMixed((string)($varToken['content'] ?? ''), $docBlockTypes)) {
+        $errors = [];
+        foreach ($parameters as $parameter) {
+            if ($parameter['type_hint'] ?? null) {
                 continue;
             }
 
-            $typePosition = $phpcsFile->findPrevious(
-                [T_WHITESPACE, T_ELLIPSIS, T_BITWISE_AND],
-                $varPosition - 1,
-                $paramsStart + 1,
-                true
-            );
-
-            $type = $tokens[$typePosition] ?? null;
-            if ($type && !in_array($type['code'] ?? '', self::TYPE_CODES, true)) {
-                $phpcsFile->addWarning('Argument type is missing', $stackPtr, 'NoArgumentType');
+            $docTypes = $docBlockTypes[$parameter['name']] ?? [];
+            if (!Functions::isNonDeclarableDocBlockType($docTypes, false)) {
+                $errors[] = $parameter['name'];
             }
         }
+
+        if (!$errors) {
+            return;
+        }
+
+        $allErrors = implode('", "', $errors);
+        $phpcsFile->addWarning(
+            sprintf('Argument type is missing for parameter(s) "%s"', $allErrors),
+            $stackPtr,
+            'NoArgumentType'
+        );
     }
 
     /**
@@ -102,40 +110,16 @@ class ArgumentTypeDeclarationSniff implements Sniff
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
 
         $tokenCode = $tokens[$stackPtr]['code'] ?? '';
-        $name = ($tokenCode !== T_FN) ? ($phpcsFile->getDeclarationName($stackPtr) ?: '') : '';
+        $name = ($tokenCode !== T_FN) ? FunctionDeclarations::getName($phpcsFile, $stackPtr) : '';
 
-        return PhpcsHelpers::functionIsArrayAccess($phpcsFile, $stackPtr)
-            || PhpcsHelpers::isHookClosure($phpcsFile, $stackPtr)
-            || PhpcsHelpers::isHookFunction($phpcsFile, $stackPtr)
-            || PhpcsHelpers::isUntypedPsrMethod($phpcsFile, $stackPtr)
+        return Functions::isArrayAccess($phpcsFile, $stackPtr)
+            || WpHooks::isHookClosure($phpcsFile, $stackPtr)
+            || WpHooks::isHookFunction($phpcsFile, $stackPtr)
+            || Functions::isPsrMethod($phpcsFile, $stackPtr)
+            || FunctionDeclarations::isSpecialMethod($phpcsFile, $stackPtr)
             || (
-                PhpcsHelpers::functionIsMethod($phpcsFile, $stackPtr)
+                Scopes::isOOMethod($phpcsFile, $stackPtr)
                 && in_array($name, self::METHODS_WHITELIST, true)
             );
-    }
-
-    /**
-     * @param string $paramName
-     * @param array<string, array<string>> $docBlockTypes
-     * @return bool
-     */
-    private function isMixed(string $paramName, array $docBlockTypes): bool
-    {
-        $paramDocBlockTypes = $paramName ? ($docBlockTypes[$paramName] ?? null) : null;
-        if (!$paramDocBlockTypes) {
-            return false;
-        }
-
-        $paramDocBlockTypesCount = count($paramDocBlockTypes);
-        if ($paramDocBlockTypesCount !== 1 && $paramDocBlockTypesCount !== 2) {
-            return false;
-        }
-
-        $paramDocBlockTypes = array_map('trim', $paramDocBlockTypes);
-        if (!in_array('mixed', $paramDocBlockTypes, true)) {
-            return false;
-        }
-
-        return ($paramDocBlockTypesCount === 1) || in_array('null', $paramDocBlockTypes, true);
     }
 }

@@ -3,14 +3,15 @@
 
     <description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
 
-    <autoload>./PhpcsHelpers.php</autoload>
-
     <!--
     PSR 12 Code style.
     See http://www.php-fig.org/psr/psr-12/
     -->
     <rule ref="PSR12">
         <exclude name="Generic.Files.LineLength.TooLong"/>
+    </rule>
+    <rule ref="PSR12.Operators.OperatorSpacing.NoSpaceBefore">
+        <type>warning</type>
     </rule>
 
     <!--
@@ -118,6 +119,7 @@
     Slevomat
     -->
     <rule ref="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration">
+        <type>warning</type>
         <properties>
             <property name="allowMultiLine" type="boolean" value="yes"/>
         </properties>
@@ -128,6 +130,7 @@
         </properties>
     </rule>
     <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
+        <type>warning</type>
         <properties>
             <property type="boolean" name="ignoreSpacesInComment" value="yes" />
         </properties>
@@ -136,7 +139,9 @@
     <!--
     Generic
     -->
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax">
+        <type>warning</type>
+    </rule>
     <rule ref="Generic.CodeAnalysis.AssignmentInCondition"/>
     <rule ref="Generic.CodeAnalysis.EmptyPHPStatement"/>
     <rule ref="Generic.Metrics.CyclomaticComplexity">
@@ -149,6 +154,7 @@
     <rule ref="Generic.PHP.LowerCaseConstant"/>
     <rule ref="Generic.VersionControl.GitMergeConflict"/>
     <rule ref="Generic.WhiteSpace.ArbitraryParenthesesSpacing">
+        <type>warning</type>
         <properties>
             <property type="boolean" name="ignoreNewlines" value="yes" />
         </properties>
@@ -161,6 +167,9 @@
             <property name="maxPercentage" value="45"/>
         </properties>
     </rule>
+    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration">
+        <type>warning</type>
+    </rule>
     <rule ref="Squiz.PHP.Eval"/>
     <rule ref="Squiz.PHP.InnerFunctions"/>
     <rule ref="Squiz.PHP.LowercasePHPFunctions"/>
@@ -168,6 +177,7 @@
     <rule ref="Squiz.Scope.MemberVarScope"/>
     <rule ref="Squiz.Scope.StaticThisUsage"/>
     <rule ref="Squiz.WhiteSpace.FunctionSpacing">
+        <type>warning</type>
         <properties>
             <property name="spacing" value="1"/>
             <property name="spacingBeforeFirst" value="0"/>

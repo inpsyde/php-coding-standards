@@ -26,55 +26,58 @@
 
 declare(strict_types=1);
 
-namespace Inpsyde\Sniffs\CodeQuality;
+namespace Inpsyde\CodingStandard\Tests\Helpers;
 
-use PHP_CodeSniffer\Files\File;
-use PHP_CodeSniffer\Sniffs\Sniff;
-use PHPCSUtils\Utils\FunctionDeclarations;
-use PHPCSUtils\Utils\Scopes;
+use Inpsyde\CodingStandard\Tests\TestCase;
+use Inpsyde\CodingStandard\Helpers\Functions;
+use Inpsyde\CodingStandard\Helpers\WpHooks;
 
-class DisableMagicSerializeSniff implements Sniff
+class WpHooksTest extends TestCase
 {
-    /** @var list<string>  */
-    public array $disabledFunctions = [
-        '__serialize',
-        '__sleep',
-        '__unserialize',
-        '__wakeup',
-    ];
-
     /**
-     * @return list<int>
+     * @test
      */
-    public function register(): array
+    public function testHookClosure(): void
     {
-        return [T_FUNCTION];
+        $php = <<<'PHP'
+<?php
+
+add_action /* x */ (theHookPrefix() . 'xx', static
+    fn () /* add_action('x', function () {}) */ => 'find me short!';
+);
+
+add_action('x', '__return_false');
+
+function theHookPrefix() {
+    return 'x_';
+}
+
+add_action /* x */ (theHookPrefix() . 'xx', 
+    static
+    function /* add_action('x', function () {}) */
+    () {
+        return 'find me!';
     }
+);
 
-    /**
-     * @param File $phpcsFile
-     * @param int $stackPtr
-     * @return void
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-     */
-    public function process(File $phpcsFile, $stackPtr): void
-    {
-        // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        if (!Scopes::isOOMethod($phpcsFile, $stackPtr)) {
-            return;
+function add_action($x, $y) {
+    return function () {
+        return function() {
+            add_action('x', 'theHookPrefix');
+        };
+    };
+}
+PHP;
+
+        $file = $this->factoryFile($php);
+        $tokens = $file->getTokens();
+
+        $bodies = [];
+        foreach ($tokens as $pos => $token) {
+            $isHookClosure = WpHooks::isHookClosure($file, $pos);
+            $isHookClosure and $bodies[] = trim(Functions::bodyContent($file, $pos));
         }
 
-        $name = FunctionDeclarations::getName($phpcsFile, $stackPtr);
-        if (in_array($name, $this->disabledFunctions, true)) {
-            $phpcsFile->addError(
-                sprintf(
-                    'The method "%s" is forbidden, please use Serializable interface.',
-                    $name
-                ),
-                $stackPtr,
-                'Found'
-            );
-        }
+        static::assertSame(["'find me short!'", "return 'find me!';"], $bodies);
     }
 }

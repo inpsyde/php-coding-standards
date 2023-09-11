@@ -3,8 +3,8 @@
 
     <description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
 
+    <file>./Inpsyde/Helpers</file>
     <file>./Inpsyde/Sniffs</file>
-    <file>./Inpsyde/PhpcsHelpers.php</file>
     <file>./tests/src</file>
     <file>./tests/cases</file>
 
@@ -21,6 +21,10 @@
 
     <rule ref="Inpsyde">
         <exclude name="WordPress.Security"/>
+    </rule>
+
+    <rule ref="Inpsyde.CodeQuality.FunctionLength">
+        <exclude-pattern>./tests/cases/</exclude-pattern>
     </rule>
 
 </ruleset>

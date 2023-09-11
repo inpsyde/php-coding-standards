@@ -1,6 +1,20 @@
 <?php
 // @phpcsSniff CodeQuality.ReturnTypeDeclaration
 
+use Psr\Container\ContainerInterface as PsrContainer;
+
+add_filter('x', function () {
+    return '';
+});
+
+add_filter('x', function (): string {
+    return '';
+});
+
+add_filter('x', static function () {
+    return '';
+});
+
 function hooks(): ?array
 {
     return null;
@@ -12,7 +26,7 @@ function a()
     return 'x';
 }
 
-// @phpcsErrorCodeOnNextLine IncorrectVoidReturn
+// @phpcsErrorCodeOnNextLine IncorrectNullReturn
 function iReturnWrongNull(): \ArrayAccess
 {
     if (rand(1, 4) > 2) {
@@ -28,6 +42,7 @@ function c(): void
     return true;
 }
 
+// @phpcsWarningCodeOnNextLine NoReturnType
 function aa($foo)
 {
     return;
@@ -43,7 +58,7 @@ function d($foo): void
     return;
 }
 
-// @phpcsErrorCodeOnNextLine MissingReturn
+// @phpcsErrorCodeOnNextLine IncorrectVoidReturn
 function e(): bool
 {
     if (true) {
@@ -78,8 +93,13 @@ function h(): void
     return null === true;
 }
 
+// @phpcsErrorCodeOnNextLine IncorrectVoidReturnType
 function hh(): void {
     return null;
+}
+
+function hhh(): void {
+    return;
 }
 
 function hhComment(): void {
@@ -96,7 +116,7 @@ function gen(string $content): \Generator
 }
 
 // @phpcsErrorCodeOnNextLine GeneratorReturnTypeWithoutYield
-function genNoYield(string $content): \Generator
+function genNoYield1(string $content): \Generator
 {
     $line = strtok($content, "\n");
     while ($line !== false) {
@@ -107,8 +127,20 @@ function genNoYield(string $content): \Generator
     return true;
 }
 
-// @phpcsWarningCodeOnNextLine NoGeneratorReturnType
-function yieldNoGen(string $content)
+// @phpcsErrorCodeOnNextLine GeneratorReturnTypeWithoutYield
+function genNoYield2(string $content): (Generator&Countable)|bool
+{
+    $line = strtok($content, "\n");
+    while ($line !== false) {
+        $line = strtok("\n");
+        is_string($line) ? trim($line) : '';
+    }
+
+    return true;
+}
+
+// @phpcsErrorCodeOnNextLine NoGeneratorReturnType
+function yieldNoGen1(string $content): Foo
 {
     $line = strtok($content, "\n");
     while ($line !== false) {
@@ -117,7 +149,17 @@ function yieldNoGen(string $content)
     }
 }
 
-// @phpcsErrorCodeOnNextLine IncorrectReturnTypeForGenerator
+// @phpcsErrorCodeOnNextLine NoGeneratorReturnType
+function yieldNoGen2(string $content)
+{
+    $line = strtok($content, "\n");
+    while ($line !== false) {
+        $line = strtok("\n");
+        yield is_string($line) ? trim($line) : '';
+    }
+}
+
+// @phpcsErrorCodeOnNextLine NoGeneratorReturnType
 function yieldWrongReturn(string $content): int
 {
     $line = strtok($content, "\n");
@@ -160,7 +202,7 @@ function genFrom(): \Generator
     yield from $data;
 }
 
-// @phpcsWarningCodeOnNextLine InvalidGeneratorManyReturns
+// @phpcsErrorCodeOnNextLine InvalidGeneratorManyReturns
 function genMultiReturn(): \Generator
 {
     if (defined('MEH_MEH')) {
@@ -176,24 +218,12 @@ function genMultiReturn(): \Generator
     return 2;
 }
 
-add_filter('x', function () {
-    return '';
-});
-
-add_filter('x', function (): string {
-    return '';
-});
-
-add_filter('x', static function () {
-    return '';
-});
-
 // @phpcsErrorCodeOnNextLine IncorrectVoidReturnType
 add_filter('x', function (): void {
     return '0';
 });
 
-// @phpcsErrorCodeOnNextLine MissingReturn
+// @phpcsErrorCodeOnNextLine IncorrectVoidReturn
 add_filter('x', function (): string {
     return;
 });
@@ -205,7 +235,6 @@ foo('x', function () {
 
 function filter_wrapper(): bool
 {
-
     // @phpcsWarningCodeOnNextLine NoReturnType
     foo('x', function () {
         return '';
@@ -235,7 +264,7 @@ function hookCallback()
  * @return bool
  * @wp-hook Meh
  */
-function badHookCallback(): bool // @phpcsErrorCodeOnThisLine MissingReturn
+function badHookCallback(): bool // @phpcsErrorCodeOnThisLine IncorrectVoidReturn
 {
     return;
 }
@@ -249,7 +278,7 @@ function noHookCallback() // @phpcsWarningCodeOnThisLine NoReturnType
 }
 
 /**
- * @return mixed|null
+ * @return mixed
  */
 function mixed() {
     return $GLOBALS['thing'] ?? null;
@@ -275,6 +304,7 @@ class WrapperHookWrapper
         return true;
     }
 
+    // @phpcsWarningCodeOnNextLine NoReturnType
     public function register()
     {
         add_filter('foo_bar', function (array $a): array {
@@ -374,7 +404,7 @@ class FooAccess implements ArrayAccess
     /**
      * @return \ArrayAccess|null
      */
-    public function iMaybeReturnNull()
+    public function iMaybeReturnNull() // @phpcsWarningOnThisLine
     {
         if (rand(1, 4) === 3) {
             return null;
@@ -390,7 +420,7 @@ class FooAccess implements ArrayAccess
     /**
      * @return \ArrayAccess|null
      */
-    public function iShouldReturnNullButReturnVoid()
+    public function iShouldReturnNullButReturnVoid() // @phpcsWarningOnThisLine
     {
         if (rand(1, 4) === 3) {
             return null;
@@ -406,7 +436,7 @@ class FooAccess implements ArrayAccess
     /**
      * @return \ArrayAccess|null
      */
-    public function iShouldReturnNull()
+    public function iShouldReturnNull() // @phpcsWarningOnThisLine
     {
         return new \ArrayObject();
     }
@@ -414,7 +444,7 @@ class FooAccess implements ArrayAccess
     /**
      * @return \ArrayAccess|null|\ArrayObject
      */
-    public function iReturnALotOfStuff() // @phpcsWarningCodeOnThisLine NoReturnType
+    public function iReturnALotOfStuff()
     {
         if (rand(1, 4) > 2) {
             return null;
@@ -423,7 +453,7 @@ class FooAccess implements ArrayAccess
         return new \ArrayObject();
     }
 
-    // @phpcsErrorCodeOnNextLine IncorrectVoidReturn
+    // @phpcsErrorCodeOnNextLine IncorrectNullReturn
     public function iReturnWrongNull(): \ArrayAccess
     {
         if (rand(1, 4) > 2) {
@@ -452,7 +482,7 @@ class FooAccess implements ArrayAccess
     }
 }
 
-class Container implements \Psr\Container\ContainerInterface {
+class Container implements PsrContainer {
 
     private $data = [];
 
@@ -469,17 +499,17 @@ class Container implements \Psr\Container\ContainerInterface {
 
 class JsonSerializeTest implements \JsonSerializable, \Serializable {
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return '';
     }
 
-    public function serialize()
+    public function serialize(): string
     {
         return '';
     }
 
-    public function unserialize($serialized)
+    public function unserialize($serialized): void
     {
     }
 }
