@@ -173,6 +173,13 @@ Analyses closures attached to WordPress hooks ensuring that:
 This sniff has no available configuration.
 
 -----
+## Inpsyde.CodeQuality.HookPriorityLimit
+
+Raises a warning if:
+
+- `PHP_INT_MAX` is used for `add_filter`.
+- `PHP_INT_MIN` is used for `add_action` or `add_filter`.
+-----
 
 ## Inpsyde.CodeQuality.LineLength
 
