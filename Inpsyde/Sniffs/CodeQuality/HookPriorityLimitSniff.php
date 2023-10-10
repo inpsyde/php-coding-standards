@@ -62,7 +62,7 @@ class HookPriorityLimitSniff implements Sniff
         $parameters = $this->stringParameters($phpcsFile, $stackPtr + 1);
 
         if (in_array('PHP_INT_MAX', $parameters, true) && $functionName === 'add_filter') {
-            $phpcsFile->addError(
+            $phpcsFile->addWarning(
                 'PHP_INT_MAX applied as filter priority.',
                 $stackPtr,
                 'HookPriorityLimit'
@@ -71,7 +71,7 @@ class HookPriorityLimitSniff implements Sniff
         }
 
         if (in_array('PHP_INT_MIN', $parameters, true)) {
-            $phpcsFile->addError(
+            $phpcsFile->addWarning(
                 'PHP_INT_MIN applied as filter or action priority.',
                 $stackPtr,
                 'HookPriorityLimit'

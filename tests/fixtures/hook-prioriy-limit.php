@@ -43,11 +43,11 @@ add_action(
     9999
 );
 
-// @phpcsErrorCodeOnNextLine HookPriorityLimit
+// @phpcsWarningCodeOnNextLine HookPriorityLimit
 add_filter('foo', 'foo', PHP_INT_MIN);
-// @phpcsErrorCodeOnNextLine HookPriorityLimit
+// @phpcsWarningCodeOnNextLine HookPriorityLimit
 add_filter('foo', [ArrayObject::class, 'meh'], PHP_INT_MIN);
-// @phpcsErrorCodeOnNextLine HookPriorityLimit
+// @phpcsWarningCodeOnNextLine HookPriorityLimit
 add_filter(
     'foo',
     function() {
@@ -56,11 +56,11 @@ add_filter(
     PHP_INT_MIN
 );
 
-// @phpcsErrorCodeOnNextLine HookPriorityLimit
+// @phpcsWarningCodeOnNextLine HookPriorityLimit
 add_action('foo', 'foo', PHP_INT_MIN);
-// @phpcsErrorCodeOnNextLine HookPriorityLimit
+// @phpcsWarningCodeOnNextLine HookPriorityLimit
 add_action('foo', [ArrayObject::class, 'meh'], PHP_INT_MIN);
-// @phpcsErrorCodeOnNextLine HookPriorityLimit
+// @phpcsWarningCodeOnNextLine HookPriorityLimit
 add_action(
     'hook',
     function() {
@@ -69,11 +69,11 @@ add_action(
     PHP_INT_MIN
 );
 
-// @phpcsErrorCodeOnNextLine HookPriorityLimit
+// @phpcsWarningCodeOnNextLine HookPriorityLimit
 add_filter('foo', 'foo', PHP_INT_MAX);
-// @phpcsErrorCodeOnNextLine HookPriorityLimit
+// @phpcsWarningCodeOnNextLine HookPriorityLimit
 add_filter('foo', [ArrayObject::class, 'meh'], PHP_INT_MAX);
-// @phpcsErrorCodeOnNextLine HookPriorityLimit
+// @phpcsWarningCodeOnNextLine HookPriorityLimit
 add_filter('foo',
     function() {
         return true;
