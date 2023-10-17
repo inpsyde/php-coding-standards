@@ -31,7 +31,7 @@ namespace Inpsyde\Sniffs\CodeQuality;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 
-class HookPriorityLimitSniff implements Sniff
+class HookPrioritySniff implements Sniff
 {
     /**
      * @return list<int>
