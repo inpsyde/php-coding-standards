@@ -30,6 +30,7 @@ namespace Inpsyde\Sniffs\CodeQuality;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
+use PHPCSUtils\Utils\PassedParameters;
 
 class HookPrioritySniff implements Sniff
 {
@@ -59,43 +60,26 @@ class HookPrioritySniff implements Sniff
             return;
         }
 
-        $parameters = $this->stringParameters($phpcsFile, $stackPtr + 1);
+        $parameter = PassedParameters::getParameter($phpcsFile, $stackPtr, 3, 'priority');
+        $parameter = $parameter['clean'] ?? '';
 
-        if (in_array('PHP_INT_MAX', $parameters, true) && $functionName === 'add_filter') {
+        if ($parameter === 'PHP_INT_MAX' && $functionName === 'add_filter') {
             $phpcsFile->addWarning(
-                'PHP_INT_MAX applied as filter priority.',
+                'Found PHP_INT_MAX used as hook priority. '
+                . 'This makes it hard, if not impossible to reliably filter the callback output.',
                 $stackPtr,
-                'HookPriorityLimit'
+                'HookPriority'
             );
             return;
         }
 
-        if (in_array('PHP_INT_MIN', $parameters, true)) {
+        if ($parameter === 'PHP_INT_MIN') {
             $phpcsFile->addWarning(
-                'PHP_INT_MIN applied as filter or action priority.',
+                'Found PHP_INT_MIN used as hook priority. '
+                . 'This makes it hard, if not impossible to reliably remove the callback.',
                 $stackPtr,
-                'HookPriorityLimit'
+                'HookPriority'
             );
         }
-    }
-
-    private function stringParameters(File $phpcsFile, int $position): array
-    {
-        $tokens = $phpcsFile->getTokens();
-
-        $openingParenthesis = $tokens[$position]['parenthesis_opener'] ?? 0;
-        $closingParenthesis = $tokens[$position]['parenthesis_closer'] ?? 0;
-        $stringParameters = [];
-
-        for ($i = (int)$openingParenthesis + 1; $i < $closingParenthesis; $i++) {
-            $tokenCode = $tokens[$i]['code'] ?? 0;
-            if ($tokenCode !== T_STRING) {
-                continue;
-            }
-
-            $stringParameters[] = $tokens[$i]['content'] ?? '';
-        }
-
-        return $stringParameters;
     }
 }
