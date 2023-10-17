@@ -173,7 +173,7 @@ Analyses closures attached to WordPress hooks ensuring that:
 This sniff has no available configuration.
 
 -----
-## Inpsyde.CodeQuality.HookPriorityLimit
+## Inpsyde.CodeQuality.HookPriority
 
 Raises a warning if:
 
