@@ -67,12 +67,12 @@ class NoAccessorsSniff implements Sniff
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
         // phpcs:enable Inpsyde.CodeQuality.FunctionLength
 
-        if (!Scopes::isOOMethod($phpcsFile, $stackPtr)) {
+        if (! Scopes::isOOMethod($phpcsFile, $stackPtr)) {
             return;
         }
 
         $functionName = $phpcsFile->getDeclarationName($stackPtr);
-        if (!$functionName || in_array($functionName, self::ALLOWED_NAMES, true)) {
+        if (! $functionName || in_array($functionName, self::ALLOWED_NAMES, true)) {
             return;
         }
 
@@ -91,7 +91,7 @@ class NoAccessorsSniff implements Sniff
             $modifierPointer = $tokens[$modifierPointerPosition] ?? null;
             if (
                 $modifierPointer
-                && !in_array($modifierPointer['code'], Tokens::$scopeModifiers, true)
+                && ! in_array($modifierPointer['code'], Tokens::$scopeModifiers, true)
             ) {
                 $modifierPointer = null;
             }
@@ -106,7 +106,7 @@ class NoAccessorsSniff implements Sniff
         }
 
         preg_match('/^(set|get)[_A-Z0-9]+/', $functionName, $matches);
-        if (!$matches) {
+        if (! $matches) {
             return;
         }
 

@@ -42,21 +42,21 @@ class FixtureContentParser
      */
     public function parse(string $fixturePath): array
     {
-        if (!file_exists($fixturePath) || !is_readable($fixturePath)) {
+        if (! file_exists($fixturePath) || ! is_readable($fixturePath)) {
             throw new \Error("Fixture file {$fixturePath} is not readable.");
         }
 
-        $accumulator = (object)[
+        $accumulator = (object) [
             'sniff' => null,
             'warnings' => [],
             'errors' => [],
             'messages' => [],
-            'properties' => (object)[
+            'properties' => (object) [
                 'start' => false,
                 'end' => false,
                 'values' => [],
             ],
-            'process' => (object)[
+            'process' => (object) [
                 'start' => false,
                 'end' => false,
                 'content' => '',
@@ -77,7 +77,7 @@ class FixtureContentParser
      */
     private function processResults(object $accumulator, string $fixturePath): array
     {
-        if (!$accumulator->process->content) {
+        if (! $accumulator->process->content) {
             return [
                 $this->checkSniffName($accumulator->sniff),
                 new SniffMessages(
@@ -106,11 +106,11 @@ class FixtureContentParser
         [$sniff, $messages, $warnings, $errors, $properties] = $results;
 
         if (
-            !is_string($sniff)
-            || !is_array($messages)
-            || !is_array($warnings)
-            || !is_array($errors)
-            || !is_array($properties)
+            ! is_string($sniff)
+            || ! is_array($messages)
+            || ! is_array($warnings)
+            || ! is_array($errors)
+            || ! is_array($properties)
         ) {
             throw new \Error(
                 sprintf(
@@ -140,12 +140,12 @@ class FixtureContentParser
         }
 
         static $regex;
-        if (!$regex) {
+        if (! $regex) {
             $chars = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*';
             $regex = "({$chars})(({$chars}|\.)*({$chars}))";
         }
 
-        if (!preg_match('~^' . $regex . '$~', $sniff)) {
+        if (! preg_match('~^' . $regex . '$~', $sniff)) {
             throw new \Error("Invalid sniff name '{$sniff}'.");
         }
 
@@ -182,9 +182,9 @@ class FixtureContentParser
     private function readLine(int $lineNum, string $line, object $accumulator): void
     {
         if (
-            !$this->readProcessLine($lineNum, $line, $accumulator)
-            && !$this->readSniffLine($line, $accumulator)
-            && !$this->readPropertiesLine($lineNum, $line, $accumulator)
+            ! $this->readProcessLine($lineNum, $line, $accumulator)
+            && ! $this->readSniffLine($line, $accumulator)
+            && ! $this->readPropertiesLine($lineNum, $line, $accumulator)
         ) {
             $this->readTokenLine($lineNum, $line, $accumulator);
         }
@@ -235,7 +235,7 @@ class FixtureContentParser
         $regex or $regex = '~' . preg_quote(self::TOKEN_SNIFF, '~') . '\s+([^\s]+)~';
 
         preg_match($regex, $line, $matches);
-        if (!empty($matches[1])) {
+        if (! empty($matches[1])) {
             $accumulator->sniff = $matches[1];
 
             return true;
@@ -288,7 +288,7 @@ class FixtureContentParser
     private function readTokenLine(int $lineNum, string $line, object $accumulator): void
     {
         static $pattern;
-        if (!$pattern) {
+        if (! $pattern) {
             $typePattern = '(?<type>Warning|Error|Message)';
             $hasCodePattern = '(?<has_code>Code)?';
 
@@ -298,7 +298,7 @@ class FixtureContentParser
         }
 
         preg_match("~{$pattern}~", $line, $matches);
-        if (!$matches) {
+        if (! $matches) {
             return;
         }
 
@@ -313,7 +313,7 @@ class FixtureContentParser
         }
 
         $code = '';
-        if (!empty($matches['has_code']) && !empty($matches['code'])) {
+        if (! empty($matches['has_code']) && ! empty($matches['code'])) {
             $matchedCode = trim($matches['code']);
             $matchedCode and $code = $matchedCode;
         }

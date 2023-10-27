@@ -47,7 +47,7 @@ final class Objects
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
         if (
-            !in_array(
+            ! in_array(
                 $tokens[$position]['code'] ?? null,
                 Collections::ooPropertyScopes(),
                 true
@@ -100,16 +100,16 @@ final class Objects
 
         while (true) {
             $nextUse = $file->findNext(T_USE, $nextUse + 1, $position - 1);
-            if (!$nextUse) {
+            if (! $nextUse) {
                 break;
             }
-            if (!UseStatements::isImportUse($file, $nextUse)) {
+            if (! UseStatements::isImportUse($file, $nextUse)) {
                 continue;
             }
             $usePositions[] = $nextUse;
         }
 
-        if (!$usePositions) {
+        if (! $usePositions) {
             return [];
         }
 
@@ -148,12 +148,12 @@ final class Objects
     {
         $tokens = $file->getTokens();
         $code = $tokens[$position]['code'] ?? null;
-        if (!in_array($code, Collections::ooCanImplement(), true)) {
+        if (! in_array($code, Collections::ooCanImplement(), true)) {
             return null;
         }
 
         $implementsPos = $file->findNext(T_IMPLEMENTS, $position, null, false, null, true);
-        if (!$implementsPos) {
+        if (! $implementsPos) {
             return null;
         }
 
@@ -166,14 +166,14 @@ final class Objects
             true
         );
 
-        if (!$namesEnd) {
+        if (! $namesEnd) {
             return null;
         }
 
         $uses = static::findAllImportUses($file, $position - 1);
         /** @var non-empty-list<string>|false $names */
         $names = ObjectDeclarations::findImplementedInterfaceNames($file, $position);
-        if (!$names) {
+        if (! $names) {
             return [];
         }
 

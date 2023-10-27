@@ -61,7 +61,7 @@ class FixturesTest extends TestCase
 
         $previous = null;
         foreach ($failures as $failure) {
-            if (!$failure instanceof \Throwable) {
+            if (! $failure instanceof \Throwable) {
                 continue;
             }
 
@@ -211,7 +211,7 @@ class FixturesTest extends TestCase
 
         $sniffFile = str_replace('.', '/', "{$sniffName}Sniff");
         $sniffPath = getenv('SNIFFS_PATH') . "/{$sniffFile}.php";
-        if (!file_exists($sniffPath) || !is_readable($sniffPath)) {
+        if (! file_exists($sniffPath) || ! is_readable($sniffPath)) {
             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             throw new Exception("Non-existent of unreadable sniff file '{$sniffPath}' found.");
         }

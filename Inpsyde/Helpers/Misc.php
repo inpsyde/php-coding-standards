@@ -43,7 +43,7 @@ final class Misc
     public static function minPhpTestVersion(): string
     {
         $testVersion = trim(Config::getConfigData('testVersion') ?: '');
-        if (!$testVersion) {
+        if (! $testVersion) {
             return self::MIN_SUPPORTED_VERSION;
         }
 
@@ -107,8 +107,8 @@ final class Misc
                 continue;
             }
             $empty = $types === [];
-            $inArray = !$empty && in_array($token['code'] ?? '', $types, true);
-            if ($empty || (!$excludeTypes && $inArray) || ($excludeTypes && !$inArray)) {
+            $inArray = ! $empty && in_array($token['code'] ?? '', $types, true);
+            if ($empty || (! $excludeTypes && $inArray) || ($excludeTypes && ! $inArray)) {
                 $filtered[$i] = $token;
             }
         }
@@ -136,7 +136,7 @@ final class Misc
 
         $content = '';
         foreach ($filtered as $token) {
-            $content .= (string)($token['content'] ?? '');
+            $content .= (string) ($token['content'] ?? '');
         }
 
         return $content;

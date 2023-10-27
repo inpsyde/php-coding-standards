@@ -76,7 +76,7 @@ class LineLengthSniff implements Sniff
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
 
         $longLinesData = $this->collectLongLinesData($phpcsFile, max(1, $stackPtr));
-        if (!$longLinesData) {
+        if (! $longLinesData) {
             return $phpcsFile->numTokens + 1;
         }
 
@@ -113,7 +113,7 @@ class LineLengthSniff implements Sniff
         for ($i = $start; $i < $file->numTokens; $i++) {
             // Still processing previous line: increment length and continue.
             if ($lastLine && ($tokens[$i]['line'] === $lastLine)) {
-                $content = (string)$tokens[$i]['content'];
+                $content = (string) $tokens[$i]['content'];
                 $data[$lastLine]['length'] += strlen($content);
                 $data[$lastLine]['nonEmptyLength'] += strlen(trim($content));
                 continue;
@@ -124,8 +124,8 @@ class LineLengthSniff implements Sniff
                 $data[$lastLine]['end'] = $i - 1;
             }
 
-            $lastLine = (int)$tokens[$i]['line'];
-            $content = (string)$tokens[$i]['content'];
+            $lastLine = (int) $tokens[$i]['line'];
+            $content = (string) $tokens[$i]['content'];
             $data[$lastLine] = [
                 'length' => strlen($content),
                 'nonEmptyLength' => strlen(trim($content)),
@@ -177,7 +177,7 @@ class LineLengthSniff implements Sniff
         $foundString = false;
 
         while ($start && ($start <= $end)) {
-            if (!in_array($tokens[$start]['code'], $targetTypes, true)) {
+            if (! in_array($tokens[$start]['code'], $targetTypes, true)) {
                 $start++;
                 continue;
             }
@@ -192,7 +192,7 @@ class LineLengthSniff implements Sniff
                 ? $this->isLongHtmlAttribute($start, $end, $file, $tokens)
                 : $this->isLongSingleWord($start, $end, $file, $tokens);
 
-            if (!$isLong) {
+            if (! $isLong) {
                 return false;
             }
 
@@ -224,11 +224,11 @@ class LineLengthSniff implements Sniff
         $content = '';
         for ($i = $position; $i <= $lineEnd; $i++) {
             $code = $tokens[$i]['code'];
-            if (($code === T_OPEN_TAG || $code === T_OPEN_TAG_WITH_ECHO) && !$inPhp) {
+            if (($code === T_OPEN_TAG || $code === T_OPEN_TAG_WITH_ECHO) && ! $inPhp) {
                 $inPhp = true;
             }
             if ($tokens[$i]['code'] === T_INLINE_HTML || $inPhp) {
-                $tokenContent = (string)$tokens[$i]['content'];
+                $tokenContent = (string) $tokens[$i]['content'];
                 $content .= $inPhp ? str_repeat('x', strlen($tokenContent)) : $tokenContent;
             }
             if ($tokens[$i]['code'] === T_CLOSE_TAG && $inPhp) {
@@ -271,7 +271,12 @@ class LineLengthSniff implements Sniff
         array $tokens
     ): bool {
 
-        $words = preg_split('~\s+~', (string)$tokens[$position]['content'], 2, PREG_SPLIT_NO_EMPTY);
+        $words = preg_split(
+            '~\s+~',
+            (string) $tokens[$position]['content'],
+            2,
+            PREG_SPLIT_NO_EMPTY
+        );
 
         // If multiple words exceed line limit, we can split each word in its own line
         if ($words === false || count($words) !== 1) {
@@ -281,7 +286,7 @@ class LineLengthSniff implements Sniff
         $word = reset($words);
         $firstNonWhitePos = $file->findNext(T_WHITESPACE, $position, $lineEnd, true);
         $firstNonWhite = ($firstNonWhitePos === false) ? null : $tokens[$firstNonWhitePos];
-        $tolerance = is_array($firstNonWhite) ? ((int)($firstNonWhite['column'] ?? 1) + 3) : 4;
+        $tolerance = is_array($firstNonWhite) ? ((int) ($firstNonWhite['column'] ?? 1) + 3) : 4;
 
         return (strlen($word) + $tolerance) > $this->lineLimit;
     }
@@ -320,8 +325,8 @@ class LineLengthSniff implements Sniff
             return false;
         }
 
-        $function = strtolower((string)$tokens[$functionPos]['content']);
-        if (!in_array($function, self::I18N_FUNCTIONS, true)) {
+        $function = strtolower((string) $tokens[$functionPos]['content']);
+        if (! in_array($function, self::I18N_FUNCTIONS, true)) {
             return false;
         }
 
@@ -333,7 +338,7 @@ class LineLengthSniff implements Sniff
             if ($tokens[$i]['line'] !== $targetLine) {
                 continue;
             }
-            $textLen += max(1, strlen((string)$tokens[$i]['content']));
+            $textLen += max(1, strlen((string) $tokens[$i]['content']));
         }
 
         return ($textLen + 2) > $this->lineLimit;
@@ -360,7 +365,7 @@ class LineLengthSniff implements Sniff
         $endUse = $file->findEndOfStatement($usePos);
         $useLen = 0;
         for ($i = $usePos; $i <= $endUse; $i++) {
-            $useLen += strlen((string)$tokens[$i]['content']);
+            $useLen += strlen((string) $tokens[$i]['content']);
         }
 
         return $useLen > $this->lineLimit;

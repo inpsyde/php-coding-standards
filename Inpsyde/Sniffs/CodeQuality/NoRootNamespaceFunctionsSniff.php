@@ -63,7 +63,7 @@ class NoRootNamespaceFunctionsSniff implements Sniff
             return;
         }
         $name = FunctionDeclarations::getName($phpcsFile, $stackPtr);
-        if (!$name) {
+        if (! $name) {
             return;
         }
 

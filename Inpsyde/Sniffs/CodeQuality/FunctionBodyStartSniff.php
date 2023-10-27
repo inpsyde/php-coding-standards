@@ -57,8 +57,8 @@ class FunctionBodyStartSniff implements Sniff
         $tokens = $phpcsFile->getTokens();
         $token = $tokens[$stackPtr] ?? [];
 
-        $scopeOpener = (int)($token['scope_opener'] ?? -1);
-        $scopeCloser = (int)($token['scope_closer'] ?? -1);
+        $scopeOpener = (int) ($token['scope_opener'] ?? -1);
+        $scopeCloser = (int) ($token['scope_closer'] ?? -1);
 
         if ($scopeOpener < 0 || $scopeCloser < 0 || $scopeCloser <= $scopeOpener) {
             return;
@@ -66,8 +66,8 @@ class FunctionBodyStartSniff implements Sniff
 
         $bodyStart = $phpcsFile->findNext([T_WHITESPACE], $scopeOpener + 1, null, true);
         if (
-            !$bodyStart
-            || !array_key_exists($bodyStart, $tokens)
+            ! $bodyStart
+            || ! array_key_exists($bodyStart, $tokens)
             || $bodyStart <= $scopeOpener
             || $bodyStart >= $scopeCloser
         ) {
@@ -76,8 +76,8 @@ class FunctionBodyStartSniff implements Sniff
 
         [$code, $message, $expectedLine] = $this->checkBodyStart(
             $bodyStart,
-            (int)($tokens[$scopeOpener]['line'] ?? -1),
-            (int)($token['line'] ?? -1),
+            (int) ($tokens[$scopeOpener]['line'] ?? -1),
+            (int) ($token['line'] ?? -1),
             $phpcsFile
         );
 
@@ -107,7 +107,7 @@ class FunctionBodyStartSniff implements Sniff
 
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
-        $bodyLine = (int)($tokens[$bodyStart]['line'] ?? -1);
+        $bodyLine = (int) ($tokens[$bodyStart]['line'] ?? -1);
 
         $isMultiLineDeclare = ($openerLine - $functionLine) > 1;
         $isSingleLineDeclare = $openerLine === ($functionLine + 1);
@@ -117,13 +117,13 @@ class FunctionBodyStartSniff implements Sniff
             ($isMultiLineDeclare || $isSingleLineSignature) && $bodyLine !== ($openerLine + 2)
             || $isSingleLineDeclare && $bodyLine > ($openerLine + 2);
 
-        if (!$error) {
+        if (! $error) {
             return [null, null, null];
         }
 
         $startWithComment = in_array($tokens[$bodyStart]['code'], Tokens::$emptyTokens, true);
 
-        if (!$startWithComment && ($isMultiLineDeclare || $isSingleLineSignature)) {
+        if (! $startWithComment && ($isMultiLineDeclare || $isSingleLineSignature)) {
             $where = $isSingleLineSignature
                 ? 'with single-line signature and open curly bracket on same line'
                 : 'where arguments declaration spans across multiple lines';
@@ -138,7 +138,7 @@ class FunctionBodyStartSniff implements Sniff
             ];
         }
 
-        if (!$isSingleLineDeclare) {
+        if (! $isSingleLineDeclare) {
             return [null, null, null];
         }
 
@@ -163,7 +163,7 @@ class FunctionBodyStartSniff implements Sniff
     {
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
-        $currentLine = (int)($tokens[$bodyStart]['line'] ?? -1);
+        $currentLine = (int) ($tokens[$bodyStart]['line'] ?? -1);
 
         if ($currentLine === $expectedLine) {
             return;
