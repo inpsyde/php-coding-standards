@@ -61,7 +61,7 @@ jobs:
                 php-ver: [ '7.4', '8.0', '8.1', '8.2' ]
         with:
             PHP_VERSION: ${{ matrix.php-ver }}
-            PSALM_ARGS: ${{ format("--no-suggestions --report-show-info=false --find-unused-psalm-suppress --no-diff --output-format={0}", ((github.event_name == 'pull_request') && 'github ') || 'compact') }}
+            PSALM_ARGS: ${{ format('--no-suggestions --report-show-info=false --find-unused-psalm-suppress --no-diff --output-format={0}', ((github.event_name == 'pull_request') && 'github') || 'compact') }}
 
     tests-unit-php:
         if: ${{ (github.event_name != 'workflow_dispatch') || ((github.event.inputs.jobs == 'Run all') || (github.event.inputs.jobs == 'Run unit tests only')) }}
