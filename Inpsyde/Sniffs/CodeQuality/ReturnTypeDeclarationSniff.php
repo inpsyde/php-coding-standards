@@ -185,6 +185,12 @@ class ReturnTypeDeclarationSniff implements Sniff
         array $returnInfo
     ): void {
 
+        if ($returnTypes === ['mixed']) {
+            $this->checkIsNotVoid($file, $position, $returnInfo);
+
+            return;
+        }
+
         if (($returnTypes === ['void']) || ($returnTypes === ['null'])) {
             $this->checkIsActualVoid($file, $position, $returnInfo, $returnTypes === ['null']);
 
@@ -194,6 +200,30 @@ class ReturnTypeDeclarationSniff implements Sniff
         $this->checkInvalidGenerator($file, $position, $returnTypes, $returnInfo)
             || $this->checkMissingReturn($file, $position, $returnTypes, $returnInfo)
             || $this->checkIncorrectVoid($file, $position, $returnTypes, $returnInfo);
+    }
+
+    /**
+     * @param File $file
+     * @param int $position
+     * @param array $returnInfo
+     * @param bool $checkNull
+     * @return void
+     */
+    private function checkIsNotVoid(
+        File $file,
+        int $position,
+        array $returnInfo
+    ): void {
+
+        if ($returnInfo['void'] === 0) {
+            return;
+        }
+
+        $file->addError(
+            'Return type is declared non-void but void return statement(s) found',
+            $position,
+            'IncorrectVoidReturn'
+        );
     }
 
     /**

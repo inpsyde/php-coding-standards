@@ -3,6 +3,11 @@
 
 use Psr\Container\ContainerInterface as PsrContainer;
 
+function returnMixed(): mixed
+{
+    return null;
+}
+
 add_filter('x', function () {
     return '';
 });
@@ -216,6 +221,12 @@ function genMultiReturn(): \Generator
     }
 
     return 2;
+}
+
+// @phpcsErrorCodeOnNextLine IncorrectVoidReturn
+function returnMixed2(): mixed
+{
+    return;
 }
 
 // @phpcsErrorCodeOnNextLine IncorrectVoidReturnType
