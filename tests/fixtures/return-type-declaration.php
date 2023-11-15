@@ -373,6 +373,15 @@ interface LoremIpsum
 
 class FooAccess implements ArrayAccess
 {
+    private string $x;
+
+    public function __construct(string $x)
+    {
+        if ($x === '') {
+            return;
+        }
+        $this->x = $x;
+    }
 
     /**
      * @inheritdoc

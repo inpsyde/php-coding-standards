@@ -36,6 +36,7 @@ use Inpsyde\CodingStandard\Helpers\WpHooks;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
 use PHPCSUtils\Utils\FunctionDeclarations;
+use PHPCSUtils\Utils\ObjectDeclarations;
 use PHPCSUtils\Utils\Scopes;
 
 class ReturnTypeDeclarationSniff implements Sniff
@@ -78,6 +79,14 @@ class ReturnTypeDeclarationSniff implements Sniff
 
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $phpcsFile->getTokens();
+
+        // Do not check return type for constructors.
+        if (
+            Scopes::isOOMethod($phpcsFile, $stackPtr)
+            && (ObjectDeclarations::getName($phpcsFile, $stackPtr) === '__construct')
+        ) {
+            return;
+        }
 
         $data = FunctionDeclarations::getProperties($phpcsFile, $stackPtr);
         if (!$data['has_body']) {
