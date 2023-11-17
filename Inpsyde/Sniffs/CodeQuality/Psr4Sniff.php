@@ -128,7 +128,7 @@ class Psr4Sniff implements Sniff
         $fullyQualifiedName = $namespace . "\\{$className}";
 
         foreach ($this->exclude as $excluded) {
-            if (strpos($fullyQualifiedName, (string)$excluded) === 0) {
+            if (strpos($fullyQualifiedName, (string) $excluded) === 0) {
                 return;
             }
         }

@@ -46,17 +46,17 @@ class FixtureContentParser
             throw new \Error("Fixture file {$fixturePath} is not readable.");
         }
 
-        $accumulator = (object)[
+        $accumulator = (object) [
             'sniff' => null,
             'warnings' => [],
             'errors' => [],
             'messages' => [],
-            'properties' => (object)[
+            'properties' => (object) [
                 'start' => false,
                 'end' => false,
                 'values' => [],
             ],
-            'process' => (object)[
+            'process' => (object) [
                 'start' => false,
                 'end' => false,
                 'content' => '',

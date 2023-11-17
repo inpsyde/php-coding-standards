@@ -64,10 +64,10 @@ class NestingLevelSniff implements Sniff
             return;
         }
 
-        $start = (int)$tokens[$stackPtr]['scope_opener'];
-        $end = (int)$tokens[$stackPtr]['scope_closer'];
+        $start = (int) $tokens[$stackPtr]['scope_opener'];
+        $end = (int) $tokens[$stackPtr]['scope_closer'];
 
-        $baseLevel = (int)$tokens[$stackPtr]['level'];
+        $baseLevel = (int) $tokens[$stackPtr]['level'];
         $nestingLevel = 0;
         $inTry = false;
         $endTry = null;
@@ -82,7 +82,7 @@ class NestingLevelSniff implements Sniff
                 continue;
             }
 
-            $level = (int)$tokens[$i]['level'];
+            $level = (int) $tokens[$i]['level'];
 
             if (!$inTry && $tokens[$i]['code'] === T_TRY && $level === $tryTargetLevel) {
                 $inTry = true;
@@ -149,7 +149,7 @@ class NestingLevelSniff implements Sniff
     {
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $phpcsFile->getTokens();
-        $currentEnd = (int)$tokens[$catchPosition]['scope_closer'];
+        $currentEnd = (int) $tokens[$catchPosition]['scope_closer'];
         $nextCatch = $phpcsFile->findNext(T_CATCH, $currentEnd + 1, $currentEnd + 3);
         if ($nextCatch) {
             return $this->endOfTryBlock($nextCatch, $phpcsFile);
@@ -157,6 +157,6 @@ class NestingLevelSniff implements Sniff
 
         $finally = $phpcsFile->findNext(T_FINALLY, $currentEnd + 1, $currentEnd + 3);
 
-        return $finally ? (int)$tokens[$finally]['scope_closer'] + 1 : $currentEnd + 1;
+        return $finally ? (int) $tokens[$finally]['scope_closer'] + 1 : $currentEnd + 1;
     }
 }

@@ -71,7 +71,7 @@ class StaticClosureSniff implements Sniff
         $tokens = $phpcsFile->getTokens();
         while (!$thisFound && ($i < $functionEnd)) {
             $token = $tokens[$i];
-            $content = (string)($token['content'] ?? '');
+            $content = (string) ($token['content'] ?? '');
             $thisFound = (($token['code'] === T_VARIABLE) && ($content === '$this'))
                 || (
                     in_array($token['code'], [T_DOUBLE_QUOTED_STRING, T_HEREDOC], true)
@@ -96,7 +96,7 @@ class StaticClosureSniff implements Sniff
             }
         }
 
-        $line = (int)$tokens[$stackPtr]['line'];
+        $line = (int) $tokens[$stackPtr]['line'];
         $message = sprintf('Closure found at line %d could be static.', $line);
 
         if ($phpcsFile->addFixableWarning($message, $stackPtr, 'PossiblyStaticClosure')) {

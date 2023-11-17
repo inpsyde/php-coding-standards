@@ -82,7 +82,7 @@ class ForbiddenPublicPropertySniff implements Sniff
     {
         $classNameTokenPosition = $file->findNext(
             T_STRING,
-            (int)$file->findPrevious(T_CLASS, $position)
+            (int) $file->findPrevious(T_CLASS, $position)
         );
 
         if ($classNameTokenPosition === false) {
@@ -93,7 +93,7 @@ class ForbiddenPublicPropertySniff implements Sniff
         $tokens = $file->getTokens();
         $classNameToken = $tokens[$classNameTokenPosition];
 
-        if (substr((string)$classNameToken['content'], -5, 5) === 'Sniff') {
+        if (substr((string) $classNameToken['content'], -5, 5) === 'Sniff') {
             return true;
         }
 

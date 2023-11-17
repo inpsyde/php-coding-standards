@@ -103,9 +103,9 @@ class FunctionLengthSniff implements Sniff
             return 0;
         }
 
-        $start = (int)$token['scope_opener'];
-        $end = (int)$token['scope_closer'];
-        $length = (int)$tokens[$end]['line'] - (int)$tokens[$start]['line'];
+        $start = (int) $token['scope_opener'];
+        $end = (int) $token['scope_closer'];
+        $length = (int) $tokens[$end]['line'] - (int) $tokens[$start]['line'];
 
         if ($length < $this->maxLength) {
             return $length;
@@ -138,7 +138,7 @@ class FunctionLengthSniff implements Sniff
         $empty = array_filter(array_column($linesData, 'empty'));
         $onlyComment = array_filter(array_column($linesData, 'only-comment'));
 
-        $toExcludeCount = (int)array_sum($docblocks);
+        $toExcludeCount = (int) array_sum($docblocks);
         if ($this->ignoreBlankLines) {
             $toExcludeCount += count($empty);
         }
@@ -156,7 +156,7 @@ class FunctionLengthSniff implements Sniff
      */
     private function ignoredLinesData(array $token, array $lines): array
     {
-        $line = (int)$token['line'];
+        $line = (int) $token['line'];
         if (!array_key_exists($line, $lines)) {
             $lines[$line] = ['empty' => true, 'only-comment' => true];
         }
@@ -189,7 +189,7 @@ class FunctionLengthSniff implements Sniff
 
         $closer = $tokens[$position]['comment_closer'] ?? null;
         $docBlocks[] = is_numeric($closer)
-            ? 1 + ((int)$tokens[(int)$closer]['line'] - (int)$tokens[$position]['line'])
+            ? 1 + ((int) $tokens[(int) $closer]['line'] - (int) $tokens[$position]['line'])
             : 1;
 
         return $docBlocks;
@@ -208,7 +208,7 @@ class FunctionLengthSniff implements Sniff
 
         foreach ($flags as $flag) {
             if (is_string($this->{$flag})) {
-                $this->{$flag} = (bool)filter_var($this->{$flag}, FILTER_VALIDATE_BOOLEAN);
+                $this->{$flag} = (bool) filter_var($this->{$flag}, FILTER_VALIDATE_BOOLEAN);
             }
         }
     }
