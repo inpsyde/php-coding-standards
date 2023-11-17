@@ -80,12 +80,12 @@ class ArgumentTypeDeclarationSniff implements Sniff
             }
 
             $docTypes = $docBlockTypes[$parameter['name']] ?? [];
-            if (! Functions::isNonDeclarableDocBlockType($docTypes, false)) {
+            if (!Functions::isNonDeclarableDocBlockType($docTypes, false)) {
                 $errors[] = $parameter['name'];
             }
         }
 
-        if (! $errors) {
+        if (!$errors) {
             return;
         }
 

@@ -53,8 +53,8 @@ final class FunctionDocBlock
         $tokens = $file->getTokens();
 
         if (
-            ! array_key_exists($position, $tokens)
-            || ! in_array($tokens[$position]['code'], [T_FUNCTION, T_CLOSURE, T_FN], true)
+            !array_key_exists($position, $tokens)
+            || !in_array($tokens[$position]['code'], [T_FUNCTION, T_CLOSURE, T_FN], true)
         ) {
             return [];
         }
@@ -62,19 +62,19 @@ final class FunctionDocBlock
         $closeType = T_DOC_COMMENT_CLOSE_TAG;
         $closeTag = $file->findPrevious($closeType, $position - 1, null, false, null, true);
 
-        if (! $closeTag || empty($tokens[$closeTag]['comment_opener'])) {
+        if (!$closeTag || empty($tokens[$closeTag]['comment_opener'])) {
             return [];
         }
 
-        $functionLine = (int) ($tokens[$position]['line'] ?? -1);
-        $closeLine = (int) ($tokens[$closeTag]['line'] ?? -1);
+        $functionLine = (int)($tokens[$position]['line'] ?? -1);
+        $closeLine = (int)($tokens[$closeTag]['line'] ?? -1);
         if ($closeLine !== ($functionLine - 1)) {
             return [];
         }
 
         /** @var array<int, array{string, string}> $tags */
         $tags = [];
-        $start = (int) $tokens[$closeTag]['comment_opener'] + 1;
+        $start = (int)$tokens[$closeTag]['comment_opener'] + 1;
         $key = -1;
         $inTag = false;
 
@@ -84,7 +84,7 @@ final class FunctionDocBlock
                 continue;
             }
 
-            $content = (string) $tokens[$i]['content'];
+            $content = (string)$tokens[$i]['content'];
             if (($tokens[$i]['code'] === T_DOC_COMMENT_TAG)) {
                 $inTag = true;
                 $key++;
@@ -102,7 +102,7 @@ final class FunctionDocBlock
         $rand or $rand = bin2hex(random_bytes(3));
         foreach ($tags as [$tagName, $tagContent]) {
             empty($normalizedTags[$tagName]) and $normalizedTags[$tagName] = [];
-            if (! $normalizeContent) {
+            if (!$normalizeContent) {
                 $normalizedTags[$tagName][] = $tagContent;
                 continue;
             }
@@ -140,7 +140,7 @@ final class FunctionDocBlock
     public static function allParamTypes(File $file, int $functionPosition): array
     {
         $params = static::tag('@param', $file, $functionPosition);
-        if (! $params) {
+        if (!$params) {
             return [];
         }
 
@@ -173,7 +173,7 @@ final class FunctionDocBlock
                 $splitType = substr($splitType, 1) ?: '';
                 $hasNull = $hasNull || ($splitType !== '');
             }
-            if (! $splitType) {
+            if (!$splitType) {
                 continue;
             }
             if (strtolower($splitType) === 'null') {

@@ -46,7 +46,7 @@ final class Boundaries
         $tokens = $file->getTokens();
 
         if (
-            ! in_array(
+            !in_array(
                 $tokens[$position]['code'] ?? null,
                 array_keys(Collections::functionDeclarationTokens()),
                 true
@@ -68,7 +68,7 @@ final class Boundaries
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
-        if (! in_array(($tokens[$position]['code'] ?? null), Tokens::$ooScopeTokens, true)) {
+        if (!in_array(($tokens[$position]['code'] ?? null), Tokens::$ooScopeTokens, true)) {
             return [-1, -1];
         }
 
@@ -84,14 +84,14 @@ final class Boundaries
     {
         $openClose = Arrays::getOpenClose($file, $position);
         if (
-            ! is_array($openClose)
-            || ! is_int($openClose['opener'] ?? null)
-            || ! is_int($openClose['closer'] ?? null)
+            !is_array($openClose)
+            || !is_int($openClose['opener'] ?? null)
+            || !is_int($openClose['closer'] ?? null)
         ) {
             return [-1, -1];
         }
 
-        return [(int) $openClose['opener'], (int) $openClose['closer']];
+        return [(int)$openClose['opener'], (int)$openClose['closer']];
     }
 
     /**
@@ -105,15 +105,15 @@ final class Boundaries
         $token = $file->getTokens()[$position] ?? [];
         if (($token['code'] ?? '') === T_FN) {
             $start = $file->findNext(T_FN_ARROW, $position + 1, null, false, null, true);
-            if (! $start) {
+            if (!$start) {
                 return [-1, -1];
             }
 
             return [$start + 1, $file->findEndOfStatement($start)];
         }
 
-        $start = (int) ($token['scope_opener'] ?? 0);
-        $end = (int) ($token['scope_closer'] ?? 0);
+        $start = (int)($token['scope_opener'] ?? 0);
+        $end = (int)($token['scope_closer'] ?? 0);
         if (($start <= 0) || ($end <= 0) || ($start >= ($end - 1))) {
             return [-1, -1];
         }

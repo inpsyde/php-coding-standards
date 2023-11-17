@@ -52,14 +52,14 @@ final class Functions
         $types[] = T_VARIABLE;
 
         if (
-            ! in_array($code, $types, true)
+            !in_array($code, $types, true)
             || (($code === T_VARIABLE) && Scopes::isOOProperty($file, $position))
         ) {
             return false;
         }
 
         $callOpen = $file->findNext(Tokens::$emptyTokens, $position + 1, null, true, null, true);
-        if (! $callOpen || $tokens[$callOpen]['code'] !== T_OPEN_PARENTHESIS) {
+        if (!$callOpen || $tokens[$callOpen]['code'] !== T_OPEN_PARENTHESIS) {
             return false;
         }
 
@@ -158,7 +158,7 @@ final class Functions
      */
     public static function isPsrMethod(File $file, int $position): bool
     {
-        if (! Scopes::isOOMethod($file, $position)) {
+        if (!Scopes::isOOMethod($file, $position)) {
             return false;
         }
 
@@ -167,7 +167,7 @@ final class Functions
 
         $classPos = Conditions::getLastCondition($file, $position, $scopes);
         $type = is_int($classPos) ? ($tokens[$classPos]['code'] ?? null) : null;
-        if (! in_array($type, $scopes, true)) {
+        if (!in_array($type, $scopes, true)) {
             return false;
         }
 
@@ -209,7 +209,7 @@ final class Functions
         // If "never" is there, this is valid for return types and PHP < 8.1,
         // not valid for argument types.
         if (in_array('never', $docTypes, true)) {
-            return $return && ! $is81;
+            return $return && !$is81;
         }
 
         if ($count > 1) {
@@ -219,8 +219,8 @@ final class Functions
             }
             // Union type without null, valid if we're not on PHP < 8.0, or on PHP < 8.2 and
             // there's an intersection (DNF)
-            if (! in_array('null', $docTypes, true)) {
-                return ! $is80 || (! $is82 && $isIntersection);
+            if (!in_array('null', $docTypes, true)) {
+                return !$is80 || (!$is82 && $isIntersection);
             }
             $docTypes = array_diff($docTypes, ['null']);
             $count = count($docTypes);
@@ -229,7 +229,7 @@ final class Functions
         // Union type with "null" plus something else, valid if we're not on PHP < 8.0 or
         // on PHP < 8.2 and there's an intersection (DNF)
         if ($count > 1) {
-            return ! $is80 || (! $is82 && $isIntersection);
+            return !$is80 || (!$is82 && $isIntersection);
         }
 
         $singleDocType = reset($docTypes);
@@ -237,8 +237,8 @@ final class Functions
         // If the single type is "mixed" is valid if we are on PHP < 8.0.
         // If the single type is "null" is valid if we are on PHP < 8.2.
         // If the single is an intersection, is valid if we are on PHP < 8.1
-        return (($singleDocType === 'mixed') && ! $is80)
-            || (($singleDocType === 'null') && ! $is82)
-            || ($isIntersection && ! $is81);
+        return (($singleDocType === 'mixed') && !$is80)
+            || (($singleDocType === 'null') && !$is82)
+            || ($isIntersection && !$is81);
     }
 }

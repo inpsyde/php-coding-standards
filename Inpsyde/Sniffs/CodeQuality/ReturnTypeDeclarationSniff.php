@@ -80,7 +80,7 @@ class ReturnTypeDeclarationSniff implements Sniff
         $tokens = $phpcsFile->getTokens();
 
         $data = FunctionDeclarations::getProperties($phpcsFile, $stackPtr);
-        if (! $data['has_body']) {
+        if (!$data['has_body']) {
             return;
         }
 
@@ -104,8 +104,8 @@ class ReturnTypeDeclarationSniff implements Sniff
             : [];
 
         if (
-            ! Functions::isNonDeclarableDocBlockType($docTypes, true)
-            && ! $this->shouldIgnore($phpcsFile, $stackPtr, $tokens)
+            !Functions::isNonDeclarableDocBlockType($docTypes, true)
+            && !$this->shouldIgnore($phpcsFile, $stackPtr, $tokens)
         ) {
             $phpcsFile->addWarning('Return type is missing', $stackPtr, 'NoReturnType');
 
@@ -234,8 +234,8 @@ class ReturnTypeDeclarationSniff implements Sniff
         $hasReturnNull = $returnInfo['null'] > 0;
 
         if (
-            ($hasReturnNull && ! in_array('null', $returnTypes, true))
-            || (! in_array('void', $returnTypes, true) && ($returnInfo['void'] > 0))
+            ($hasReturnNull && !in_array('null', $returnTypes, true))
+            || (!in_array('void', $returnTypes, true) && ($returnInfo['void'] > 0))
         ) {
             $file->addError(
                 sprintf(
@@ -306,7 +306,7 @@ class ReturnTypeDeclarationSniff implements Sniff
     ): bool {
 
         $hasGenerator = false;
-        while (! $hasGenerator && $returnTypes) {
+        while (!$hasGenerator && $returnTypes) {
             $returnType = explode('&', rtrim(ltrim(array_shift($returnTypes), '('), ')'));
             $hasGenerator = in_array('Generator', $returnType, true)
                 || in_array('\Generator', $returnType, true)
@@ -342,7 +342,7 @@ class ReturnTypeDeclarationSniff implements Sniff
             return true;
         }
 
-        if (! $hasGenerator && ($yieldCount > 0)) {
+        if (!$hasGenerator && ($yieldCount > 0)) {
             $file->addError(
                 'Return type does not contain "Generator" but yield found in the function body',
                 $position,

@@ -49,7 +49,7 @@ final class WpHooks
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
 
-        if (! in_array(($tokens[$position]['code'] ?? ''), [T_CLOSURE, T_FN], true)) {
+        if (!in_array(($tokens[$position]['code'] ?? ''), [T_CLOSURE, T_FN], true)) {
             return false;
         }
 
@@ -58,18 +58,18 @@ final class WpHooks
         $exclude = $empty;
         $exclude[] = T_STATIC;
         $commaPos = $file->findPrevious($exclude, $position - 1, null, true, null, true);
-        if (! $commaPos || ($tokens[$commaPos]['code'] ?? '') !== T_COMMA) {
+        if (!$commaPos || ($tokens[$commaPos]['code'] ?? '') !== T_COMMA) {
             return false;
         }
 
         $openType = [T_OPEN_PARENTHESIS];
         $openCallPos = $file->findPrevious($openType, $commaPos - 2, null, false, null, true);
-        if (! $openCallPos) {
+        if (!$openCallPos) {
             return false;
         }
 
         $functionCallPos = $file->findPrevious($empty, $openCallPos - 1, null, true, null, true);
-        if (! $functionCallPos || $tokens[$functionCallPos]['code'] !== T_STRING) {
+        if (!$functionCallPos || $tokens[$functionCallPos]['code'] !== T_STRING) {
             return false;
         }
 
@@ -87,6 +87,6 @@ final class WpHooks
      */
     public static function isHookFunction(File $file, int $position): bool
     {
-        return (bool) FunctionDocBlock::tag('@wp-hook', $file, $position);
+        return (bool)FunctionDocBlock::tag('@wp-hook', $file, $position);
     }
 }

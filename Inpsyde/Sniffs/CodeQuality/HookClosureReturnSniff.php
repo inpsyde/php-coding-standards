@@ -55,7 +55,7 @@ class HookClosureReturnSniff implements Sniff
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
 
-        if (! WpHooks::isHookClosure($phpcsFile, $stackPtr)) {
+        if (!WpHooks::isHookClosure($phpcsFile, $stackPtr)) {
             return;
         }
 
@@ -74,7 +74,7 @@ class HookClosureReturnSniff implements Sniff
 
         $isFilterClosure = WpHooks::isHookClosure($phpcsFile, $stackPtr, true, false);
 
-        if ($isFilterClosure && (! $nonVoidReturnCount || $voidReturnCount)) {
+        if ($isFilterClosure && (!$nonVoidReturnCount || $voidReturnCount)) {
             $phpcsFile->addError(
                 'No (or void) return from filter closure.',
                 $stackPtr,
@@ -82,7 +82,7 @@ class HookClosureReturnSniff implements Sniff
             );
         }
 
-        if (! $isFilterClosure && $nonVoidReturnCount) {
+        if (!$isFilterClosure && $nonVoidReturnCount) {
             $phpcsFile->addError(
                 'Return value from action closure.',
                 $stackPtr,

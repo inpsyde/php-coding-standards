@@ -76,10 +76,10 @@ final class FunctionReturnStatement
             if ($tokens[$pos]['code'] === T_RETURN) {
                 $returnCount['total']++;
                 $void = static::isVoid($file, $pos);
-                $null = ! $void && static::isNull($file, $pos);
+                $null = !$void && static::isNull($file, $pos);
                 $void and $returnCount['void']++;
                 $null and $returnCount['null']++;
-                (! $void && ! $null) and $returnCount['nonEmpty']++;
+                (!$void && !$null) and $returnCount['nonEmpty']++;
             }
 
             $pos++;
@@ -127,7 +127,7 @@ final class FunctionReturnStatement
 
         if ($code === T_FN) {
             $position = $file->findNext(T_FN_ARROW, $position + 1, null, false, null, true);
-            if (! $position) {
+            if (!$position) {
                 return false;
             }
         }

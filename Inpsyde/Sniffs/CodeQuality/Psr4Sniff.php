@@ -69,7 +69,7 @@ class Psr4Sniff implements Sniff
 
         $this->normalizeExcluded();
 
-        if (! $this->psr4) {
+        if (!$this->psr4) {
             $this->checkFilenameOnly($phpcsFile, $stackPtr, $className, $entityType);
 
             return;
@@ -128,7 +128,7 @@ class Psr4Sniff implements Sniff
         $fullyQualifiedName = $namespace . "\\{$className}";
 
         foreach ($this->exclude as $excluded) {
-            if (strpos($fullyQualifiedName, (string) $excluded) === 0) {
+            if (strpos($fullyQualifiedName, (string)$excluded) === 0) {
                 return;
             }
         }
@@ -136,7 +136,7 @@ class Psr4Sniff implements Sniff
         $filePath = str_replace('\\', '/', $file->getFilename());
 
         foreach ($this->psr4 as $baseNamespace => $foldersStr) {
-            if (! is_string($baseNamespace) || ! is_string($foldersStr)) {
+            if (!is_string($baseNamespace) || !is_string($foldersStr)) {
                 continue;
             }
 

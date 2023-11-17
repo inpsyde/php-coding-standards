@@ -98,7 +98,7 @@ class VariablesNameSniff implements Sniff
 
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $phpcsFile->getTokens();
-        $name = (string) $tokens[$stackPtr]['content'];
+        $name = (string)$tokens[$stackPtr]['content'];
 
         if (
             in_array($name, $ignored, true)
@@ -119,7 +119,7 @@ class VariablesNameSniff implements Sniff
 
         if (
             ($isProperty && $this->arePropertiesIgnored())
-            || (! $isProperty && $this->areVariablesIgnored())
+            || (!$isProperty && $this->areVariablesIgnored())
         ) {
             return;
         }
@@ -152,7 +152,7 @@ class VariablesNameSniff implements Sniff
      */
     private function arePropertiesIgnored(): bool
     {
-        return (bool) filter_var($this->ignoreProperties, FILTER_VALIDATE_BOOLEAN);
+        return (bool)filter_var($this->ignoreProperties, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -160,7 +160,7 @@ class VariablesNameSniff implements Sniff
      */
     private function areVariablesIgnored(): bool
     {
-        return (bool) filter_var($this->ignoreLocalVars, FILTER_VALIDATE_BOOLEAN);
+        return (bool)filter_var($this->ignoreLocalVars, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -170,7 +170,7 @@ class VariablesNameSniff implements Sniff
     private function checkCamelCase(string $name): bool
     {
         return preg_match('~^\$[a-z]+(?:[a-zA-Z0-9]+)?$~', $name)
-            && ! preg_match('~[A-Z]{2,}~', $name);
+            && !preg_match('~[A-Z]{2,}~', $name);
     }
 
     /**
@@ -179,7 +179,7 @@ class VariablesNameSniff implements Sniff
      */
     private function checkSnakeCase(string $name): bool
     {
-        return (bool) preg_match('~^\$[a-z]+(?:[a-z0-9_]+)?$~', $name);
+        return (bool)preg_match('~^\$[a-z]+(?:[a-z0-9_]+)?$~', $name);
     }
 
     /**

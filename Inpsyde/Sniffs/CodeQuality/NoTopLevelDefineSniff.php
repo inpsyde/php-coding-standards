@@ -59,7 +59,7 @@ class NoTopLevelDefineSniff implements Sniff
         if (
             ($tokens[$stackPtr]['content'] ?? '') !== 'define'
             || ($tokens[$stackPtr]['level'] ?? -1) !== 0
-            || ! Functions::looksLikeFunctionCall($phpcsFile, $stackPtr)
+            || !Functions::looksLikeFunctionCall($phpcsFile, $stackPtr)
         ) {
             return;
         }

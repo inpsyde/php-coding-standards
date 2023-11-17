@@ -61,7 +61,7 @@ class DisableMagicSerializeSniff implements Sniff
     public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        if (! Scopes::isOOMethod($phpcsFile, $stackPtr)) {
+        if (!Scopes::isOOMethod($phpcsFile, $stackPtr)) {
             return;
         }
 
