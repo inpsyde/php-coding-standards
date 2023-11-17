@@ -67,7 +67,7 @@ final class Names
         }
 
         if ($code === T_VARIABLE) {
-            $name = ltrim((string)($tokens[$position]['content'] ?? ''), '$');
+            $name = ltrim((string) ($tokens[$position]['content'] ?? ''), '$');
 
             return ($name === '') ? null : $name;
         }
@@ -79,7 +79,7 @@ final class Names
         }
 
         $namePosition = $file->findNext(T_STRING, $position, null, false, null, true);
-        $name = ($namePosition === false) ? null : (string)$tokens[$namePosition]['content'];
+        $name = ($namePosition === false) ? null : (string) $tokens[$namePosition]['content'];
 
         return ($name === '') ? null : $name;
     }
