@@ -6,6 +6,7 @@
 - Inpsyde.CodeQuality.ConstantVisibility
 - Inpsyde.CodeQuality.DisallowShortOpenTag
 - Inpsyde.CodeQuality.ElementNameMinimalLength
+- Inpsyde.CodeQuality.EncodingComment
 - Inpsyde.CodeQuality.ForbiddenPublicProperty
 - Inpsyde.CodeQuality.FunctionBodyStart
 - Inpsyde.CodeQuality.FunctionLength
@@ -94,6 +95,15 @@ alternatively, whitelist can be extended via `additionalAllowedNames` config, e.
     </properties>
 </rule>
 ```
+
+-----
+## Inpsyde.CodeQuality.EncodingComment
+
+Prevent usage of some outdated encoding definition in PHP comments.
+
+It raises a Warning if something like this is found `-*- coding: utf-8 -*-`.
+
+This sniff has no available configuration.
 
 -----
 
