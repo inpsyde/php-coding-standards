@@ -1,6 +1,6 @@
 <?php
 
-// @phpcsSniff CodeQuality.DisableMagicSerialize
+// @phpcsSniff Inpsyde.CodeQuality.DisableMagicSerialize
 
 class Foo {
 

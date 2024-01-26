@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.StaticClosure
+// @phpcsSniff Inpsyde.CodeQuality.StaticClosure
 
 /**
  * @return string

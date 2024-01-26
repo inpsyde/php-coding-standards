@@ -35,7 +35,7 @@ if (!is_file($autoload)) {
     die('Please install via Composer before running tests.');
 }
 
-putenv("SNIFFS_PATH={$libDir}/Inpsyde/Sniffs");
+putenv("LIB_PATH={$libDir}");
 putenv('SNIFFS_NAMESPACE=Inpsyde\\Sniffs');
 putenv("FIXTURES_PATH={$testsDir}/fixtures");
 

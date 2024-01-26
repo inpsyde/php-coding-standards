@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.FunctionBodyStart
+// @phpcsSniff Inpsyde.CodeQuality.FunctionBodyStart
 
 namespace FunctionBodyStartTest;
 

@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.DisableCallUserFunc
+// @phpcsSniff Inpsyde.CodeQuality.DisableCallUserFunc
 
 function test() {
     // @phpcsErrorOnNextLine

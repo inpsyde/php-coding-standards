@@ -209,24 +209,36 @@ class FixturesTest extends TestCase
         array $properties
     ): File {
 
-        $sniffFile = str_replace('.', '/', "{$sniffName}Sniff");
-        $sniffPath = getenv('SNIFFS_PATH') . "/{$sniffFile}.php";
+        $sniffFile = $this->buildSniffFile($sniffName);
+        $sniffPath = getenv('LIB_PATH') . "/{$sniffFile}.php";
         if (!file_exists($sniffPath) || !is_readable($sniffPath)) {
             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             throw new Exception("Non-existent of unreadable sniff file '{$sniffPath}' found.");
         }
 
+        $standard = strtok($sniffName, '.');
         $config = new Config();
-        $config->standards = [dirname(getenv('SNIFFS_PATH'))];
-        $config->sniffs = ["Inpsyde.{$sniffName}"];
+        $config->standards = [getenv('LIB_PATH') . "/{$standard}"];
+        $config->sniffs = [$sniffName];
         $ruleset = new Ruleset($config);
 
-        $baseSniffNamespace = getenv('SNIFFS_NAMESPACE');
         $sniffFqn = str_replace('/', '\\', $sniffFile);
         foreach ($properties as $name => $value) {
-            $ruleset->setSniffProperty("{$baseSniffNamespace}\\{$sniffFqn}", $name, $value);
+            $ruleset->setSniffProperty(
+                $sniffFqn,
+                $name,
+                ['scope' => 'sniff', 'value' => $value],
+            );
         }
 
         return new LocalFile($fixtureFile, $ruleset, $config);
+    }
+
+    private function buildSniffFile(string $sniffName): string
+    {
+        $parts = explode('.', $sniffName);
+        array_splice($parts, 1, 0, 'Sniffs');
+
+        return implode('/', $parts) . 'Sniff';
     }
 }

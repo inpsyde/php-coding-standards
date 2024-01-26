@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.ElementNameMinimalLength
+// @phpcsSniff Inpsyde.CodeQuality.ElementNameMinimalLength
 
 namespace {
 

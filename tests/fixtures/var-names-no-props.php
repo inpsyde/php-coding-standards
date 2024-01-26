@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.VariablesName
+// @phpcsSniff Inpsyde.CodeQuality.VariablesName
 
 // @phpcsSniffPropertiesStart
 // $ignoreProperties = "true";

@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.NoRootNamespaceFunctions
+// @phpcsSniff Inpsyde.CodeQuality.NoRootNamespaceFunctions
 
 class Foo
 {

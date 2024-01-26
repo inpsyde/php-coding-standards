@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.NestingLevel
+// @phpcsSniff Inpsyde.CodeQuality.NestingLevel
 
 // @phpcsErrorOnNextLine
 function a()

@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.LineLength
+// @phpcsSniff Inpsyde.CodeQuality.LineLength
 
 ?>
     <!-- Warning two lines below: multiple attributes can go each in one line -->
@@ -117,4 +117,3 @@ function longComment() {
             </div>
         </div>
     </div>
-

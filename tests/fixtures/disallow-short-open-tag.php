@@ -13,7 +13,7 @@ function (string $sniff, array $messages, array $warnings, array $errors, array 
 }
 // @phpcsProcessFixtureEnd
 
-// @phpcsSniff CodeQuality.DisallowShortOpenTag
+// @phpcsSniff Inpsyde.CodeQuality.DisallowShortOpenTag
 ?>
 <div>
     <?= strtolower($x) ?>

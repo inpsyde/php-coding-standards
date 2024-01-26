@@ -1,6 +1,6 @@
 <?php
 
-// @phpcsSniff CodeQuality.NoElse
+// @phpcsSniff Inpsyde.CodeQuality.NoElse
 
 if ('x') {
 

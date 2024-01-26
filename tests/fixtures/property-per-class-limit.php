@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.PropertyPerClassLimit
+// @phpcsSniff Inpsyde.CodeQuality.PropertyPerClassLimit
 
 class Reasonable {
 

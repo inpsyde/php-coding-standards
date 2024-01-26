@@ -2,7 +2,7 @@
 
 namespace Inpsyde\CodingStandard\Tests\Fixtures;
 
-// @phpcsSniff CodeQuality.HookPriority
+// @phpcsSniff Inpsyde.CodeQuality.HookPriority
 add_action('foo', 'bar');
 
 add_filter('foo', [ArrayObject::class, 'meh']);

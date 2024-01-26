@@ -1,6 +1,6 @@
 <?php
 
-// @phpcsSniff CodeQuality.HookClosureReturn
+// @phpcsSniff Inpsyde.CodeQuality.HookClosureReturn
 
 add_action('foo', 'bar');
 
