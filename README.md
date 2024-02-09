@@ -184,15 +184,31 @@ For **notes and configuration** see [`/inpsyde-custom-sniffs.md`](/inpsyde-custo
 
 ## Templates Rules
 
-InpsydeTemplates ruleset contains custom rules targeted to the PHP templates and views.
-To enable the ruleset only for templates the following configuration could be used:
+InpsydeTemplates ruleset extends Inpsyde ruleset apart from several rules that doesn't make sense in
+the templating context. Several template-specific sniffs are added.
+
+The recommended way of using InpsydeTemplates ruleset:
 
 ```xml
-<rule ref="InpsydeTemplates">
-    <include-pattern>*/templates/*</include-pattern>
-    <include-pattern>*/views/*</include-pattern>
-</rule>
+<ruleset>
+    <file>./src/</file>
+    <file>./tests</file>
+    <file>./templates</file>
+    <file>./block-views</file>
+
+    <rule ref="Inpsyde">
+        <exclude-pattern>*/templates/*</exclude-pattern>
+        <exclude-pattern>*/views/*</exclude-pattern>
+    </rule>
+
+    <rule ref="InpsydeTemplates">
+        <include-pattern>*/templates/*</include-pattern>
+        <include-pattern>*/views/*</include-pattern>
+    </rule>
+</ruleset>
 ```
+The following Inpsyde rules are disabled:
+* NoElse
 
 The following templates-specific rules are available:
 
