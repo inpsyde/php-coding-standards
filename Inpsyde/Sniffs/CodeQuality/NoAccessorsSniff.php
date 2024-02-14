@@ -40,6 +40,7 @@ class NoAccessorsSniff implements Sniff
         'getInnerIterator',
         'getChildren',
         'setUp',
+        'setUpBeforeClass',
     ];
 
     public bool $skipForPrivate = true;
