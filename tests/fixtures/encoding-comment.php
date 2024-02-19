@@ -15,4 +15,3 @@ namespace Inpsyde\CodingStandard\Tests\Fixtures;
 
 <?php //-*- coding: utf-8 -*-
 // @phpcsWarningOnPreviousLine CodeQuality.EncodingComment
-?>

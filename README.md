@@ -194,7 +194,7 @@ The recommended way to use the `InpsydeTemplates` ruleset is as follows:
     <file>./src/</file>
     <file>./tests</file>
     <file>./templates</file>
-    <file>./block-views</file>
+    <file>./views</file>
 
     <rule ref="Inpsyde">
         <exclude-pattern>*/templates/*</exclude-pattern>
@@ -207,7 +207,7 @@ The recommended way to use the `InpsydeTemplates` ruleset is as follows:
     </rule>
 </ruleset>
 ```
-The following Inpsyde rules are disabled:
+The following `Inpsyde` rules are disabled:
 * `NoElse`
 
 The following templates-specific rules are available:

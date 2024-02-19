@@ -7,7 +7,6 @@
 <?= 'Without trailing semicolon' ?>
 
 <?php
-
 $content = 'New content';
 if ($content) {
     echo $content;

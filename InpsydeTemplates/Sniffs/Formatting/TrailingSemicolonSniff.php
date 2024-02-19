@@ -86,7 +86,7 @@ final class TrailingSemicolonSniff implements Sniff
             return;
         }
 
-        $message = sprintf('Trailing semicolon found at line %d.', $currentLine);
+        $message = sprintf('Trailing semicolon found in line %d.', $currentLine);
 
         if ($phpcsFile->addFixableWarning($message, $stackPtr, 'Found')) {
             $this->fix($stackPtr, $phpcsFile);
