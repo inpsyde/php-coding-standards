@@ -152,7 +152,7 @@ class VariablesNameSniff implements Sniff
      */
     private function arePropertiesIgnored(): bool
     {
-        return (bool)filter_var($this->ignoreProperties, FILTER_VALIDATE_BOOLEAN);
+        return filter_var($this->ignoreProperties, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -160,7 +160,7 @@ class VariablesNameSniff implements Sniff
      */
     private function areVariablesIgnored(): bool
     {
-        return (bool)filter_var($this->ignoreLocalVars, FILTER_VALIDATE_BOOLEAN);
+        return filter_var($this->ignoreLocalVars, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**

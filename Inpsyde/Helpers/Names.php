@@ -73,9 +73,12 @@ final class Names
         }
 
         if ($code === T_NAMESPACE) {
-            return Namespaces::isDeclaration($file, $position)
-                ? (Namespaces::getDeclaredName($file, $position) ?: '')
-                : null;
+            if (!Namespaces::isDeclaration($file, $position)) {
+                return null;
+            }
+            $declaredName = Namespaces::getDeclaredName($file, $position);
+
+            return ($declaredName !== '' && is_string($declaredName)) ? $declaredName : null;
         }
 
         $namePosition = $file->findNext(T_STRING, $position, null, false, null, true);

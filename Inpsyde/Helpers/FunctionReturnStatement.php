@@ -127,7 +127,7 @@ final class FunctionReturnStatement
 
         if ($code === T_FN) {
             $position = $file->findNext(T_FN_ARROW, $position + 1, null, false, null, true);
-            if (!$position) {
+            if ($position === false) {
                 return false;
             }
         }

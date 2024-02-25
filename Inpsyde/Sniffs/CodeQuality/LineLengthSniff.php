@@ -112,7 +112,7 @@ class LineLengthSniff implements Sniff
         $lastLine = null;
         for ($i = $start; $i < $file->numTokens; $i++) {
             // Still processing previous line: increment length and continue.
-            if ($lastLine && ($tokens[$i]['line'] === $lastLine)) {
+            if (($lastLine !== null) && ($tokens[$i]['line'] === $lastLine)) {
                 $content = (string)$tokens[$i]['content'];
                 $data[$lastLine]['length'] += strlen($content);
                 $data[$lastLine]['nonEmptyLength'] += strlen(trim($content));
@@ -120,12 +120,12 @@ class LineLengthSniff implements Sniff
             }
 
             // A new line started: let's set "end" for the previous line (if this isn't 1st line)
-            if ($lastLine && isset($data[$lastLine])) {
+            if (($lastLine !== null) && isset($data[$lastLine])) {
                 $data[$lastLine]['end'] = $i - 1;
             }
 
-            $lastLine = (int)$tokens[$i]['line'];
-            $content = (string)$tokens[$i]['content'];
+            $lastLine = (int) $tokens[$i]['line'];
+            $content = (string) $tokens[$i]['content'];
             $data[$lastLine] = [
                 'length' => strlen($content),
                 'nonEmptyLength' => strlen(trim($content)),
@@ -135,7 +135,7 @@ class LineLengthSniff implements Sniff
         }
 
         // We still have to set the "end" for last file line.
-        if ($lastLine && ($data[$lastLine]['end'] === null)) {
+        if (($lastLine !== null) && ($data[$lastLine]['end'] === null)) {
             $data[$lastLine]['end'] = $i - 1;
         }
 

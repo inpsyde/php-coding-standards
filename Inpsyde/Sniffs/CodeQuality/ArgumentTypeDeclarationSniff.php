@@ -75,7 +75,8 @@ class ArgumentTypeDeclarationSniff implements Sniff
 
         $errors = [];
         foreach ($parameters as $parameter) {
-            if ($parameter['type_hint'] ?? null) {
+            $typeHint = $parameter['type_hint'] ?? '';
+            if (($typeHint !== '') && ($typeHint !== false)) {
                 continue;
             }
 

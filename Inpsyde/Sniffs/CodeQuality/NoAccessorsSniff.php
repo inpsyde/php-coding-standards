@@ -40,6 +40,7 @@ class NoAccessorsSniff implements Sniff
         'getInnerIterator',
         'getChildren',
         'setUp',
+        'setUpBeforeClass',
     ];
 
     public bool $skipForPrivate = true;
@@ -71,8 +72,8 @@ class NoAccessorsSniff implements Sniff
             return;
         }
 
-        $functionName = $phpcsFile->getDeclarationName($stackPtr);
-        if (!$functionName || in_array($functionName, self::ALLOWED_NAMES, true)) {
+        $functionName = $phpcsFile->getDeclarationName($stackPtr) ?? '';
+        if (($functionName === '') || in_array($functionName, self::ALLOWED_NAMES, true)) {
             return;
         }
 
@@ -90,16 +91,16 @@ class NoAccessorsSniff implements Sniff
             $tokens = $phpcsFile->getTokens();
             $modifierPointer = $tokens[$modifierPointerPosition] ?? null;
             if (
-                $modifierPointer
+                is_array($modifierPointer)
                 && !in_array($modifierPointer['code'], Tokens::$scopeModifiers, true)
             ) {
                 $modifierPointer = null;
             }
 
-            $modifier = $modifierPointer ? $modifierPointer['code'] ?? null : null;
+            $modifier = ($modifierPointer !== null) ? ($modifierPointer['code'] ?? null) : null;
             if (
-                ($modifier === T_PRIVATE && $this->skipForPrivate)
-                || ($modifier === T_PROTECTED && $this->skipForProtected)
+                (($modifier === T_PRIVATE) && $this->skipForPrivate)
+                || (($modifier === T_PROTECTED) && $this->skipForProtected)
             ) {
                 return;
             }
