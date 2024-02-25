@@ -173,6 +173,7 @@ final class FunctionDocBlock
                 $splitType = substr($splitType, 1);
                 $hasNull = $hasNull || (($splitType !== '') && ($splitType !== false));
             }
+            /** @psalm-suppress DocblockTypeContradiction */
             if (($splitType === false) || ($splitType === '')) {
                 continue;
             }
