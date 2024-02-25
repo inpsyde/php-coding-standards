@@ -170,11 +170,10 @@ final class FunctionDocBlock
             if (strpos($splitType, '&') !== false) {
                 $splitType = rtrim(ltrim($splitType, '('), ')');
             } elseif (strpos($splitType, '?') === 0) {
-                $splitType = substr($splitType, 1);
-                $hasNull = $hasNull || (($splitType !== '') && ($splitType !== false));
+                $splitType = (string) substr($splitType, 1);
+                $hasNull = $hasNull || ($splitType !== '');
             }
-            /** @psalm-suppress DocblockTypeContradiction */
-            if (($splitType === false) || ($splitType === '')) {
+            if ($splitType === '') {
                 continue;
             }
             if (strtolower($splitType) === 'null') {
