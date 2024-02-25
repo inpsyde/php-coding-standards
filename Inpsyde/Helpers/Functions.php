@@ -59,28 +59,33 @@ final class Functions
         }
 
         $callOpen = $file->findNext(Tokens::$emptyTokens, $position + 1, null, true, null, true);
-        if (!$callOpen || $tokens[$callOpen]['code'] !== T_OPEN_PARENTHESIS) {
+        if (($callOpen === false) || $tokens[$callOpen]['code'] !== T_OPEN_PARENTHESIS) {
             return false;
         }
 
         $prevExclude = Tokens::$emptyTokens;
         $prevMeaningful = $file->findPrevious($prevExclude, $position - 1, null, true, null, true);
 
-        if ($prevMeaningful && ($tokens[$prevMeaningful]['code'] ?? -1) === T_NS_SEPARATOR) {
+        if (
+            ($prevMeaningful !== false)
+            && ($tokens[$prevMeaningful]['code'] ?? -1) === T_NS_SEPARATOR
+        ) {
             $prevExclude = array_merge($prevExclude, [T_STRING, T_NS_SEPARATOR]);
             $prevStart = $prevMeaningful - 1;
             $prevMeaningful = $file->findPrevious($prevExclude, $prevStart, null, true, null, true);
         }
 
-        $prevMeaningfulCode = $prevMeaningful ? $tokens[$prevMeaningful]['code'] : null;
-        if ($prevMeaningfulCode && in_array($prevMeaningfulCode, [T_NEW, T_FUNCTION], true)) {
+        $prevMeaningfulCode = ($prevMeaningful !== false)
+            ? $tokens[$prevMeaningful]['code']
+            : null;
+        if (in_array($prevMeaningfulCode, [T_NEW, T_FUNCTION], true)) {
             return false;
         }
 
         $callClose = $file->findNext([T_CLOSE_PARENTHESIS], $callOpen + 1, null, false, null, true);
         $expectedCallClose = $tokens[$callOpen]['parenthesis_closer'] ?? -1;
 
-        return $callClose && ($callClose === $expectedCallClose);
+        return ($callClose !== false) && ($callClose === $expectedCallClose);
     }
 
     /**

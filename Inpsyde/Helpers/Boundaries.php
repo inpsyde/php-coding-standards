@@ -105,7 +105,7 @@ final class Boundaries
         $token = $file->getTokens()[$position] ?? [];
         if (($token['code'] ?? '') === T_FN) {
             $start = $file->findNext(T_FN_ARROW, $position + 1, null, false, null, true);
-            if (!$start) {
+            if ($start === false) {
                 return [-1, -1];
             }
 

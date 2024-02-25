@@ -96,11 +96,12 @@ final class Objects
     {
         // phpcs:enable Generic.Metrics.CyclomaticComplexity
         $usePositions = [];
-        $nextUse = $file->findPrevious(T_NAMESPACE, $position - 1) ?: 0;
+        $nextUse = $file->findPrevious(T_NAMESPACE, $position - 1);
+        ($nextUse === false) and $nextUse = 0;
 
         while (true) {
             $nextUse = $file->findNext(T_USE, $nextUse + 1, $position - 1);
-            if (!$nextUse) {
+            if ($nextUse === false) {
                 break;
             }
             if (!UseStatements::isImportUse($file, $nextUse)) {
@@ -121,14 +122,14 @@ final class Objects
             $asPos = $file->findNext(T_AS, $usePosition + 1, $end, false, null, true);
             $useName = Misc::tokensSubsetToString(
                 $usePosition + 1,
-                ($asPos ?: $end) - 1,
+                (($asPos !== false) ? $asPos : $end) - 1,
                 $file,
                 [T_STRING, T_NS_SEPARATOR]
             );
             $useName = trim($useName, '\\');
             $useNameParts = explode('\\', $useName);
             $key = end($useNameParts);
-            if ($asPos) {
+            if ($asPos !== false) {
                 $keyPos = $file->findNext(T_STRING, $asPos + 1, null, false, null, true);
                 /** @var string $key */
                 $key = $tokens[$keyPos]['content'] ?? '';
@@ -153,7 +154,7 @@ final class Objects
         }
 
         $implementsPos = $file->findNext(T_IMPLEMENTS, $position, null, false, null, true);
-        if (!$implementsPos) {
+        if ($implementsPos === false) {
             return null;
         }
 
@@ -166,7 +167,7 @@ final class Objects
             true
         );
 
-        if (!$namesEnd) {
+        if ($namesEnd === false) {
             return null;
         }
 

@@ -66,7 +66,7 @@ class FunctionBodyStartSniff implements Sniff
 
         $bodyStart = $phpcsFile->findNext([T_WHITESPACE], $scopeOpener + 1, null, true);
         if (
-            !$bodyStart
+            ($bodyStart === false)
             || !array_key_exists($bodyStart, $tokens)
             || $bodyStart <= $scopeOpener
             || $bodyStart >= $scopeCloser
@@ -82,9 +82,9 @@ class FunctionBodyStartSniff implements Sniff
         );
 
         if (
-            $code
-            && $message
-            && $expectedLine
+            (($code !== null) && ($code !== ''))
+            && (($message !== null) && ($message !== ''))
+            && ($expectedLine !== null)
             && $phpcsFile->addFixableWarning($message, $stackPtr, $code)
         ) {
             $this->fix($bodyStart, $expectedLine, $scopeOpener, $phpcsFile);

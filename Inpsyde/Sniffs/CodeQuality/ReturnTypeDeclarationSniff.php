@@ -94,7 +94,9 @@ class ReturnTypeDeclarationSniff implements Sniff
         }
 
         $returnType = $data['return_type'] ?? null;
-        $returnTypes = $returnType ? $this->normalizeReturnTypes($phpcsFile, $data) : [];
+        $returnTypes = (is_string($returnType) && $returnType !== '')
+            ? $this->normalizeReturnTypes($phpcsFile, $data)
+            : [];
         $returnInfo = FunctionReturnStatement::allInfo($phpcsFile, $stackPtr);
 
         if ($returnTypes) {
@@ -161,7 +163,7 @@ class ReturnTypeDeclarationSniff implements Sniff
 
         if (($start > 0) && ($end > 0)) {
             $returnTypesStr = Misc::tokensSubsetToString($start, $end, $file, []);
-            if ($data['nullable_return_type'] ?? false) {
+            if ((bool) ($data['nullable_return_type'] ?? false)) {
                 $returnTypesStr .= '|null';
             }
 

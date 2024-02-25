@@ -58,18 +58,18 @@ final class WpHooks
         $exclude = $empty;
         $exclude[] = T_STATIC;
         $commaPos = $file->findPrevious($exclude, $position - 1, null, true, null, true);
-        if (!$commaPos || ($tokens[$commaPos]['code'] ?? '') !== T_COMMA) {
+        if (($commaPos === false) || ($tokens[$commaPos]['code'] ?? '') !== T_COMMA) {
             return false;
         }
 
         $openType = [T_OPEN_PARENTHESIS];
         $openCallPos = $file->findPrevious($openType, $commaPos - 2, null, false, null, true);
-        if (!$openCallPos) {
+        if ($openCallPos === false) {
             return false;
         }
 
         $functionCallPos = $file->findPrevious($empty, $openCallPos - 1, null, true, null, true);
-        if (!$functionCallPos || $tokens[$functionCallPos]['code'] !== T_STRING) {
+        if (($functionCallPos === false) || $tokens[$functionCallPos]['code'] !== T_STRING) {
             return false;
         }
 

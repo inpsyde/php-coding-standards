@@ -62,7 +62,7 @@ final class FunctionDocBlock
         $closeType = T_DOC_COMMENT_CLOSE_TAG;
         $closeTag = $file->findPrevious($closeType, $position - 1, null, false, null, true);
 
-        if (!$closeTag || empty($tokens[$closeTag]['comment_opener'])) {
+        if (($closeTag === false) || !isset($tokens[$closeTag]['comment_opener'])) {
             return [];
         }
 
@@ -74,7 +74,7 @@ final class FunctionDocBlock
 
         /** @var array<int, array{string, string}> $tags */
         $tags = [];
-        $start = (int)$tokens[$closeTag]['comment_opener'] + 1;
+        $start = (int) $tokens[$closeTag]['comment_opener'] + 1;
         $key = -1;
         $inTag = false;
 
@@ -101,7 +101,7 @@ final class FunctionDocBlock
         static $rand;
         $rand or $rand = bin2hex(random_bytes(3));
         foreach ($tags as [$tagName, $tagContent]) {
-            empty($normalizedTags[$tagName]) and $normalizedTags[$tagName] = [];
+            isset($normalizedTags[$tagName]) or $normalizedTags[$tagName] = [];
             if (!$normalizeContent) {
                 $normalizedTags[$tagName][] = $tagContent;
                 continue;
@@ -147,7 +147,7 @@ final class FunctionDocBlock
         $types = [];
         foreach ($params as $param) {
             preg_match('~^([^$]+)\s*(\$\S+)~', trim($param), $matches);
-            if (($matches[1] ?? null) && ($matches[2] ?? null)) {
+            if (isset($matches[1]) && isset($matches[2])) {
                 $types[$matches[2]] = static::normalizeTypesString($matches[1]);
             }
         }
@@ -170,10 +170,10 @@ final class FunctionDocBlock
             if (strpos($splitType, '&') !== false) {
                 $splitType = rtrim(ltrim($splitType, '('), ')');
             } elseif (strpos($splitType, '?') === 0) {
-                $splitType = substr($splitType, 1) ?: '';
-                $hasNull = $hasNull || ($splitType !== '');
+                $splitType = substr($splitType, 1);
+                $hasNull = $hasNull || (($splitType !== '') && ($splitType !== false));
             }
-            if (!$splitType) {
+            if (($splitType === false) || ($splitType === '')) {
                 continue;
             }
             if (strtolower($splitType) === 'null') {
