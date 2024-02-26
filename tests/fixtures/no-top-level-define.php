@@ -2,7 +2,7 @@
 
 namespace Inpsyde\CodingStandard\Tests\Fixtures;
 
-// @phpcsSniff CodeQuality.NoTopLevelDefine
+// @phpcsSniff Inpsyde.CodeQuality.NoTopLevelDefine
 
 if (!defined('X')) {
     define('X', 1);

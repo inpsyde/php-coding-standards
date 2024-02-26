@@ -1,5 +1,5 @@
 <?php # -*- coding: utf-8 -*-
-// @phpcsSniff CodeQuality.Psr4
+// @phpcsSniff Inpsyde.CodeQuality.Psr4
 
 namespace {
 

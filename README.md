@@ -182,6 +182,40 @@ For **notes and configuration** see [`/inpsyde-custom-sniffs.md`](/inpsyde-custo
 
 -------------
 
+## Template Rules
+
+The `InpsydeTemplates` ruleset extends the standard `Inpsyde` ruleset with some template-specific
+sniffs while disabling some rules that are not useful in templating context.
+
+The recommended way to use the `InpsydeTemplates` ruleset is as follows:
+
+```xml
+<ruleset>
+    <file>./src/</file>
+    <file>./tests</file>
+    <file>./templates</file>
+    <file>./views</file>
+
+    <rule ref="Inpsyde">
+        <exclude-pattern>*/templates/*</exclude-pattern>
+        <exclude-pattern>*/views/*</exclude-pattern>
+    </rule>
+
+    <rule ref="InpsydeTemplates">
+        <include-pattern>*/templates/*</include-pattern>
+        <include-pattern>*/views/*</include-pattern>
+    </rule>
+</ruleset>
+```
+The following `Inpsyde` rules are disabled:
+* `NoElse`
+
+The following templates-specific rules are available:
+
+| Sniff name          | Description                                       | Has Config | Auto-Fixable |
+|:--------------------|:--------------------------------------------------|:----------:|:------------:|
+| `TrailingSemicolon` | Remove trailing semicolon before closing PHP tag. |            |      ✓       |
+
 # Removing or Disabling Rules
 
 ## Rules Tree

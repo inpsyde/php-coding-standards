@@ -1,6 +1,6 @@
 <?php
 
-// @phpcsSniff CodeQuality.NoAccessors
+// @phpcsSniff Inpsyde.CodeQuality.NoAccessors
 
 function getting() {
 

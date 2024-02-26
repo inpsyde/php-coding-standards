@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.FunctionLength
+// @phpcsSniff Inpsyde.CodeQuality.FunctionLength
 
 // @phpcsSniffPropertiesStart
 // $ignoreComments = false;
