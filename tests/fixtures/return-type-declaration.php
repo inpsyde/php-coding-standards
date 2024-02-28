@@ -1,7 +1,6 @@
 <?php
 // @phpcsSniff Inpsyde.CodeQuality.ReturnTypeDeclaration
 
-use Brain\Assets\Enqueue\Enqueue;
 use Psr\Container\ContainerInterface as PsrContainer;
 
 class FooIterator implements IteratorAggregate
