@@ -44,7 +44,7 @@ jobs:
         uses: inpsyde/reusable-workflows/.github/workflows/lint-php.yml@main
         strategy:
             matrix:
-                php-ver: [ '7.4', '8.0', '8.1', '8.2' ]
+                php-ver: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
         with:
             PHP_VERSION: ${{ matrix.php-ver }}
             LINT_ARGS: '-e php --colors --show-deprecated ./Inpsyde'
@@ -58,7 +58,7 @@ jobs:
         uses: inpsyde/reusable-workflows/.github/workflows/static-analysis-php.yml@main
         strategy:
             matrix:
-                php-ver: [ '7.4', '8.0', '8.1', '8.2' ]
+                php-ver: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
         with:
             PHP_VERSION: ${{ matrix.php-ver }}
             PSALM_ARGS: ${{ format('--no-suggestions --report-show-info=false --find-unused-psalm-suppress --no-diff --output-format={0}', ((github.event_name == 'pull_request') && 'github') || 'compact') }}
@@ -68,7 +68,7 @@ jobs:
         uses: inpsyde/reusable-workflows/.github/workflows/tests-unit-php.yml@main
         strategy:
             matrix:
-                php-ver: [ '7.4', '8.0', '8.1', '8.2' ]
+                php-ver: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
         with:
             PHP_VERSION: ${{ matrix.php-ver }}
             PHPUNIT_ARGS: '--no-coverage'
