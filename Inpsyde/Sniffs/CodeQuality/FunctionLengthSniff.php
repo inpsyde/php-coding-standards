@@ -208,7 +208,7 @@ class FunctionLengthSniff implements Sniff
 
         foreach ($flags as $flag) {
             if (is_string($this->{$flag})) {
-                $this->{$flag} = (bool) filter_var($this->{$flag}, FILTER_VALIDATE_BOOLEAN);
+                $this->{$flag} = filter_var($this->{$flag}, FILTER_VALIDATE_BOOLEAN);
             }
         }
     }

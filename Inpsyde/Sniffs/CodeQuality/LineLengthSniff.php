@@ -112,7 +112,7 @@ class LineLengthSniff implements Sniff
         $lastLine = null;
         for ($i = $start; $i < $file->numTokens; $i++) {
             // Still processing previous line: increment length and continue.
-            if ($lastLine && ($tokens[$i]['line'] === $lastLine)) {
+            if (($lastLine !== null) && ($lastLine > 0) && ($tokens[$i]['line'] === $lastLine)) {
                 $content = (string) $tokens[$i]['content'];
                 $data[$lastLine]['length'] += strlen($content);
                 $data[$lastLine]['nonEmptyLength'] += strlen(trim($content));
@@ -120,7 +120,7 @@ class LineLengthSniff implements Sniff
             }
 
             // A new line started: let's set "end" for the previous line (if this isn't 1st line)
-            if ($lastLine && isset($data[$lastLine])) {
+            if (($lastLine !== null) && ($lastLine > 0) && isset($data[$lastLine])) {
                 $data[$lastLine]['end'] = $i - 1;
             }
 
@@ -135,32 +135,45 @@ class LineLengthSniff implements Sniff
         }
 
         // We still have to set the "end" for last file line.
-        if ($lastLine && ($data[$lastLine]['end'] === null)) {
+        if (($lastLine !== null) && ($lastLine > 0) && ($data[$lastLine]['end'] === null)) {
+            /** @var int $lastLine */
             $data[$lastLine]['end'] = $i - 1;
         }
 
         $longLines = [];
+        /**
+         * @var int $lineNumber
+         * @var array{length:int, nonEmptyLength:int, start:int, end:int|null} $lineData
+         */
         foreach ($data as $lineNumber => $lineData) {
-            $lineEnd = $lineData['end'] ?? $lineData['start'];
-            if (
-                (($lineData['length'] - $this->lineLimit) <= 1) // 1 char of tolerance
-                || ($lineData['nonEmptyLength'] === 0) // ignore empty lines
-                || $this->isLongUse($file, $tokens, $lineData['start'], $lineEnd)
-                || $this->isLongI10nFunction($file, $tokens, $lineData['start'], $lineEnd)
-                || $this->isLongWord($file, $tokens, $lineData['start'], $lineEnd)
-            ) {
-                continue;
+            if (!$this->isLengthAcceptable($lineData, $file, $tokens)) {
+                $longLines[$lineNumber] = [$lineData['length'], $lineData['start']];
             }
-
-            $longLines[$lineNumber] = [$lineData['length'], $lineData['start']];
         }
 
         return $longLines;
     }
 
     /**
+     * @param array{length:int, nonEmptyLength:int, start:int, end:int|null} $lineData
+     * @param File $file
+     * @param array<int, array<string, mixed>> $tokens
+     * @return bool
+     */
+    private function isLengthAcceptable(array $lineData, File $file, array $tokens): bool
+    {
+        $lineEnd = $lineData['end'] ?? $lineData['start'];
+
+        return (($lineData['length'] - $this->lineLimit) <= 1) // 1 char of tolerance
+            || ($lineData['nonEmptyLength'] === 0) // ignore empty lines
+            || $this->isLongUse($file, $tokens, $lineData['start'], $lineEnd)
+            || $this->isLongI10nFunction($file, $tokens, $lineData['start'], $lineEnd)
+            || $this->isLongWord($file, $tokens, $lineData['start'], $lineEnd);
+    }
+
+    /**
      * We don't want to split a single word in multiple lines.
-     * So if there's a long word (e.g. an URL) that alone is above max line length, we don't show
+     * So if there's a long word (e.g. a URL) that alone is above max line length, we don't show
      * warnings for it.
      *
      * @param File $file

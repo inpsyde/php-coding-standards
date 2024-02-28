@@ -151,12 +151,14 @@ class NestingLevelSniff implements Sniff
         $tokens = $phpcsFile->getTokens();
         $currentEnd = (int) $tokens[$catchPosition]['scope_closer'];
         $nextCatch = $phpcsFile->findNext(T_CATCH, $currentEnd + 1, $currentEnd + 3);
-        if ($nextCatch) {
+        if ($nextCatch !== false) {
             return $this->endOfTryBlock($nextCatch, $phpcsFile);
         }
 
         $finally = $phpcsFile->findNext(T_FINALLY, $currentEnd + 1, $currentEnd + 3);
 
-        return $finally ? (int) $tokens[$finally]['scope_closer'] + 1 : $currentEnd + 1;
+        return ($finally !== false)
+            ? (int) $tokens[$finally]['scope_closer'] + 1
+            : $currentEnd + 1;
     }
 }
