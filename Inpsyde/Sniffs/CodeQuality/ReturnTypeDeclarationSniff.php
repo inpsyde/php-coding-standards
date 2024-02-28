@@ -347,10 +347,13 @@ class ReturnTypeDeclarationSniff implements Sniff
     ): bool {
 
         $hasGenerator = false;
+        $hasIterator = false;
         while (!$hasGenerator && $returnTypes) {
             $returnType = explode('&', rtrim(ltrim(array_shift($returnTypes), '('), ')'));
             $hasGenerator = in_array('Generator', $returnType, true)
-                || in_array('\Generator', $returnType, true)
+                || in_array('\Generator', $returnType, true);
+            $hasIterator = $hasIterator
+                || $hasGenerator
                 || in_array('Traversable', $returnType, true)
                 || in_array('\Traversable', $returnType, true)
                 || in_array('Iterator', $returnType, true)
@@ -383,7 +386,7 @@ class ReturnTypeDeclarationSniff implements Sniff
             return true;
         }
 
-        if (!$hasGenerator && ($yieldCount > 0)) {
+        if (!$hasIterator && ($yieldCount > 0)) {
             $file->addError(
                 'Return type does not contain "Generator" but yield found in the function body',
                 $position,
