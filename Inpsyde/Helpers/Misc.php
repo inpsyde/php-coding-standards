@@ -42,8 +42,8 @@ final class Misc
      */
     public static function minPhpTestVersion(): string
     {
-        $testVersion = trim(Config::getConfigData('testVersion') ?: '');
-        if (!$testVersion) {
+        $testVersion = trim(Config::getConfigData('testVersion') ?? '');
+        if ($testVersion === '') {
             return self::MIN_SUPPORTED_VERSION;
         }
 

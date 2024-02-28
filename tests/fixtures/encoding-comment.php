@@ -3,7 +3,7 @@
 namespace Inpsyde\CodingStandard\Tests\Fixtures;
 
 
-// @phpcsSniff CodeQuality.EncodingComment
+// @phpcsSniff Inpsyde.CodeQuality.EncodingComment
 
 // @phpcsWarningCodeOnNextLine EncodingComment
 // -*- coding: utf-8 -*-
@@ -15,4 +15,3 @@ namespace Inpsyde\CodingStandard\Tests\Fixtures;
 
 <?php //-*- coding: utf-8 -*-
 // @phpcsWarningOnPreviousLine CodeQuality.EncodingComment
-?>

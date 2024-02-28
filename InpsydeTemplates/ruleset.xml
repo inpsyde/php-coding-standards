@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ruleset name="Inpsyde PHP Templates Coding Standard">
+
+    <description>Coding standards for PHP templates.</description>
+
+    <rule ref="Inpsyde">
+        <exclude name="Inpsyde.CodeQuality.NoElse" />
+    </rule>
+
+</ruleset>

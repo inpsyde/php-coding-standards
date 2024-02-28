@@ -60,7 +60,7 @@ class StaticClosureSniff implements Sniff
         }
 
         $isStatic = $phpcsFile->findPrevious(T_STATIC, $stackPtr, $stackPtr - 3, false, null, true);
-        if ($isStatic) {
+        if ($isStatic !== false) {
             return;
         }
 

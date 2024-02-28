@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.ForbiddenPublicProperty
+// @phpcsSniff Inpsyde.CodeQuality.ForbiddenPublicProperty
 
 $foo = 'foo';
 

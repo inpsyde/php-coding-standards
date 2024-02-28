@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.ArgumentTypeDeclaration
+// @phpcsSniff Inpsyde.CodeQuality.ArgumentTypeDeclaration
 
 use Psr\Container as PsrContainer;
 

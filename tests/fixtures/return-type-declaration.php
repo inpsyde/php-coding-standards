@@ -1,5 +1,5 @@
 <?php
-// @phpcsSniff CodeQuality.ReturnTypeDeclaration
+// @phpcsSniff Inpsyde.CodeQuality.ReturnTypeDeclaration
 
 use Psr\Container\ContainerInterface as PsrContainer;
 

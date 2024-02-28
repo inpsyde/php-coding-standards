@@ -26,49 +26,84 @@
 
 declare(strict_types=1);
 
-namespace Inpsyde\Sniffs\CodeQuality;
+namespace InpsydeTemplates\Sniffs\Formatting;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
-use PHPCSUtils\Utils\FunctionDeclarations;
-use PHPCSUtils\Utils\Namespaces;
-use PHPCSUtils\Utils\Scopes;
+use PHP_CodeSniffer\Util\Tokens;
 
-class NoRootNamespaceFunctionsSniff implements Sniff
+/**
+ * @psalm-type Token = array{
+ *     type: string,
+ *     code: string|int,
+ *     line: int
+ *     }
+ */
+final class TrailingSemicolonSniff implements Sniff
 {
     /**
-     * @return list<int>
+     * @return list<int|string>
      */
     public function register(): array
     {
-        return [T_FUNCTION];
+        return [
+            T_SEMICOLON,
+        ];
     }
 
     /**
      * @param File $phpcsFile
      * @param int $stackPtr
-     * @return void
      *
      * phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration
      */
     public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        if (Scopes::isOOMethod($phpcsFile, $stackPtr)) {
+
+        /** @var array<int, Token> $tokens */
+        $tokens = $phpcsFile->getTokens();
+        $currentLine = $tokens[$stackPtr]['line'];
+
+        $nextNonEmptyPosition = $phpcsFile->findNext(
+            Tokens::$emptyTokens,
+            ($stackPtr + 1),
+            null,
+            true
+        );
+
+        if (!is_int($nextNonEmptyPosition) || !isset($tokens[$nextNonEmptyPosition])) {
             return;
         }
 
-        $namespace = Namespaces::determineNamespace($phpcsFile, $stackPtr);
-        if ($namespace !== '') {
-            return;
-        }
-        $name = FunctionDeclarations::getName($phpcsFile, $stackPtr);
-        if (($name === null) || ($name === '')) {
+        $nextNonEmptyToken = $tokens[$nextNonEmptyPosition];
+
+        if ($nextNonEmptyToken['line'] !== $currentLine) {
             return;
         }
 
-        $message = sprintf('The function "%s" is in root namespace.', $name);
+        if ($nextNonEmptyToken['code'] !== T_CLOSE_TAG) {
+            return;
+        }
 
-        $phpcsFile->addError($message, $stackPtr, 'Found');
+        $message = sprintf('Trailing semicolon found in line %d.', $currentLine);
+
+        if ($phpcsFile->addFixableWarning($message, $stackPtr, 'Found')) {
+            $this->fix($stackPtr, $phpcsFile);
+        }
+    }
+
+    /**
+     * @param int $position
+     * @param File $file
+     */
+    private function fix(int $position, File $file): void
+    {
+        $fixer = $file->fixer;
+        $fixer->beginChangeset();
+
+        $fixer->replaceToken($position, '');
+
+        $fixer->endChangeset();
     }
 }
