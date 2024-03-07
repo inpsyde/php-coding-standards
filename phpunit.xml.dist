@@ -16,5 +16,8 @@
         <testsuite name="helpers">
             <directory>tests/cases/Helpers</directory>
         </testsuite>
+        <testsuite name="e2e">
+            <directory>tests/e2e/E2eTest.php</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
