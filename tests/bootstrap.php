@@ -37,7 +37,7 @@ if (!is_file($autoload)) {
 
 putenv("LIB_PATH={$libDir}");
 putenv('SNIFFS_NAMESPACE=Inpsyde\\Sniffs');
-putenv("FIXTURES_PATH={$testsDir}/fixtures");
+putenv("FIXTURES_PATH={$testsDir}/unit/fixtures");
 
 if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
     define('PHPUNIT_COMPOSER_INSTALL', $autoload);

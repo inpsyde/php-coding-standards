@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Inpsyde\CodingStandard\Tests;
+namespace Inpsyde\CodingStandard\Tests\cases;
 
+use Inpsyde\CodingStandard\Tests\TestCase;
 use RuntimeException;
 
 class E2eTest extends TestCase
@@ -14,7 +15,7 @@ class E2eTest extends TestCase
     protected function setUp(): void
     {
         $libPath = (string) getenv('LIB_PATH');
-        $this->testPackagePath = $libPath . '/tests/e2e/test-package';
+        $this->testPackagePath = $libPath . '/tests/e2e/fixtures/test-package';
         $this->phpCsBinary = $libPath . '/vendor/bin/phpcs';
     }
 
