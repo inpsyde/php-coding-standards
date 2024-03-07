@@ -21,6 +21,7 @@ class E2eTest extends TestCase
     public function testInpsydeAndTemplatesRulesets(): void
     {
         $output = [];
+        // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec
         exec(
             sprintf(
                 'cd %s && %s',
@@ -37,7 +38,8 @@ class E2eTest extends TestCase
 
         $json = end($output);
 
-        self::assertSame([
+        // phpcs:disable Inpsyde.CodeQuality.LineLength.TooLong
+        $expectedMessages = [
             'index.php' => [
                 [
                     'source' => 'Inpsyde.CodeQuality.NoElse.ElseFound',
@@ -64,13 +66,16 @@ class E2eTest extends TestCase
                 ],
 
             ],
-        ], $this->phpCsNormalizedOutput($json));
+        ];
+        // phpcs:enable Inpsyde.CodeQuality.LineLength.TooLong
+
+        self::assertSame($expectedMessages, $this->phpCsMessages($json));
     }
 
     /**
      * @psalm-return array<string, list<array{source: string, line: positive-int}>>
      */
-    private function phpCsNormalizedOutput(string $json): array
+    private function phpCsMessages(string $json): array
     {
         /** @var array{
          *     files: array<string, array{
