@@ -50,8 +50,8 @@
         "psr-4": {
             "Inpsyde\\CodingStandard\\Tests\\": [
                 "tests/src/",
-                "tests/unit/",
-                "tests/e2e/"
+                "tests/unit/cases",
+                "tests/e2e/cases"
             ]
         }
     },

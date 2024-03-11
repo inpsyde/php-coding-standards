@@ -28,4 +28,14 @@
         <exclude-pattern>./tests/unit/cases/</exclude-pattern>
     </rule>
 
+    <rule ref="Inpsyde.CodeQuality.Psr4">
+        <exclude-pattern>./Inpsyde/Sniffs/</exclude-pattern>
+        <properties>
+            <property name="psr4" type="array">
+                <element key="Inpsyde\CodingStandard\Helpers" value="Inpsyde/Helpers"/>
+                <element key="Inpsyde\CodingStandard\Tests" value="tests/src|tests/unit/cases|tests/e2e/cases"/>
+            </property>
+        </properties>
+    </rule>
+
 </ruleset>

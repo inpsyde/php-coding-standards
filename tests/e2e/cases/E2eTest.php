@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Inpsyde\CodingStandard\Tests\cases;
+namespace Inpsyde\CodingStandard\Tests;
 
-use Inpsyde\CodingStandard\Tests\TestCase;
 use RuntimeException;
 
 class E2eTest extends TestCase
