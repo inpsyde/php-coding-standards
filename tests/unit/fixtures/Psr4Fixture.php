@@ -4,7 +4,7 @@
 namespace {
 
     // @phpcsSniffPropertiesStart
-    $psr4 = ["\\Inpsyde\\CodingStandard\\Tests\\" => "tests/"];
+    $psr4 = ["\\Inpsyde\\CodingStandard\\Tests\\" => "tests/unit"];
     $exclude = ["\\I\\Am\\Excluded\\Psr4Fixture"];
     // @phpcsSniffPropertiesEnd
 }
