@@ -11,10 +11,13 @@
     </coverage>
     <testsuites>
         <testsuite name="fixtures">
-            <file>tests/cases/FixturesTest.php</file>
+            <file>tests/unit/cases/FixturesTest.php</file>
         </testsuite>
         <testsuite name="helpers">
-            <directory>tests/cases/Helpers</directory>
+            <directory>tests/unit/cases/Helpers</directory>
+        </testsuite>
+        <testsuite name="e2e">
+            <directory>tests/e2e/cases</directory>
         </testsuite>
     </testsuites>
 </phpunit>
