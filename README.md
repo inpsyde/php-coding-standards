@@ -184,8 +184,7 @@ For **notes and configuration** see [`/inpsyde-custom-sniffs.md`](/inpsyde-custo
 
 ## Template Rules
 
-The `InpsydeTemplates` ruleset extends the standard `Inpsyde` ruleset with some template-specific
-sniffs while disabling some rules that are not useful in templating context.
+The `InpsydeTemplates` ruleset extends the standard `Inpsyde` ruleset with some template-specific sniffs.
 
 The recommended way to use the `InpsydeTemplates` ruleset is as follows:
 
@@ -196,10 +195,7 @@ The recommended way to use the `InpsydeTemplates` ruleset is as follows:
     <file>./templates</file>
     <file>./views</file>
 
-    <rule ref="Inpsyde">
-        <exclude-pattern>*/templates/*</exclude-pattern>
-        <exclude-pattern>*/views/*</exclude-pattern>
-    </rule>
+    <rule ref="Inpsyde" />
 
     <rule ref="InpsydeTemplates">
         <include-pattern>*/templates/*</include-pattern>
@@ -207,8 +203,6 @@ The recommended way to use the `InpsydeTemplates` ruleset is as follows:
     </rule>
 </ruleset>
 ```
-The following `Inpsyde` rules are disabled:
-* `NoElse`
 
 The following templates-specific rules are available:
 

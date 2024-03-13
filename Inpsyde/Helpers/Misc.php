@@ -112,7 +112,7 @@ final class Misc
 
         $content = '';
         foreach ($filtered as $token) {
-            $content .= (string)($token['content'] ?? '');
+            $content .= (string) ($token['content'] ?? '');
         }
 
         return $content;

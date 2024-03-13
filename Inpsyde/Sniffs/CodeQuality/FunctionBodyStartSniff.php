@@ -33,8 +33,8 @@ class FunctionBodyStartSniff implements Sniff
         $tokens = $phpcsFile->getTokens();
         $token = $tokens[$stackPtr] ?? [];
 
-        $scopeOpener = (int)($token['scope_opener'] ?? -1);
-        $scopeCloser = (int)($token['scope_closer'] ?? -1);
+        $scopeOpener = (int) ($token['scope_opener'] ?? -1);
+        $scopeCloser = (int) ($token['scope_closer'] ?? -1);
 
         if ($scopeOpener < 0 || $scopeCloser < 0 || $scopeCloser <= $scopeOpener) {
             return;
@@ -52,8 +52,8 @@ class FunctionBodyStartSniff implements Sniff
 
         [$code, $message, $expectedLine] = $this->checkBodyStart(
             $bodyStart,
-            (int)($tokens[$scopeOpener]['line'] ?? -1),
-            (int)($token['line'] ?? -1),
+            (int) ($tokens[$scopeOpener]['line'] ?? -1),
+            (int) ($token['line'] ?? -1),
             $phpcsFile
         );
 
@@ -83,7 +83,7 @@ class FunctionBodyStartSniff implements Sniff
 
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
-        $bodyLine = (int)($tokens[$bodyStart]['line'] ?? -1);
+        $bodyLine = (int) ($tokens[$bodyStart]['line'] ?? -1);
 
         $isMultiLineDeclare = ($openerLine - $functionLine) > 1;
         $isSingleLineDeclare = $openerLine === ($functionLine + 1);
@@ -139,7 +139,7 @@ class FunctionBodyStartSniff implements Sniff
     {
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $file->getTokens();
-        $currentLine = (int)($tokens[$bodyStart]['line'] ?? -1);
+        $currentLine = (int) ($tokens[$bodyStart]['line'] ?? -1);
 
         if ($currentLine === $expectedLine) {
             return;

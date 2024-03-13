@@ -42,8 +42,8 @@ final class FunctionDocBlock
             return [];
         }
 
-        $functionLine = (int)($tokens[$position]['line'] ?? -1);
-        $closeLine = (int)($tokens[$closeTag]['line'] ?? -1);
+        $functionLine = (int) ($tokens[$position]['line'] ?? -1);
+        $closeLine = (int) ($tokens[$closeTag]['line'] ?? -1);
         if ($closeLine !== ($functionLine - 1)) {
             return [];
         }
@@ -60,7 +60,7 @@ final class FunctionDocBlock
                 continue;
             }
 
-            $content = (string)$tokens[$i]['content'];
+            $content = (string) $tokens[$i]['content'];
             if (($tokens[$i]['code'] === T_DOC_COMMENT_TAG)) {
                 $inTag = true;
                 $key++;

@@ -144,6 +144,7 @@
     </rule>
     <rule ref="Generic.CodeAnalysis.AssignmentInCondition"/>
     <rule ref="Generic.CodeAnalysis.EmptyPHPStatement"/>
+    <rule ref="Generic.Formatting.SpaceAfterCast"/>
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="absoluteComplexity" value="50"/>

@@ -3,8 +3,6 @@
 
     <description>Coding standards for PHP templates.</description>
 
-    <rule ref="Inpsyde">
-        <exclude name="Inpsyde.CodeQuality.NoElse" />
-    </rule>
+    <rule ref="Inpsyde" />
 
 </ruleset>

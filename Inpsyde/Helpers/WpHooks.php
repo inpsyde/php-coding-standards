@@ -63,6 +63,6 @@ final class WpHooks
      */
     public static function isHookFunction(File $file, int $position): bool
     {
-        return (bool)FunctionDocBlock::tag('@wp-hook', $file, $position);
+        return (bool) FunctionDocBlock::tag('@wp-hook', $file, $position);
     }
 }

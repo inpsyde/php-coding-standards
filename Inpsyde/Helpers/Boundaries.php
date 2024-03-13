@@ -67,7 +67,7 @@ final class Boundaries
             return [-1, -1];
         }
 
-        return [(int)$openClose['opener'], (int)$openClose['closer']];
+        return [(int) $openClose['opener'], (int) $openClose['closer']];
     }
 
     /**
@@ -88,8 +88,8 @@ final class Boundaries
             return [$start + 1, $file->findEndOfStatement($start)];
         }
 
-        $start = (int)($token['scope_opener'] ?? 0);
-        $end = (int)($token['scope_closer'] ?? 0);
+        $start = (int) ($token['scope_opener'] ?? 0);
+        $end = (int) ($token['scope_closer'] ?? 0);
         if (($start <= 0) || ($end <= 0) || ($start >= ($end - 1))) {
             return [-1, -1];
         }

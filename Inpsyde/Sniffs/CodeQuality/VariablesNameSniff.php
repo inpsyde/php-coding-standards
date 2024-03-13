@@ -23,27 +23,28 @@ class VariablesNameSniff implements Sniff
     ];
 
     public const WP_GLOBALS = [
+        '$charset_collate',
         '$current_user',
-        '$is_iphone',
-        '$is_chrome',
-        '$is_safari',
-        '$is_NS4',
-        '$is_opera',
-        '$is_macIE',
-        '$is_winIE',
-        '$is_gecko',
-        '$is_lynx',
-        '$is_IE',
-        '$is_edge',
+        '$interim_login',
         '$is_apache',
+        '$is_chrome',
+        '$is_edge',
+        '$is_gecko',
+        '$is_IE',
         '$is_IIS',
         '$is_iis7',
-        '$tinymce_version',
+        '$is_iphone',
+        '$is_lynx',
+        '$is_macIE',
+        '$is_NS4',
+        '$is_opera',
+        '$is_safari',
+        '$is_winIE',
         '$manifest_version',
-        '$required_php_version',
         '$required_mysql_version',
+        '$required_php_version',
         '$super_admins',
-        '$interim_login',
+        '$tinymce_version',
     ];
 
     public string $checkType = 'camelCase';
@@ -74,7 +75,7 @@ class VariablesNameSniff implements Sniff
 
         /** @var array<int, array<string, mixed>> $tokens */
         $tokens = $phpcsFile->getTokens();
-        $name = (string)$tokens[$stackPtr]['content'];
+        $name = (string) $tokens[$stackPtr]['content'];
 
         if (
             in_array($name, $ignored, true)
@@ -155,7 +156,7 @@ class VariablesNameSniff implements Sniff
      */
     private function checkSnakeCase(string $name): bool
     {
-        return (bool)preg_match('~^\$[a-z]+(?:[a-z0-9_]+)?$~', $name);
+        return (bool) preg_match('~^\$[a-z]+(?:[a-z0-9_]+)?$~', $name);
     }
 
     /**

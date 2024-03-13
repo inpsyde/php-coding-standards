@@ -40,10 +40,10 @@ class NestingLevelSniff implements Sniff
             return;
         }
 
-        $start = (int)$tokens[$stackPtr]['scope_opener'];
-        $end = (int)$tokens[$stackPtr]['scope_closer'];
+        $start = (int) $tokens[$stackPtr]['scope_opener'];
+        $end = (int) $tokens[$stackPtr]['scope_closer'];
 
-        $baseLevel = (int)$tokens[$stackPtr]['level'];
+        $baseLevel = (int) $tokens[$stackPtr]['level'];
         $nestingLevel = 0;
         $inTry = false;
         $endTry = null;
@@ -58,7 +58,7 @@ class NestingLevelSniff implements Sniff
                 continue;
             }
 
-            $level = (int)$tokens[$i]['level'];
+            $level = (int) $tokens[$i]['level'];
 
             if (!$inTry && $tokens[$i]['code'] === T_TRY && $level === $tryTargetLevel) {
                 $inTry = true;

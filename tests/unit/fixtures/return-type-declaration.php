@@ -3,6 +3,19 @@
 
 use Psr\Container\ContainerInterface as PsrContainer;
 
+class FooIterator implements IteratorAggregate
+{
+    private array $collection = [];
+
+    /**
+     * @return Iterator<int, Foo>
+     */
+    public function getIterator(): \Iterator
+    {
+        return new ArrayIterator($this->collection);
+    }
+}
+
 function returnMixed(): mixed
 {
     return null;
