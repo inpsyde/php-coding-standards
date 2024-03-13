@@ -110,6 +110,7 @@
 
     <!--
     PHPCS Extra
+    See: https://github.com/PHPCSStandards/PHPCSExtra
     -->
     <rule ref="NormalizedArrays.Arrays.CommaAfterLast" />
     <rule ref="Universal.Operators.StrictComparisons" />
@@ -117,6 +118,7 @@
 
     <!--
     Slevomat
+    See https://github.com/slevomat/coding-standard
     -->
     <rule ref="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration">
         <type>warning</type>
