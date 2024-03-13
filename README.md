@@ -1,6 +1,6 @@
-# Inpsyde PHP Coding Standards
+# Syde PHP Coding Standards
 
-> PHP 7+ coding standards for Inpsyde WordPress projects.
+> PHP 7.4+ coding standards for Inpsyde WordPress projects.
 
 ![PHP Quality Assurance](https://github.com/inpsyde/php-coding-standards/workflows/PHP%20Quality%20Assurance/badge.svg)
 

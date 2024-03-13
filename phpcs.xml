@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<ruleset name="Inpsyde Coding Standard">
+<ruleset name="Syde Coding Standard">
 
-    <description>PHP 7+ coding standards for Inpsyde WordPress projects.</description>
+    <description>PHP 7.4+ coding standards for Syde WordPress projects.</description>
 
-    <file>./Inpsyde/Helpers</file>
-    <file>./Inpsyde/Sniffs</file>
+    <file>Inpsyde</file>
     <file>./tests/src</file>
     <file>./tests/unit/cases</file>
     <file>./tests/e2e/cases</file>
