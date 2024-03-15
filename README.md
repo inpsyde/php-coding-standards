@@ -12,20 +12,20 @@ When the package is installed via Composer, and dependencies are updated, everyt
 the coding standards can be checked via:
 
 ```shell
-$ vendor/bin/phpcs --standard="Inpsyde" <path>
+vendor/bin/phpcs --standard="Inpsyde" <path>
 ```
 
 Where `<path>` is at least one file or directory to check, e.g.:
 
 ```shell
-$ vendor/bin/phpcs --standard="Inpsyde" ./src/ ./my-plugin.php
+vendor/bin/phpcs --standard="Inpsyde" ./src/ ./my-plugin.php
 ```
 
 There are many options that can be used to customise the behavior of the command, to get
 documentation use:
 
 ```shell
-$ vendor/bin/phpcs --help
+vendor/bin/phpcs --help
 ```
 
 ## Configuration File
@@ -70,7 +70,7 @@ For example:
 Such a configuration allows to run the code style check with only:
 
 ```shell
-$ vendor/bin/phpcs
+vendor/bin/phpcs
 ```
 
 Moreover, thanks to the `text_domain` setting, Code Sniffer will also check that all WP
@@ -297,7 +297,7 @@ allowing to detect them without running any commands at all.
 Via Composer, require as dev-dependency:
 
 ```shell
-$ composer require "inpsyde/php-coding-standards:^2@dev" --dev
+composer require "inpsyde/php-coding-standards:^2@dev" --dev
 ```
 
 _(the `@dev` can be removed as soon as the stable 2.0.0 will be released, or if root package minimum stability is "dev")._
