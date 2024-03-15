@@ -24,7 +24,7 @@ Thanks for contributing&mdash;you rock!
 Before submitting a PR, please run code quality checks via:
 
 ```shell
-$ composer qa
+composer qa
 ```
 
 The command will run PHPCS and Psalm checks as well as PHPUnit tests.
@@ -36,13 +36,14 @@ Unit tests are organized in fixture files (see [`/tests/unit/fixtures`](https://
 To run a single test use the `--filter` option:
 
 ```shell
-$ composer tests -- --filter function-length-no-blank-lines
+composer tests -- --filter function-length-no-blank-lines
 ```
 
 # Submitting Changes
 
 * Push your changes to the according topic branch in your fork of the repository.
-* [Create a pull request](../../../compare) to our repository.
+* [Create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
+  to our repository pointing the default branch.
 * Wait for feedback. The team looks at pull requests on a regular basis.
 
 # License
