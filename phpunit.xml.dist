@@ -7,6 +7,7 @@
     <coverage>
        <include>
            <directory>./Inpsyde</directory>
+           <directory>./InpsydeTemplates</directory>
        </include>
     </coverage>
     <testsuites>
