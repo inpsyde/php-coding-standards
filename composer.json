@@ -1,6 +1,6 @@
 {
     "name": "inpsyde/php-coding-standards",
-    "description": "PHP 7+ coding standards for Inpsyde WordPress projects.",
+    "description": "PHP 7.4+ coding standards for Syde WordPress projects.",
     "type": "phpcodesniffer-standard",
     "keywords": [
         "phpcs",
@@ -16,14 +16,15 @@
         "PHP standards",
         "WordPress",
         "WordPress standards",
-        "Inpsyde"
+        "Inpsyde",
+        "Syde"
     ],
     "license": "MIT",
     "authors": [
         {
-            "name": "Inpsyde GmbH",
-            "email": "hello@inpsyde.com",
-            "homepage": "https://inpsyde.com",
+            "name": "Syde GmbH",
+            "email": "hello@syde.com",
+            "homepage": "https://syde.com",
             "role": "Company"
         }
     ],
