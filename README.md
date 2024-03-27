@@ -15,7 +15,7 @@ the coding standards can be checked via:
 vendor/bin/phpcs --standard="Inpsyde" <path>
 ```
 
-Where `<path>` is at least one file or directory to check, e.g.:
+Here, `<path>` is at least one file or directory to check, for example:
 
 ```shell
 vendor/bin/phpcs --standard="Inpsyde" ./src/ ./my-plugin.php
@@ -30,7 +30,7 @@ vendor/bin/phpcs --help
 
 ## Configuration File
 
-A `phpcs.xml.dist` can be used to avoid passing many arguments via command line.
+A `phpcs.xml.dist` file can be used to avoid passing many arguments via the command line.
 For example:
 
 ```xml
@@ -47,11 +47,11 @@ For example:
 
     <config name="testVersion" value="7.4-"/>
     <config name="text_domain" value="my-project"/>
-    
+
     <rule ref="Inpsyde">
-        <exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize" />
+        <exclude name="WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize"/>
     </rule>
-    
+
     <rule ref="Inpsyde.CodeQuality.Psr4">
         <properties>
             <property
@@ -67,55 +67,57 @@ For example:
 </ruleset>
 ```
 
-Such a configuration allows to run the code style check with only:
+Such a configuration allows to run the code style check like so:
 
 ```shell
 vendor/bin/phpcs
 ```
 
-Moreover, thanks to the `text_domain` setting, Code Sniffer will also check that all WP
+Moreover, thanks to the `text_domain` setting, PHP_CodeSniffer will also check that all WordPress
 internationalization functions are called with the proper text domain.
 
 ---
 
 # Included rules
 
-For the detailed lists of included rules refers to [`ruleset.xml](./Inpsyde/ruleset.xml).
+For the detailed lists of included rules, refer to [`ruleset.xml`](./Inpsyde/ruleset.xml).
 
 ## PSR-1, PSR-2, PSR-12
 
-See https://www.php-fig.org/psr/psr-1, https://www.php-fig.org/psr/psr-2,
-https://www.php-fig.org/psr/psr-12
+For more information about included rules from PHP Standards Recommendations (PSR), refer to the
+official documentation:
 
-## WordPress Coding Standard
+- [PSR-1](https://www.php-fig.org/psr/psr-1)
+- [PSR-2](https://www.php-fig.org/psr/psr-2)
+- [PSR-12](https://www.php-fig.org/psr/psr-12)
 
-To ensure code quality, and compatibility with wp.com VIP, several WordPress Coding Standard rules 
-have been"cherry-picked" from
-[WP coding standards](https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards) and
-[VIP coding standard](https://github.com/Automattic/VIP-Coding-Standards/)
+## WordPress Coding Standards
+
+To ensure code quality, and compatibility with WordPress VIP, some rules have been included from:
+
+- [WordPress Coding Standards](https://github.com/WordPress/WordPress-Coding-Standards)
+- [VIP Coding Standards](https://github.com/Automattic/VIP-Coding-Standards)
 
 ## Slevomat
 
-A few rules are cherry-picked from ["Slevomat" coding standard](https://github.com/slevomat/coding-standard).
+A few rules have been included from the [Slevomat Coding Standard](https://github.com/slevomat/coding-standard).
 
 ## PHPCompatibility
 
-See https://github.com/wimg/PHPCompatibility.
+For PHP cross-version compatibility checks, the full [PHP Compatibility Coding Standard for PHP CodeSniffer](https://github.com/PHPCompatibility/PHPCompatibility)
+standard has been included.
 
-It allows to analyse code for compatibility with higher and lower versions of PHP.
-The default target version is PHP 7.0+.
-
-Target version can be changed via custom `phpcs.xml`.
+The target PHP version (range) can be changed via a [custom `phpcs.xml` file](https://github.com/PHPCompatibility/PHPCompatibility/blob/9.3.5/README.md#using-a-custom-ruleset).
 
 ## Generic Rules
 
-Some rules are also included from PHPCS itself and [PHPCS Extra](https://github.com/PHPCSStandards/PHPCSExtra).
+Some rules are also included from PHP_CodeSniffer itself, as well as [PHPCSExtra](https://github.com/PHPCSStandards/PHPCSExtra).
 
 ## Custom Rules
 
-Some custom rules are also in use. They are:
+The following custom rules are in use:
 
-| Sniff name                 | Description                                                                                    | Has Config | Auto-Fixable |
+| Sniff Name                 | Description                                                                                    | Has Config | Auto-Fixable |
 |:---------------------------|:-----------------------------------------------------------------------------------------------|:----------:|:------------:|
 | `ArgumentTypeDeclaration`  | Enforce argument type declaration.                                                             |            |              |
 | `DisableCallUserFunc`      | Disable usage of `call_user_func`.                                                             |            |              |
@@ -140,7 +142,8 @@ Some custom rules are also in use. They are:
 | `StaticClosure`            | Points closures that can be `static`.                                                          |            |      ✓       |
 | `VariablesName`            | Check variable (and properties) names                                                          |     ✓      |              |
 
-For **notes and configuration** see [`/inpsyde-custom-sniffs.md`](/inpsyde-custom-sniffs.md) file in this repo.
+For **notes and configuration**, refer to the [`inpsyde-custom-sniffs.md`](/inpsyde-custom-sniffs.md)
+file in this repository.
 
 ---
 
@@ -153,12 +156,12 @@ The recommended way to use the `InpsydeTemplates` ruleset is as follows:
 
 ```xml
 <ruleset>
-    <file>./src/</file>
-    <file>./tests</file>
+    <file>./src</file>
     <file>./templates</file>
+    <file>./tests</file>
     <file>./views</file>
 
-    <rule ref="Inpsyde" />
+    <rule ref="Inpsyde"/>
 
     <rule ref="InpsydeTemplates">
         <include-pattern>*/templates/*</include-pattern>
@@ -167,9 +170,9 @@ The recommended way to use the `InpsydeTemplates` ruleset is as follows:
 </ruleset>
 ```
 
-The following templates-specific rules are available:
+The following template-specific rules are available:
 
-| Sniff name          | Description                                       | Has Config | Auto-Fixable |
+| Sniff Name          | Description                                       | Has Config | Auto-Fixable |
 |:--------------------|:--------------------------------------------------|:----------:|:------------:|
 | `TrailingSemicolon` | Remove trailing semicolon before closing PHP tag. |            |      ✓       |
 
@@ -177,127 +180,104 @@ The following templates-specific rules are available:
 
 ## Rules Tree
 
-Sometimes it is necessary to don't follow some rules. To avoid error reporting it is possible to:
+Sometimes it is necessary not to follow some rules. To avoid error reporting, it is possible to:
 
-- Removing rules for an entire project via configuration
-- Disabling rules from code, only is specific places
+- remove rules for an entire project via configuration;
+- disable rules from code, only is specific places.
 
-In both cases it is possible to remove or disable:
+In both cases, it is possible to remove or disable:
 
-- a whole standard
-- a standard subset
-- a single sniff
-- a single rules
+- a complete standard;
+- a standard subset;
+- a single sniff;
+- a single rule.
 
-The for things above are in hierarchical relationship: a _standard_ is made of one or more _subset_, 
-each subset contains one or more _sniff_ and each sniff contains one or more rule.
+These things are in a hierarchical relationship: _standards_ are made of one or more _subsets_, 
+which contain one or more _sniffs_, which in turn contain one or more _rules_.
 
-## Remove rules via configuration file
+## Removing Rules via Configuration File
 
-Rules can be removed for the entire project by using a custom `phpcs.xml`, with a syntax like this:
+Rules can be removed for the entire project by using a custom `phpcs.xml` file, like this:
 
 ```xml
 <?xml version="1.0"?>
 <ruleset name="MyProjectCodingStandard">
 
-	<rule ref="Inpsyde">
-		<exclude name="PSR1.Classes.ClassDeclaration"/>
-	</rule>
+    <rule ref="Inpsyde">
+        <exclude name="PSR1.Classes.ClassDeclaration"/>
+    </rule>
 
 </ruleset>
 ```
 
-In the example above, the _sniff_ `PSR1.Classes.ClassDeclaration` (and all the rules it contains)
+In the example above, the `PSR1.Classes.ClassDeclaration` sniff (and all the rules it contains)
 has been removed.
 
-Replacing `PSR1.Classes.ClassDeclaration` with just `PSR1` had been possible to
-remove the whole standard, while replacing it with `PSR1.Classes.ClassDeclaration.MultipleClasses`
-only the single rule is removed.
+By using `PSR1` instead of `PSR1.Classes.ClassDeclaration`, one would remove the entire `PSR1`
+standard, whereas using `PSR1.Classes.ClassDeclaration.MultipleClasses` would remove this one rule
+only, but no other rules in the `PSR1.Classes.ClassDeclaration` sniff.
 
-## Remove rules via code comments
+## Removing Rules via Code Comments
 
-If it is necessary to remove a rule/sniff/standard subset/standard only in specific place in the 
-code, it is possible to use special comments that starts with `// phpcs:disable` followed by the 
-name of the sniff to disable.
+Removing a rule/sniff/subset/standard only for a specific file or a part of it can be done by using
+special `phpcs` annotations/comments, for example, `// phpcs:disable` followed by an optional name
+of a standard/subset/sniff/rule. Like so:
 
-For example: `// phpcs:disable PSR1.Classes.ClassDeclaration`.
-
-From the point the comment is encountered to the end of the file, the requested rule/sniff/standard 
-subset/standard is not checked anymore.
-
-To re-enable it is necessary to use a similar syntax, but this time using `phpcs:enable` instead of 
-`phpcs:disable`.
-
-It is worth noting:
-
-- `phpcs:disable` and `phpcs:enable` can be used without specifying the rule name, in this case the
-  check for *all* rules are disabled/enabled.
-- Disabling / enabling comments could be embedded in doc block comments at file/class/method level.
-  For example:
-  
 ```php
-class Foo
-{
-    /**
-     * @param mixed $a
-     * @param mixed $b
-     *
-     * phpcs:disable NeutronStandard.Functions.TypeHint.NoArgumentType
-     */
-    public function test($a, $b)
-    {
-        // phpcs:enable
-    }
-}
+// phpcs:disable PSR1.Classes.ClassDeclaration
 ```
+
+For more information about ignoring files, please refer to the official [PHP_CodeSniffer Wiki](https://github.com/PHPCSStandards/PHP_CodeSniffer/wiki/Advanced-Usage#ignoring-parts-of-a-file).
 
 ---
 
-# IDE integration
+# IDE Integration
 
 ## PhpStorm
 
-After having installed the package as explained above in the _"Installation"_ section,
-open PhpStorm settings, and navigate to
+After installing the package as explained above, open PhpStorm settings, and navigate to
 
 `Language & Frameworks` ->  `PHP` -> `Quality Tools` -> `PHP_CodeSniffer`
 
 Choose _"Local"_ in the _"Configuration"_ dropdown.
 
-Click the _"..."_ button next to the dropdown, it will show a dialog
-where you need to specify the path for the Code Sniffer executable.
+Click the _"..."_ button next to the dropdown. It will show a dialog where you need to specify
+the path for the PHP_CodeSniffer executable.
 
-Open the file selection dialog, navigate to `vendor/bin/` in your project and select `phpcs`
-(`phpcs.bat` on Windows). 
+Open the file selection dialog, navigate to `vendor/bin/` in your project, and select `phpcs`.
+On Windows, choose `phpcs.bat`.
 
-Click the _"Validate"_ button next to the path input field, if everything is fine
-a success message will be shown at the bottom of the window.
+Click the _"Validate"_ button next to the path input field. If everything is working fine, a
+success message will be shown at the bottom of the window.
 
-Navigate PhpStorm settings to:
+Still in the PhpStorm settings, navigate to:
 
 `Editor` ->  `Inspections`
 
-Type `codesniffer` in the search field before the list of inspections, 
-select `PHP` -> `Quality Tools` -> `PHP_CodeSniffer validation` and enable it using the checkbox in 
-the list, press _"Apply"_.
+Type `codesniffer` in the search field before the list of inspections, then select:
 
-Select  _"PHP_CodeSniffer validation"_, press the refresh icon next to the _"Coding standard"_ 
-dropdown on the right and choose `Inpsyde`.
+`PHP` -> `Quality Tools` -> `PHP_CodeSniffer validation`
 
-If you do not see `Inpsyde` here, you may need to specify `phpcs.xml` file by selecting _"Custom"_ 
-as standard and using the _"..."_ button next to the dropdown.
+Enable it using the checkbox in the list, press _"Apply"_.
 
-Now PhpStorm integration is complete, and errors in the code style will be shown in the IDE editor
-allowing to detect them without running any commands at all.
+Select _"PHP_CodeSniffer validation"_, click the refresh icon next to the _"Coding standard"_ 
+dropdown on the right, and choose `Inpsyde`.
+
+If you don't see `Inpsyde` here, you may need to specify the `phpcs.xml` file by selecting
+_"Custom"_ as standard and then use the _"..."_ button next to the dropdown.
+
+Once the PhpStorm integration is complete, warnings and errors in your code will automatically be
+shown in your IDE editor.
 
 ---
 
 # Installation
 
-Via Composer, require as dev-dependency:
+Via Composer, require as development dependency:
 
 ```shell
 composer require "inpsyde/php-coding-standards:^2@dev" --dev
 ```
 
-_(the `@dev` can be removed as soon as the stable 2.0.0 will be released, or if root package minimum stability is "dev")._
+_(Please note that `@dev` can be removed as soon as a stable 2.0.0 version has been released, or if
+your root package minimum stability is `dev`)._
