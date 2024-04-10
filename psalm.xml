@@ -17,6 +17,7 @@
 >
     <projectFiles>
         <directory name="Inpsyde"/>
+        <directory name="InpsydeTemplates"/>
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>

@@ -4,6 +4,7 @@
     <description>PHP 7.4+ coding standards for Syde WordPress projects.</description>
 
     <file>Inpsyde</file>
+    <file>InpsydeTemplates</file>
     <file>./tests/src</file>
     <file>./tests/unit/cases</file>
     <file>./tests/e2e/cases</file>
@@ -29,6 +30,7 @@
 
     <rule ref="Inpsyde.CodeQuality.Psr4">
         <exclude-pattern>./Inpsyde/Sniffs/</exclude-pattern>
+        <exclude-pattern>./InpsydeTemplates/Sniffs/</exclude-pattern>
         <properties>
             <property name="psr4" type="array">
                 <element key="Inpsyde\CodingStandard\Helpers" value="Inpsyde/Helpers"/>
