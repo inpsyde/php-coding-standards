@@ -13,9 +13,7 @@ class DisableMagicSerializeSniff implements Sniff
 {
     /** @var list<string>  */
     public array $disabledFunctions = [
-        '__serialize',
         '__sleep',
-        '__unserialize',
         '__wakeup',
     ];
 
@@ -45,7 +43,7 @@ class DisableMagicSerializeSniff implements Sniff
         if (in_array($name, $this->disabledFunctions, true)) {
             $phpcsFile->addError(
                 sprintf(
-                    'The method "%s" is forbidden, please use Serializable interface.',
+                    'The method "%s" is deprecated, please use __serialize and __unserialize instead.',
                     $name
                 ),
                 $stackPtr,
