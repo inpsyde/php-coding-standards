@@ -4,7 +4,6 @@
 
 class Foo {
 
-    // @phpcsErrorOnNextLine
     public function __serialize(): array
     {
         return [];
@@ -37,7 +36,6 @@ class Foo {
         return [];
     }
 
-    // @phpcsErrorOnNextLine
     public function __unserialize(): array
     {
         return [];

@@ -43,7 +43,8 @@ class DisableMagicSerializeSniff implements Sniff
         if (in_array($name, $this->disabledFunctions, true)) {
             $phpcsFile->addError(
                 sprintf(
-                    'The method "%s" is deprecated, please use __serialize and __unserialize instead.',
+                    'The method "%s" is deprecated, '
+                    . 'please use __serialize and __unserialize instead.',
                     $name
                 ),
                 $stackPtr,

@@ -11,7 +11,7 @@ use PHPCSUtils\Utils\ObjectDeclarations;
 class DisableSerializeInterfaceSniff implements Sniff
 {
     /**
-     * @return list<int>
+     * @return list<int|string>
      */
     public function register(): array
     {
@@ -33,7 +33,7 @@ class DisableSerializeInterfaceSniff implements Sniff
     public function process(File $phpcsFile, $stackPtr): void
     {
         // phpcs:enable Inpsyde.CodeQuality.ArgumentTypeDeclaration
-        $tokenCode = $phpcsFile->getTokens()[$stackPtr]['code'];
+        $tokenCode = $phpcsFile->getTokens()[$stackPtr]['code'] ?? null;
         $find = ($tokenCode === \T_INTERFACE)
             ? ObjectDeclarations::findExtendedInterfaceNames($phpcsFile, $stackPtr)
             : ObjectDeclarations::findImplementedInterfaceNames($phpcsFile, $stackPtr);
@@ -43,7 +43,8 @@ class DisableSerializeInterfaceSniff implements Sniff
         }
 
         $phpcsFile->addError(
-            'The Serializable interface is deprecated, please use __serialize and __unserialize instead.',
+            'The Serializable interface is deprecated, '
+            . 'please use __serialize and __unserialize instead.',
             $stackPtr,
             'Found'
         );
