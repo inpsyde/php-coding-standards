@@ -11,12 +11,10 @@ use PHPCSUtils\Utils\Scopes;
 
 class DisableMagicSerializeSniff implements Sniff
 {
-    /** @var list<string>  */
+    /** @var array<string, string>  */
     public array $disabledFunctions = [
-        '__serialize',
-        '__sleep',
-        '__unserialize',
-        '__wakeup',
+        '__sleep' => '__serialize',
+        '__wakeup' => '__unserialize',
     ];
 
     /**
@@ -42,12 +40,10 @@ class DisableMagicSerializeSniff implements Sniff
         }
 
         $name = FunctionDeclarations::getName($phpcsFile, $stackPtr);
-        if (in_array($name, $this->disabledFunctions, true)) {
+        $alternative = $this->disabledFunctions[$name] ?? null;
+        if ($alternative !== null) {
             $phpcsFile->addError(
-                sprintf(
-                    'The method "%s" is forbidden, please use Serializable interface.',
-                    $name
-                ),
+                "The method '{$name}' is deprecated, please use '{$alternative}' instead.",
                 $stackPtr,
                 'Found'
             );

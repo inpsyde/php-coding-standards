@@ -117,30 +117,31 @@ Some rules are also included from PHP_CodeSniffer itself, as well as [PHPCSExtra
 
 The following custom rules are in use:
 
-| Sniff Name                 | Description                                                                                    | Has Config | Auto-Fixable |
-|:---------------------------|:-----------------------------------------------------------------------------------------------|:----------:|:------------:|
-| `ArgumentTypeDeclaration`  | Enforce argument type declaration.                                                             |            |              |
-| `DisableCallUserFunc`      | Disable usage of `call_user_func`.                                                             |            |              |
-| `DisableMagicSerialize`    | Disable usage of `__serialize`, `__sleep`, `__unserialize`, `__wakeup`.                        |            |              |
-| `DisallowShortOpenTag`     | Disallow short open PHP tag (short echo tag allowed).                                          |            |              |
-| `ElementNameMinimalLength` | Use minimum 3 chars for names (with a few exclusions)                                          |     ✓      |              |
-| `EncodingComment`          | Detect usage of opening `-*- coding: utf-8 -*-`                                                |     ✓      |      ✓       |
-| `ForbiddenPublicProperty`  | No public class properties                                                                     |            |              |
-| `FunctionBodyStart`        | Handle blank line at start of function body.                                                   |            |      ✓       |
-| `FunctionLength`           | Max 50 lines per function/method, excluding blank lines and comments-only lines.               |     ✓      |              |
-| `HookClosureReturn`        | Ensure that actions callbacks do not return anything, while filter callbacks return something. |            |              |
-| `HookPriority`             | Report usage of `PHP_INT_MAX` and `PHP_INT_MIN` as hook priority.                              |            |              |
-| `LineLength`               | Max 100 chars per line                                                                         |     ✓      |              |
-| `NestingLevel`             | Max indent level of 3 inside functions                                                         |     ✓      |              |
-| `NoAccessors`              | Discourage usage of getters and setters.                                                       |            |              |
-| `NoElse`                   | Discourage usage of `else`.                                                                    |            |              |
-| `NoRootNamespaceFunctions` | Report usage of global functions in the root namespace.                                        |            |              |
-| `NoTopLevelDefine`         | Discourage usage of `define` where `const` is preferable.                                      |            |              |
-| `PropertyPerClassLimit`    | Discourage usage of more than 10 properties per class.                                         |     ✓      |              |
-| `Psr4`                     | Check PSR-4 compliance                                                                         |     ✓      |              |
-| `ReturnTypeDeclaration`    | Enforce return type declaration                                                                |            |              |
-| `StaticClosure`            | Points closures that can be `static`.                                                          |            |      ✓       |
-| `VariablesName`            | Check variable (and properties) names                                                          |     ✓      |              |
+| Sniff Name                  | Description                                                                                    | Has Config | Auto-Fixable |
+|:----------------------------|:-----------------------------------------------------------------------------------------------|:----------:|:------------:|
+| `ArgumentTypeDeclaration`   | Enforce argument type declaration.                                                             |            |              |
+| `DisableCallUserFunc`       | Disable usage of `call_user_func`.                                                             |            |              |
+| `DisableMagicSerialize`     | Disable usage of `__sleep`, `__wakeup`.                                                        |            |              |
+| `DisableSerializeInterface` | Disable usage of `Serializable` interface.                                                     |            |              |
+| `DisallowShortOpenTag`      | Disallow short open PHP tag (short echo tag allowed).                                          |            |              |
+| `ElementNameMinimalLength`  | Use minimum 3 chars for names (with a few exclusions)                                          |     ✓      |              |
+| `EncodingComment`           | Detect usage of opening `-*- coding: utf-8 -*-`                                                |     ✓      |      ✓       |
+| `ForbiddenPublicProperty`   | No public class properties                                                                     |            |              |
+| `FunctionBodyStart`         | Handle blank line at start of function body.                                                   |            |      ✓       |
+| `FunctionLength`            | Max 50 lines per function/method, excluding blank lines and comments-only lines.               |     ✓      |              |
+| `HookClosureReturn`         | Ensure that actions callbacks do not return anything, while filter callbacks return something. |            |              |
+| `HookPriority`              | Report usage of `PHP_INT_MAX` and `PHP_INT_MIN` as hook priority.                              |            |              |
+| `LineLength`                | Max 100 chars per line                                                                         |     ✓      |              |
+| `NestingLevel`              | Max indent level of 3 inside functions                                                         |     ✓      |              |
+| `NoAccessors`               | Discourage usage of getters and setters.                                                       |            |              |
+| `NoElse`                    | Discourage usage of `else`.                                                                    |            |              |
+| `NoRootNamespaceFunctions`  | Report usage of global functions in the root namespace.                                        |            |              |
+| `NoTopLevelDefine`          | Discourage usage of `define` where `const` is preferable.                                      |            |              |
+| `PropertyPerClassLimit`     | Discourage usage of more than 10 properties per class.                                         |     ✓      |              |
+| `Psr4`                      | Check PSR-4 compliance                                                                         |     ✓      |              |
+| `ReturnTypeDeclaration`     | Enforce return type declaration                                                                |            |              |
+| `StaticClosure`             | Points closures that can be `static`.                                                          |            |      ✓       |
+| `VariablesName`             | Check variable (and properties) names                                                          |     ✓      |              |
 
 For **notes and configuration**, refer to the [`inpsyde-custom-sniffs.md`](/inpsyde-custom-sniffs.md)
 file in this repository.
