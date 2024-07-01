@@ -27,5 +27,8 @@
         <MixedAssignment errorLevel="suppress" />
         <RedundantCastGivenDocblockType errorLevel="suppress" />
         <RedundantConditionGivenDocblockType errorLevel="suppress" />
+
+        <!-- Suppressing that can be removed when minimum PHP version will become 8.3 -->
+        <MissingClassConstType errorLevel="suppress" />
     </issueHandlers>
 </psalm>
