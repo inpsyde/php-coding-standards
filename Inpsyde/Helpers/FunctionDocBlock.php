@@ -101,7 +101,7 @@ final class FunctionDocBlock
     {
         $tagName = '@' . ltrim($tag, '@');
         $tags = static::allTags($file, $position);
-        if (empty($tags[$tagName])) {
+        if (!isset($tags[$tagName]) || $tags[$tagName] === []) {
             return [];
         }
 
