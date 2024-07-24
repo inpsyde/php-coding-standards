@@ -11,7 +11,9 @@ use PHPCSUtils\Utils\ObjectDeclarations;
 
 class Psr4Sniff implements Sniff
 {
+    /** @var array<string, string> */
     public array $psr4 = [];
+    /** @var list<string> */
     public array $exclude = [];
 
     /**
@@ -112,10 +114,6 @@ class Psr4Sniff implements Sniff
         $filePath = str_replace('\\', '/', $file->getFilename());
 
         foreach ($this->psr4 as $baseNamespace => $foldersStr) {
-            if (!is_string($baseNamespace) || !is_string($foldersStr)) {
-                continue;
-            }
-
             $baseNamespace = trim($baseNamespace, '\\');
             if (strpos($namespace, $baseNamespace) !== 0) {
                 continue;

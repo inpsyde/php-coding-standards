@@ -48,6 +48,7 @@ class VariablesNameSniff implements Sniff
     ];
 
     public string $checkType = 'camelCase';
+    /** @var list<string> */
     public array $ignoredNames = [];
     public bool $ignoreLocalVars = false;
     public bool $ignoreProperties = false;
