@@ -120,6 +120,9 @@
     Slevomat
     See https://github.com/slevomat/coding-standard
     -->
+    <rule ref="SlevomatCodingStandard.Arrays.SingleLineArrayWhitespace">
+        <type>warning</type>
+    </rule>
     <rule ref="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration">
         <type>warning</type>
         <properties>
@@ -131,6 +134,7 @@
             <property name="spacesCountAroundEqualsSign" type="integer" value="0"/>
         </properties>
     </rule>
+    <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint" />
     <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
         <type>warning</type>
         <properties>
@@ -169,6 +173,9 @@
     </rule>
     <rule ref="Generic.WhiteSpace.LanguageConstructSpacing"/>
     <rule ref="Generic.WhiteSpace.SpreadOperatorSpacingAfter"/>
+    <rule ref="Squiz.Arrays.ArrayBracketSpacing">
+        <type>warning</type>
+    </rule>
     <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
     <rule ref="Squiz.PHP.CommentedOutCode">
         <properties>

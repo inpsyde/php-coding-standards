@@ -6,8 +6,11 @@ namespace Inpsyde\CodingStandard\Tests;
 
 final class SniffMessages
 {
+    /** @var array<int, string> */
     private array $warnings;
+    /** @var array<int, string> */
     private array $errors;
+    /** @var array<int, string> */
     private array $messages;
     private bool $messagesContainTotal = false;
 
