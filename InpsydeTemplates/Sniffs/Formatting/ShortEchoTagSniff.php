@@ -39,7 +39,6 @@ final class ShortEchoTagSniff implements Sniff
 
         /** @var array<int, Token> $tokens */
         $tokens = $phpcsFile->getTokens();
-        $currentLine = $tokens[$stackPtr]['line'];
 
         $prevPtr = $phpcsFile->findPrevious(
             Tokens::$emptyTokens,
@@ -53,6 +52,7 @@ final class ShortEchoTagSniff implements Sniff
         }
 
         $prevToken = $tokens[$prevPtr];
+        $currentLine = $tokens[$stackPtr]['line'];
 
         if ($prevToken['line'] !== $currentLine) {
             return;
