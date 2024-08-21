@@ -66,7 +66,11 @@ switch ($flag) {
         $flag = 'YES';
     }
 } elseif ($flag === 'NO') { // @phpcsWarningOnThisLine
-    echo 'no';
+    while ($flag !== 'YES') { // @phpcsWarningOnThisLine
+        $flag = 'YES';
+        ?>
+        <div>No. Yes.</div>
+        <?php }
 } else if ($flag === 'YES') { // @phpcsWarningOnThisLine
     echo 'yes';
 } else { // @phpcsWarningOnThisLine
