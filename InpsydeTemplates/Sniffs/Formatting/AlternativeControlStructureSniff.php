@@ -10,7 +10,7 @@ use PHP_CodeSniffer\Util\Tokens;
 use PHPCSUtils\Utils\ControlStructures;
 
 /**
- * The implementation is inspired by Universal.DisallowAlternativeSyntaxSniff.
+ * The implementation is inspired by Universal.ControlStructures.DisallowAlternativeSyntaxSniff.
  *
  * @link https://github.com/PHPCSStandards/PHPCSExtra/blob/ed86bb117c340f654eab603a06b95a437ac619c9/Universal/Sniffs/ControlStructures/DisallowAlternativeSyntaxSniff.php
  *
