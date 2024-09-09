@@ -173,9 +173,11 @@ The recommended way to use the `InpsydeTemplates` ruleset is as follows:
 
 The following template-specific rules are available:
 
-| Sniff Name          | Description                                       | Has Config | Auto-Fixable |
-|:--------------------|:--------------------------------------------------|:----------:|:------------:|
-| `TrailingSemicolon` | Remove trailing semicolon before closing PHP tag. |            |      ✓       |
+| Sniff Name                    | Description                                                 | Has Config | Auto-Fixable |
+|:------------------------------|:------------------------------------------------------------|:----------:|:------------:|
+| `AlternativeControlStructure` | Encourage usage of alternative syntax with inline HTML.     |            |              |
+| `ShortEchoTag`                | Replace echo with short echo tag in single-line statements. |            |      ✓       |
+| `TrailingSemicolon`           | Remove trailing semicolon before closing PHP tag.           |            |      ✓       |
 
 # Removing or Disabling Rules
 
