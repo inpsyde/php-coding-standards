@@ -90,7 +90,7 @@ class StaticClosureSniff implements Sniff
         $fixer = $file->fixer;
         $fixer->beginChangeset();
 
-        $fixer->replaceToken($position, 'static function');
+        $fixer->addContentBefore($position, 'static ');
 
         $fixer->endChangeset();
     }
