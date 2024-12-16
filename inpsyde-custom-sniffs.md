@@ -11,6 +11,7 @@
 - Inpsyde.CodeQuality.FunctionBodyStart
 - Inpsyde.CodeQuality.FunctionLength
 - Inpsyde.CodeQuality.HookClosureReturn
+- Inpsyde.CodeQuality.HookPriority
 - Inpsyde.CodeQuality.LineLength
 - Inpsyde.CodeQuality.NestingLevel
 - Inpsyde.CodeQuality.NoAccessors
