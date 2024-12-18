@@ -279,8 +279,5 @@ shown in your IDE editor.
 Via Composer, require as development dependency:
 
 ```shell
-composer require "inpsyde/php-coding-standards:^2@dev" --dev
+composer require --dev inpsyde/php-coding-standards
 ```
-
-_(Please note that `@dev` can be removed as soon as a stable 2.0.0 version has been released, or if
-your root package minimum stability is `dev`)._
