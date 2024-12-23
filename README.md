@@ -6,6 +6,11 @@
 
 ---
 
+> [!IMPORTANT]
+> Development on this package has shifted to maintenance mode. We remain committed to fixing bugs, ensuring compatibility, and addressing security concerns, but new features are not planned at this time. For active projects, we recommend migrating to [`syde/phpcs`](https://github.com/inpsyde/phpcs), the next-generation Syde PHP Coding Standards, supporting PHP 8.1+.
+
+---
+
 # Usage
 
 When the package is installed via Composer, and dependencies are updated, everything is ready and 

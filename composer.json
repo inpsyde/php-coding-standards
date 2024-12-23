@@ -80,5 +80,8 @@
             "composer/*": true,
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
+    },
+    "suggest": {
+        "syde/phpcs": "The next-generation Syde PHP Coding Standards for WordPress development at scale, supporting PHP 8.1+."
     }
 }
