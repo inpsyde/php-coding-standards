@@ -6,6 +6,13 @@
 
 ---
 
+> [!IMPORTANT]
+> Please note that development on **this package has shifted to maintenance mode** only. We remain committed to fixing bugs, ensuring compatibility, and addressing security concerns **until July 31, 2025**. New features are not planned at this time. Maintenance mode will end on August 1, 2025, effectively marking the End-of-Life date of this package.
+> 
+> For active projects, we **strongly recommend migrating to [`syde/phpcs`](https://github.com/inpsyde/phpcs)**, the next-generation Syde PHP Coding Standards for WordPress development at scale, supporting PHP 8.1+. Please refer to the dedicated [Migration](https://github.com/inpsyde/phpcs/blob/main/docs/Migration.md) docs to get a high-level understanding of the potential migration effort.
+
+---
+
 # Usage
 
 When the package is installed via Composer, and dependencies are updated, everything is ready and 
